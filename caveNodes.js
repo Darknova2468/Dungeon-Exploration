@@ -1,14 +1,17 @@
+/* eslint-disable no-undef */
 const DEBUG = true;
 
-let nodeHardBound = 3;
-let nodeSoftBound = 5;
+let caveNodeHardBound = 3;
+let caveNodeSoftBound = 5;
+let caveEdgeHardBound = 1;
+let caveEdgeSoftBound = 6;
 
 const fillPortion = 0.6; // Portion of solid rock for cave generation
 
 let caveNodes = [];
 
-let caveNodeSeparation = 12;
-let numNodes = 25;
+let caveNodeSeparation = 15;
+let numNodes = 20;
 let trialLimit = 100;
 
 // /**
@@ -26,7 +29,7 @@ let trialLimit = 100;
 // }
 
 function verifyIndices(i, j) {
-  return (0 <= i && i < ySize && 0 <= j && j < xSize);
+  return 0 <= i && i < ySize && 0 <= j && j < xSize;
 }
 
 function setGrid(grid, i, j, val) {
@@ -100,21 +103,42 @@ function evaluateNext(grid) {
   return newGrid;
 }
 
+function generateCaveEdge(grid, i1, j1, i2, j2) {
+  let dj = j2 - j1;
+  let di = i2 - i1;
+  let c = di * j1 - dj * i1;
+  for(let a = 0; a < ySize; a++) {
+    for(let b = 0; b < xSize; b++) {
+      // Check bounds in the parallel direction
+      if(i1 * di + j1 * dj < a * di + b * dj && a * di + b * dj < i2 * di + j2 * dj) {
+        // Find the distance from the point to the line: dy x + (-dx) y + c = 0
+        let d = Math.abs((dj * a - di * b + c) / dist(0, 0, di, dj));
+        if(d < caveEdgeHardBound) {
+          setGrid(grid, a, b, 1);
+        }
+        else if(d < caveEdgeSoftBound) {
+          if(random() < fillPortion) {
+            setGrid(grid, a, b, 1);
+          }
+        }
+      }
+    }
+  }
+}
 
 function generateCaveNode(grid, i, j) {
   for(let a = 0; a < ySize; a++) {
     for(let b = 0; b < xSize; b++) {
-      if(dist(i, j, a, b) <= nodeHardBound) {
+      if(dist(i, j, a, b) <= caveNodeHardBound) {
         setGrid(grid, a, b, 1);
       }
-      else if(dist(i, j, a, b) <= nodeSoftBound) {
+      else if(dist(i, j, a, b) <= caveNodeSoftBound) {
         if(random() < fillPortion) {
           setGrid(grid, a, b, 1);
         }
       }
     }
   }
-  // console.log(grid);
 }
 
 function attemptCaveNodePlacement(grid) {
@@ -130,21 +154,35 @@ function attemptCaveNodePlacement(grid) {
   return true;
 }
 
-/**
- * Generates a new level.
- */
-function generateLevel() {
-  // Generate caves
+function placeCaveNodes(grid) {
   generateEmptyGrid(grid);
   caveNodes = [];
-  numTrials = 0
+  let numTrials = 0;
   while(caveNodes.length < numNodes && numTrials < trialLimit) {
     attemptCaveNodePlacement(grid);
   }
   if(numTrials >= 100) {
-    generateLevel();
+    return false;
   }
   // generateCaveNode(grid, 15, 30);
+  return true;
+}
+
+/**
+ * Generates a new level.
+ */
+function generateLevel() {
+  generateEmptyGrid(grid);
+  // Generate caves
+  // eslint-disable-next-line curly
+  // while(!placeCaveNodes(grid));
+
+  caveNodes = [];
+  generateCaveNode(grid, 15, 30);
+  generateCaveNode(grid, 30, 70);
+  generateCaveEdge(grid, 15, 30, 30, 70);
+  grid[15][30] = cellTypes.exit;
+  grid[30][70] = cellTypes.exit;
   for(let i = 0; i < 3; i++) {
     grid = evaluateNext(grid);
   }

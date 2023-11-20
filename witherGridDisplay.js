@@ -31,6 +31,7 @@ function randomizeGrid(grid) {
   for(let i = 0; i < grid.length; i++) {
     let row = grid[i];
     for(let j = 0; j < row.length; j++) {
+      // eslint-disable-next-line no-undef
       grid[i][j] = random() < fillPortion;
     }
   }
@@ -54,7 +55,7 @@ function displayGrid(grid) {
     for(let j = 0; j < row.length; j++) {
       let cell_type = grid[i][j];
       if(0 <= cell_type && cell_type <= 1) {
-        fill(255*(grid[i][j]));
+        fill(255*grid[i][j]);
       }
       else if(cell_type === cellTypes.exit) {
         fill("blue");
