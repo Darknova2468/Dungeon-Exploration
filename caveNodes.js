@@ -150,6 +150,9 @@ function attemptCaveNodePlacement(grid) {
     }
   }
   generateCaveNode(grid, i, j);
+  // if(caveNodes.length > 0) {
+  //   generateCaveEdge(grid, i, j, caveNodes[caveNodes.length-1][0], caveNodes[caveNodes.length-1][1]);
+  // }
   caveNodes.push([i, j]);
   return true;
 }
@@ -168,6 +171,15 @@ function placeCaveNodes(grid) {
   return true;
 }
 
+function temporaryEdgeTest() {
+  caveNodes = [];
+  generateCaveNode(grid, 15, 30);
+  generateCaveNode(grid, 30, 70);
+  generateCaveEdge(grid, 15, 30, 30, 70);
+  grid[15][30] = cellTypes.exit;
+  grid[30][70] = cellTypes.exit;
+}
+
 /**
  * Generates a new level.
  */
@@ -175,14 +187,8 @@ function generateLevel() {
   generateEmptyGrid(grid);
   // Generate caves
   // eslint-disable-next-line curly
-  // while(!placeCaveNodes(grid));
+  while(!placeCaveNodes(grid));
 
-  caveNodes = [];
-  generateCaveNode(grid, 15, 30);
-  generateCaveNode(grid, 30, 70);
-  generateCaveEdge(grid, 15, 30, 30, 70);
-  grid[15][30] = cellTypes.exit;
-  grid[30][70] = cellTypes.exit;
   for(let i = 0; i < 3; i++) {
     grid = evaluateNext(grid);
   }
