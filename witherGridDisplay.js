@@ -48,6 +48,7 @@ function updateDimensions() {
  * @param {Array.<Array.<number>>} grid The grid to display.
  */
 function displayGrid(grid) {
+  let startTime = millis();
   background(100);
   stroke(0, 50);
   for(let i = 0; i < grid.length; i++) {
@@ -64,6 +65,11 @@ function displayGrid(grid) {
       let yCoord = startY + i * squareSize;
       rect(xCoord, yCoord, squareSize, squareSize);
     }
+  }
+  if(DEBUG) {
+    console.log("[Wither Grid] Grid rendering took "
+      .concat(((millis() - startTime) / 1000)
+      .toString().concat(" seconds.")))
   }
 }
 

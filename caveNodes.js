@@ -14,6 +14,8 @@ let caveNodeSeparation = 12;
 let numNodes = 30;
 let trialLimit = 100;
 
+const caveNodePadding = 10;
+
 // /**
 //  * Wraps the coordinates of the grid at the edges.
 //  * @param {number} a The i-index.
@@ -142,8 +144,8 @@ function generateCaveNode(grid, i, j) {
 }
 
 function attemptCaveNodePlacement(grid) {
-  let i = Math.floor(random(ySize));
-  let j = Math.floor(random(xSize));
+  let i = Math.floor(random(ySize - 2*caveNodePadding) + caveNodePadding);
+  let j = Math.floor(random(xSize - 2*caveNodePadding) + caveNodePadding);
   for(let node of caveNodes) {
     if(dist(i, j, node[0], node[1]) < caveNodeSeparation) {
       return false;
@@ -163,11 +165,18 @@ function placeCaveNodes(grid) {
   let numTrials = 0;
   while(caveNodes.length < numNodes && numTrials < trialLimit) {
     attemptCaveNodePlacement(grid);
+    numTrials++;
   }
   if(numTrials >= 100) {
+    if(DEBUG) {
+      console.log("[Cave Nodes] Cave node placement failed, retrying...");
+    }
     return false;
   }
   // generateCaveNode(grid, 15, 30);
+  if(DEBUG) {
+    console.log("[Cave Nodes] Cave node placement succeeded!");
+  }
   return true;
 }
 
