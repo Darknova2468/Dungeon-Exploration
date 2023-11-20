@@ -10,8 +10,8 @@ const fillPortion = 0.6; // Portion of solid rock for cave generation
 
 let caveNodes = [];
 
-let caveNodeSeparation = 15;
-let numNodes = 20;
+let caveNodeSeparation = 12;
+let numNodes = 30;
 let trialLimit = 100;
 
 // /**
@@ -180,6 +180,38 @@ function temporaryEdgeTest() {
   grid[30][70] = cellTypes.exit;
 }
 
+function runCavePrim() {
+  let numNodes = caveNodes.length;
+  let adj = new Array(numNodes);
+  let visited = new Array(numNodes).fill(false);
+  // visited[0] = true;
+  for(let i = 0; i < numNodes; i++) {
+    adj[i] = [];
+    for(let j = 0; j < numNodes; j++) {
+      adj[i].push(dist(caveNodes[i][0], caveNodes[i][1], caveNodes[j][0], caveNodes[j][1]));
+    }
+  }
+  // Node format: current, previous, dist
+  let pq = new Heap([[0, 0, 0]], (a, b) => a[2] - b[2]);
+  while(pq.heap.length > 1) {
+    let t = pq.pop();
+    let curr = t[0];
+    let prev = t[1];
+    if(visited[curr]) {
+      continue;
+    }
+    // console.log(t);
+    generateCaveEdge(grid, caveNodes[curr][0], caveNodes[curr][1], caveNodes[prev][0], caveNodes[prev][1]);
+    visited[curr] = true;
+    for(let i = 0; i < numNodes; i++) {
+      if(visited[i]) {
+        continue;
+      }
+      pq.push([i, curr, adj[i][curr]]);
+    }
+  }
+}
+
 /**
  * Generates a new level.
  */
@@ -188,6 +220,7 @@ function generateLevel() {
   // Generate caves
   // eslint-disable-next-line curly
   while(!placeCaveNodes(grid));
+  runCavePrim();
 
   for(let i = 0; i < 3; i++) {
     grid = evaluateNext(grid);
