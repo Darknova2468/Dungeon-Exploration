@@ -2,8 +2,8 @@ let squareSize; // Side length of squares
 const padding = 10; // Minimum padding between grid and edges of screen
 let startX; // Top-right x-position of grid
 let startY; // Top-right y-position of grid
-const xSize = 100; // Number of squares across
-const ySize = 50; // Number of squares down
+const xSize = 150; // Number of squares across
+const ySize = 75; // Number of squares down
 
 const cellTypes = {
   exit: 2,

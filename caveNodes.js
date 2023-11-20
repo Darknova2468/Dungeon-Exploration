@@ -7,7 +7,9 @@ const fillPortion = 0.6; // Portion of solid rock for cave generation
 
 let caveNodes = [];
 
-const caveNodeSeparation = 15;
+let caveNodeSeparation = 12;
+let numNodes = 25;
+let trialLimit = 100;
 
 // /**
 //  * Wraps the coordinates of the grid at the edges.
@@ -135,8 +137,12 @@ function generateLevel() {
   // Generate caves
   generateEmptyGrid(grid);
   caveNodes = [];
-  while(caveNodes.length < 15) {
+  numTrials = 0
+  while(caveNodes.length < numNodes && numTrials < trialLimit) {
     attemptCaveNodePlacement(grid);
+  }
+  if(numTrials >= 100) {
+    generateLevel();
   }
   // generateCaveNode(grid, 15, 30);
   for(let i = 0; i < 3; i++) {
