@@ -7,7 +7,6 @@
 
 let myDungeon;
 let scaleFactor = 2;
-let dict = new Array(5).fill(null);
 
 function setup() {
   createCanvas(400*scaleFactor, 200*scaleFactor);
@@ -26,7 +25,9 @@ function draw() {
     y = (y+100)*scaleFactor;
     stroke(255);
     room.connections.forEach(path => {
-      line(x, y, (myDungeon.dungeon[path[0]].pos[0]+20)*scaleFactor, (myDungeon.dungeon[path[0]].pos[1]+100)*scaleFactor);
+      if(path[2] > 0){
+        line(x, y, (myDungeon.dungeon[path[0]].pos[0]+20)*scaleFactor, (myDungeon.dungeon[path[0]].pos[1]+100)*scaleFactor);
+      }
     });
     noStroke();
     circle(x, y, room.radius*2*scaleFactor);
