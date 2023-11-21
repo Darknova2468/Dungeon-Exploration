@@ -9,7 +9,9 @@
 function setup() {
   createCanvas(windowWidth, windowHeight);
   updateDimensions();
-  generateLevel();
+  generateEmptyGrid(grid);
+  displayGrid(grid);
+  // generateAshenCaveLevel();
 }
 
 function draw() {

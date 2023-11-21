@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 let squareSize; // Side length of squares
 const padding = 10; // Minimum padding between grid and edges of screen
 let startX; // Top-right x-position of grid
@@ -31,7 +32,6 @@ function randomizeGrid(grid) {
   for(let i = 0; i < grid.length; i++) {
     let row = grid[i];
     for(let j = 0; j < row.length; j++) {
-      // eslint-disable-next-line no-undef
       grid[i][j] = random() < fillPortion;
     }
   }
@@ -69,7 +69,7 @@ function displayGrid(grid) {
   if(DEBUG) {
     console.log("[Wither Grid] Grid rendering took "
       .concat(((millis() - startTime) / 1000)
-      .toString().concat(" seconds.")))
+        .toString().concat(" seconds.")));
   }
 }
 
