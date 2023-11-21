@@ -30,12 +30,14 @@ const caveNodePadding = 10;
 //   return [a,b];
 // }
 
-function verifyIndices(i, j) {
-  return 0 <= i && i < ySize && 0 <= j && j < xSize;
+function verifyIndices(grid, i, j) {
+  let y = grid.length;
+  let x = grid[0].length;
+  return 0 <= i && i < y && 0 <= j && j < x;
 }
 
 function setGrid(grid, i, j, val) {
-  if(verifyIndices(i, j)) {
+  if(verifyIndices(grid, i, j)) {
     grid[i][j] = val;
   }
 }
@@ -58,7 +60,7 @@ function getWallsWithin(grid, i, j, r) {
       let a = i + iDisp;
       let b = j + jDisp;
       //let newIndices = wrapIndices(a,b);
-      if(verifyIndices(a, b)) {
+      if(verifyIndices(grid, a, b)) {
         acc += 1-grid[a][b];
       }
       else {
@@ -99,18 +101,22 @@ function evaluateCave(newGrid, grid) {
  * @returns The new grid.
  */
 function evaluateNext(grid) {
-  let newGrid = new Array(ySize);
-  generateEmptyGrid(newGrid, xSize, toFill = 1);
+  let y = grid.length;
+  let x = grid[0].length;
+  let newGrid = new Array(y);
+  newGrid = generateEmptyGrid(x, y, 1);
   evaluateCave(newGrid, grid);
   return newGrid;
 }
 
 function generateCaveEdge(grid, i1, j1, i2, j2) {
+  let y = grid.length;
+  let x = grid[0].length;
   let dj = j2 - j1;
   let di = i2 - i1;
   let c = di * j1 - dj * i1;
-  for(let a = 0; a < ySize; a++) {
-    for(let b = 0; b < xSize; b++) {
+  for(let a = 0; a < y; a++) {
+    for(let b = 0; b < x; b++) {
       // Check bounds in the parallel direction
       if(i1 * di + j1 * dj < a * di + b * dj && a * di + b * dj < i2 * di + j2 * dj) {
         // Find the distance from the point to the line: dy x + (-dx) y + c = 0
@@ -128,27 +134,19 @@ function generateCaveEdge(grid, i1, j1, i2, j2) {
   }
 }
 
-function generateCaveNode(grid, i, j) {
-  for(let a = 0; a < ySize; a++) {
-    for(let b = 0; b < xSize; b++) {
-      if(dist(i, j, a, b) <= caveNodeHardBound) {
+function generateCaveNode(grid, i, j, hr = caveNodeHardBound, sr = caveNodeSoftBound) {
+  let y = grid.length;
+  let x = grid[0].length;
+  for(let a = 0; a < y; a++) {
+    for(let b = 0; b < x; b++) {
+      if(dist(i, j, a, b) <= hr) {
         setGrid(grid, a, b, 1);
       }
-      else if(dist(i, j, a, b) <= caveNodeSoftBound) {
+      else if(dist(i, j, a, b) <= sr) {
         if(random() < fillPortion) {
           setGrid(grid, a, b, 1);
         }
       }
-    }
-  }
-}
-
-function keyPressed() {
-  if(DEBUG) {
-    if(keyCode === ENTER) {
-      generateLevel();
-      // attemptCaveNodePlacement(grid);
-      // displayGrid(grid);
     }
   }
 }

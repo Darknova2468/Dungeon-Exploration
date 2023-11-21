@@ -16,7 +16,7 @@ function attemptCaveNodePlacement(grid) {
 }
 
 function placeCaveNodes(grid) {
-  generateEmptyGrid(grid);
+  grid = generateEmptyGrid(grid);
   caveNodes = [];
   let numTrials = 0;
   while(caveNodes.length < numNodes && numTrials < trialLimit) {
@@ -25,13 +25,13 @@ function placeCaveNodes(grid) {
   }
   if(numTrials >= 100) {
     if(DEBUG) {
-      console.log("[Cave Nodes] Cave node placement failed, retrying...");
+      console.log("[Ashen Cave Dungeons] Cave node placement failed, retrying...");
     }
     return false;
   }
   // generateCaveNode(grid, 15, 30);
   if(DEBUG) {
-    console.log("[Cave Nodes] Cave node placement succeeded!");
+    console.log("[Ashen Cave Dungeons] Cave node placement succeeded!");
   }
   return true;
 }
@@ -81,7 +81,7 @@ function runCavePrim() {
  * Generates a new level.
  */
 function generateAshenCaveLevel() {
-  generateEmptyGrid(grid);
+  grid = generateEmptyGrid();
   // Generate caves
   // eslint-disable-next-line curly
   while(!placeCaveNodes(grid));
