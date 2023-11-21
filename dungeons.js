@@ -46,9 +46,9 @@ class DungeonMap {
     });
     
     //creates map
-    let offset = [minX, minY];
-    let map = new Array(Math.floor(maxX - minX)+2).fill(false);
-    map.forEach(row => {
+    let offset = [minX+1, minY+1];
+    this.map = new Array(Math.floor(maxX - minX)+2).fill(false);
+    this.map.forEach(row => {
       new Array(Math.floor(maxY - minY)+2).fill(false);
     });
   }
