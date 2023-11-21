@@ -1,10 +1,10 @@
 /* eslint-disable no-undef */
-const DEBUG = true;
+const DEBUG = false;
 
 let caveNodeHardBound = 3;
 let caveNodeSoftBound = 5;
-let caveEdgeHardBound = 1;
-let caveEdgeSoftBound = 6;
+let caveEdgeHardBound = 6;
+let caveEdgeSoftBound = 0;
 
 const fillPortion = 0.6; // Portion of solid rock for cave generation
 

@@ -1,5 +1,6 @@
+/* eslint-disable no-undef */
 class DungeonMap {
-  constructor(_numberOfRooms, _twoPathChance, _bridgeOrMazeChance, _bridgeLength, _mazeLength, _emptyPathLength){
+  constructor(_numberOfRooms, _twoPathChance){
     //builds room nodes;
     this.dungeon = [new Room(15)];
     for(let i=1; i<_numberOfRooms-1; i++){
@@ -46,10 +47,23 @@ class DungeonMap {
     });
     
     //creates map
-    let offset = [minX+1, minY+1];
-    this.map = new Array(Math.floor(maxX - minX)+2).fill(false);
-    this.map.forEach(row => {
-      new Array(Math.floor(maxY - minY)+2).fill(false);
+    let offset = [-minX+1, -minY+1];
+    this.minimap = generateEmptyGrid(Math.floor(maxX-minX)+2, Math.floor(maxY-minY)+2);
+    
+    this.dungeon.forEach(room => {
+      let pos1 = room.pos;
+      room.connections.forEach(connection => {
+        if(connection[2] === 1) {
+          let pos2 = this.dungeon[connection[0]].pos;
+          generateCaveEdge(this.minimap, pos1[1] + offset[1], pos1[0] + offset[0],
+            pos2[1] + offset[1], pos2[0] + offset[0]);
+        }
+      });
+    });
+    
+    this.dungeon.forEach(room => {
+      let raster = generatePrecursorDungeonRoom(room.radius);
+      this.minimap = integrateRaster(this.minimap, raster, room.pos, offset);
     });
   }
 }
@@ -112,6 +126,17 @@ class Line {
   }
 }
 
+function integrateRaster(minimap, raster, pos, offset){
+  pos[0] = Math.floor(pos[0]+offset[0]-raster.length/2);
+  pos[1] = Math.floor(pos[1]+offset[1]-raster[0].length/2);
+  for(let y=0; y<raster.length; y++){
+    for(let x=0; x<raster[y].length; x++){
+      minimap[y+pos[1]][x+pos[0]] ||= raster[y][x];
+    }
+  }
+  return minimap;
+}
+
 //finds an angle given three side lengths
 function cosineLaw(a, b, c){
   return acos((a*a+b*b-c*c)/(2*a*b));
@@ -122,4 +147,14 @@ function between(point, bound1, bound2){
   let minimum = min(bound1, bound2);
   let maximum = max(bound1, bound2);
   return minimum <= point && maximum >= point;
+}
+
+//generates single cave
+function generatePrecursorDungeonRoom(radius) {
+  let room = generateEmptyGrid(2*radius + 1, 2*radius + 1);
+  generateCaveNode(room, radius, radius, radius - 4, radius);
+  for(let i = 0; i < 3; i++) {
+    room = evaluateNext(room);
+  }
+  return room;
 }
