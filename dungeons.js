@@ -23,26 +23,21 @@ class DungeonMap {
 
     //generates the rest of the tree
     for(let i=3; i<this.dungeon.length; i++){
-      dist1 = this.dungeon[i - 1].connections[0][1];
-      dist2 = this.dungeon[i - 2].connections[1][1];
-      /*
-      let angle1 = Math.atan2(this.dungeon[i - 1].pos[0] - this.dungeon[i - 2].pos[0], this.dungeon[i - 1].pos[1] - this.dungeon[i - 2].pos[1]);
-      let angle2 = cosineLaw(dist1, dist3, dist2);
-      let theta = angle1 + angle2;
-    
-      let pointX = this.dungeon[i - 1].pos[0] + Math.sin(theta) * dist1;
-      let pointY = this.dungeon[i - 1].pos[1] + Math.cos(theta) * dist1;  
-      */
-      let points = findPoint3(this.dungeon[i-1].pos, this.dungeon[i-2].pos, dist1, dist2);
-
+      dist1 = this.dungeon[i-1].connections[0][1];
+      dist2 = this.dungeon[i-2].connections[1][1];
+      let point1 = this.dungeon[i-1].pos;
+      let point2 = this.dungeon[i-2].pos;
+      let alpha = atan((point2[1]-point1[1])/(point2[0]-point1[0]));
+      let beta = cosineLaw(dist2, dist1, dist3);
+      let theta = PI-alpha-beta;
+      let point = [point2[0]+sin(theta)*dist2, point2[1]+cos(theta)*dist2];
+      console.log(i + "\n" + "point1", point1 + "\n" + "point2", point2 + "\n" + "dist", dist1, dist2, dist3 + "\n" + (point2[1]-point1[1])/(point2[0]-point1[0]), "angles", alpha, beta, theta + "\n" + "result", point);
       let line1 = new Line(this.dungeon[i-3].pos, this.dungeon[i-1].pos);
-      let line2 = new Line(this.dungeon[i-2].pos, points[0]);
-
+      let line2 = new Line(this.dungeon[i-2].pos, point);
+      this.dungeon[i].pos = point;
       if(line1.intersects(line2)) {
-        this.dungeon[i].pos = points[1];
-      }
-      else{
-        this.dungeon[i].pos = points[0];
+        let line3 = new Line(this.dungeon[i-2].pos, this.dungeon[i-1].pos);
+        this.dungeon[i].pos = line3.reflect(point);
       }
     }
 
