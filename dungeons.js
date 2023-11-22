@@ -46,10 +46,6 @@ class DungeonMap {
       let theta = alpha - beta * Math.pow(-1, i);
       let point = [point1[0] + dist1 * cos(theta), point1[1] + dist1 * sin(theta)];
       this.dungeon[i].pos = point;
-      if(line1.intersects(line2)) {
-        let line3 = new Line(this.dungeon[i-2].pos, this.dungeon[i-1].pos);
-        this.dungeon[i].pos = line3.reflect(point);
-      }
     }
 
     //finds bounding box of the map
