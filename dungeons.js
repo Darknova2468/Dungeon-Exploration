@@ -25,8 +25,9 @@ class DungeonMap {
     for(let i=3; i<this.dungeon.length; i++){
       dist1 = this.dungeon[i-1].connections[0][1];
       dist2 = this.dungeon[i-2].connections[1][1];
-      let angle1 = atan((this.dungeon[i-1].pos[0]-this.dungeon[i-2].pos[0])/(this.dungeon[i-1].pos[1]-this.dungeon[i-2].pos[1]));
-      theta = angle1 + cosineLaw(dist1, dist3, dist2);
+      let alpha = atan((this.dungeon[i-1].pos[1]-this.dungeon[i-2].pos[1])/(this.dungeon[i-1].pos[0]-this.dungeon[i-2].pos[0]));
+      let beta = cosineLaw(dist1, dist3, dist2);
+      let theta = PI-(alpha+beta);
       let point = [this.dungeon[i-1].pos[0]+sin(theta)*dist1, this.dungeon[i-1].pos[1]+cos(theta)*dist1];
       let line1 = new Line(this.dungeon[i-3].pos, this.dungeon[i-1].pos);
       let line2 = new Line(this.dungeon[i-2].pos, point);
