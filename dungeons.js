@@ -30,11 +30,11 @@ class DungeonMap {
       let point = [this.dungeon[i-1].pos[0]+sin(theta)*dist1, this.dungeon[i-1].pos[1]+cos(theta)*dist1];
       let line1 = new Line(this.dungeon[i-3].pos, this.dungeon[i-1].pos);
       let line2 = new Line(this.dungeon[i-2].pos, point);
-      if(line1.intersects(line2)){
-        let line3 = new Line(this.dungeon[i-1].pos, this.dungeon[i-2].pos);
-        point = line3.reflect(point);
-      }
       this.dungeon[i].pos = point;
+      if(line1.intersects(line2)) {
+        let line3 = new Line(this.dungeon[i-2].pos, this.dungeon[i-1].pos);
+        this.dungeon[i].pos = line3.reflect(point);
+      }
     }
 
     //finds bounding box of the map
@@ -157,4 +157,40 @@ function generatePrecursorDungeonRoom(radius) {
     room = evaluateNext(room);
   }
   return room;
+}
+
+function findPoint3(point1, point2, dist1, dist2, dist3) {
+  // Calculate the vector between point1 and point2
+  let vector12 = [point2[0] - point1[0], point2[1] - point1[1]];
+
+  // Calculate the distance between point1 and point2
+  let distance12 = Math.sqrt(vector12[0] ** 2 + vector12[1] ** 2);
+
+  // Calculate the coordinates of the midpoint between point1 and point2
+  let midpoint = [
+    (point1[0] + point2[0]) / 2,
+    (point1[1] + point2[1]) / 2
+  ];
+
+  // Calculate the distance from the midpoint to the unknown point P3
+  let distanceMidpointP3 = (dist1 ** 2 - dist2 ** 2 + distance12 ** 2) / (2 * distance12);
+
+  // Calculate the height difference
+  let h = Math.sqrt(dist1 ** 2 - distanceMidpointP3 ** 2);
+
+  // Calculate the unit vector in the direction of point1 to point2
+  let unitVector12 = [vector12[0] / distance12, vector12[1] / distance12];
+
+  // Calculate the coordinates of both solutions for point P3
+  let solution1 = [
+    midpoint[0] + unitVector12[1] * h,
+    midpoint[1] - unitVector12[0] * h
+  ];
+
+  let solution2 = [
+    midpoint[0] - unitVector12[1] * h,
+    midpoint[1] + unitVector12[0] * h
+  ];
+
+  return [solution1, solution2];
 }
