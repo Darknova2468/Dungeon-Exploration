@@ -14,7 +14,7 @@ function setup() {
   noLoop();
   stroke(255);
   strokeWeight(scaleFactor*10);
-  myDungeon = new DungeonMap(10, 0.3);
+  myDungeon = new DungeonMap(5, 0.3);
   console.log(myDungeon);
 }
 
@@ -24,11 +24,10 @@ function draw() {
     let [x, y] = room.pos;
     x = (x+20)*scaleFactor;
     y = (y+50)*scaleFactor;
-    stroke(127);
+    
     room.connections.forEach(path => {
-      if(path[2] > 0){
-        line(x, y, (myDungeon.dungeon[path[0]].pos[0]+20)*scaleFactor, (myDungeon.dungeon[path[0]].pos[1]+50)*scaleFactor);
-      }
+      stroke([255*(path[2]===1), 255*(path[2]===2), 255*(path[2]===0)]);
+      line(x, y, (myDungeon.dungeon[path[0]].pos[0]+20)*scaleFactor, (myDungeon.dungeon[path[0]].pos[1]+50)*scaleFactor);
     });
     noStroke();
     fill(255);
