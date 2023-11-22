@@ -10,12 +10,10 @@ let myDungeon;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  // noLoop();
-  myDungeon = new DungeonMap(6, 0.3);
+  myDungeon = new DungeonMap(6, 0.2);
 }
 
 function draw() {
   background(0);
-  myDungeon = new DungeonMap(6, 0.3);
   displayGrid(myDungeon.minimap);
 }
