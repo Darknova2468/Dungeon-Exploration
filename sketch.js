@@ -11,9 +11,11 @@ let myDungeon;
 function setup() {
   createCanvas(windowWidth, windowHeight);
   myDungeon = new DungeonMap(6, 0.2);
+  noLoop();
 }
 
 function draw() {
   background(0);
   displayGrid(myDungeon.minimap);
+  testConvexHull();
 }
