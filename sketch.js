@@ -12,7 +12,6 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   noLoop();
   myDungeon = new DungeonMap(6, 0.3);
-  console.log(myDungeon);
 }
 
 function draw() {

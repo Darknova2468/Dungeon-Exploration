@@ -17,20 +17,34 @@ class DungeonMap {
     let dist1 = this.dungeon[0].connections[0][1];
     let dist2 = this.dungeon[0].connections[1][1];
     let dist3 = this.dungeon[1].connections[0][1];
+    
     let theta = 0.5*cosineLaw(dist1, dist2, dist3);
     this.dungeon[1].pos = [Math.abs(cos(theta)*dist1), sin(theta)*dist1];
     this.dungeon[2].pos = [Math.abs(cos(theta)*dist2), -sin(theta)*dist2];
 
     //generates the rest of the tree
     for(let i=3; i<this.dungeon.length; i++){
-      dist1 = this.dungeon[i-1].connections[0][1];
-      dist2 = this.dungeon[i-2].connections[1][1];
-      let alpha = atan((this.dungeon[i-1].pos[1]-this.dungeon[i-2].pos[1])/(this.dungeon[i-1].pos[0]-this.dungeon[i-2].pos[0]));
+      // console.log(i + "\n" + "point1", point1 + "\n" + "point2", point2 + "\n" + "dist", dist1, dist2, dist3 + "\n" + (point2[1]-point1[1])/(point2[0]-point1[0]), "angles", alpha, beta, theta + "\n" + "result", point);
+      // let line1 = new Line(this.dungeon[i-3].pos, this.dungeon[i-1].pos);
+      // let line2 = new Line(this.dungeon[i-2].pos, point);
+      // this.dungeon[i].pos = point;
+      // if(line1.intersects(line2)) {
+      //   let line3 = new Line(this.dungeon[i-2].pos, this.dungeon[i-1].pos);
+      //   this.dungeon[i].pos = line3.reflect(point);
+      // }
+      dist1 = this.dungeon[i-2].connections[1][1];
+      dist2 = this.dungeon[i-1].connections[0][1];
+      dist3 = this.dungeon[i-2].connections[0][1];
+      let point1 = this.dungeon[i-2].pos;
+      let point2 = this.dungeon[i-1].pos;
+      let alpha = atan((point2[1] - point1[1])/(point2[0] - point1[0]));
+      if(point2[0] - point1[0] < 0) {
+        alpha += Math.PI;
+        alpha %= 2*Math.PI;
+      }
       let beta = cosineLaw(dist1, dist3, dist2);
-      let theta = PI-(alpha+beta);
-      let point = [this.dungeon[i-1].pos[0]+sin(theta)*dist1, this.dungeon[i-1].pos[1]+cos(theta)*dist1];
-      let line1 = new Line(this.dungeon[i-3].pos, this.dungeon[i-1].pos);
-      let line2 = new Line(this.dungeon[i-2].pos, point);
+      let theta = alpha - beta * Math.pow(-1, i);
+      let point = [point1[0] + dist1 * cos(theta), point1[1] + dist1 * sin(theta)];
       this.dungeon[i].pos = point;
       if(line1.intersects(line2)) {
         let line3 = new Line(this.dungeon[i-2].pos, this.dungeon[i-1].pos);
@@ -101,31 +115,31 @@ class Room {
   }
 }
 
-class Line {
-  constructor(_point1, _point2){
-    this.point1 = _point1;
-    this.point2 = _point2;
-    this.slope = (_point2[1]-_point1[1])/(_point2[0]-_point1[0]);
-    this.yint = _point1[1]-this.slope*_point1[0];
-  }
-  //checks if two line segments intersect
-  intersects(line){
-    let x = (line.yint-this.yint)/(this.slope-line.slope);
-    let y = x*this.slope+this.yint;
-    return between(x, this.point1[0], this.point2[0]) && between(x, line.point1[0], line.point2[0]) &&
-           between(y, this.point1[1], this.point2[1]) && between(y, line.point1[1], line.point2[1]);
-  }
-  //reflects a point along a line
-  reflect(point){
-    let dx = this.point2[0]-this.point1[0];
-    let dy = this.point2[1]-this.point1[1];
-    let a = (dx*dx-dy*dy)/(dx*dx+dy*dy);
-    let b = 2*dx*dy/(dx*dx + dy*dy);
-    let x = a*(point[0]-this.point1[0])+b*(point[1]-this.point1[1])+this.point1[0];
-    let y = b*(point[0]-this.point1[0])-a*(point[1]-this.point1[1])+this.point1[1];
-    return[x, y];
-  }
-}
+// class Line {
+//   constructor(_point1, _point2){
+//     this.point1 = _point1;
+//     this.point2 = _point2;
+//     this.slope = (_point2[1]-_point1[1])/(_point2[0]-_point1[0]);
+//     this.yint = _point1[1]-this.slope*_point1[0];
+//   }
+//   //checks if two line segments intersect
+//   intersects(line){
+//     let x = (line.yint-this.yint)/(this.slope-line.slope);
+//     let y = x*this.slope+this.yint;
+//     return between(x, this.point1[0], this.point2[0]) && between(x, line.point1[0], line.point2[0]) &&
+//            between(y, this.point1[1], this.point2[1]) && between(y, line.point1[1], line.point2[1]);
+//   }
+//   //reflects a point along a line
+//   reflect(point){
+//     let dx = this.point2[0]-this.point1[0];
+//     let dy = this.point2[1]-this.point1[1];
+//     let a = (dx*dx-dy*dy)/(dx*dx+dy*dy);
+//     let b = 2*dx*dy/(dx*dx + dy*dy);
+//     let x = a*(point[0]-this.point1[0])+b*(point[1]-this.point1[1])+this.point1[0];
+//     let y = b*(point[0]-this.point1[0])-a*(point[1]-this.point1[1])+this.point1[1];
+//     return[x, y];
+//   }
+// }
 
 function integrateRaster(minimap, raster, pos, offset){
   pos[0] = Math.floor(pos[0]+offset[0]-raster.length/2);
@@ -138,9 +152,23 @@ function integrateRaster(minimap, raster, pos, offset){
   return minimap;
 }
 
-//finds an angle given three side lengths
-function cosineLaw(a, b, c){
-  return acos((a*a+b*b-c*c)/(2*a*b));
+/**
+ * Finds an angle in a triangle given three side lengths.
+ * @param {number} leg1 The first leg.
+ * @param {number} leg2 The second leg.
+ * @param {number} opp The opposite angle.
+ * @returns The angle of the angle in radians.
+ */
+function cosineLaw(leg1, leg2, opp){
+  if(DEBUG) {
+    console.assert(leg1 + leg2 > opp,
+      "[Cosine Law] Opposite side length is too short!");
+    console.assert(opp + leg2 > leg1,
+      "[Cosine Law] Leg 1 side length is too short!");
+    console.assert(opp + leg1 > leg2,
+      "[Cosine Law] Leg 2 side length is too short!");
+  }
+  return acos((leg1*leg1+leg2*leg2-opp*opp)/(2*leg1*leg2));
 }
 
 //checks if a number is with in a bound
@@ -150,7 +178,6 @@ function between(point, bound1, bound2){
   return minimum <= point && maximum >= point;
 }
 
-//generates single cave
 function generatePrecursorDungeonRoom(radius) {
   let room = generateEmptyGrid(2*radius + 1, 2*radius + 1);
   generateCaveNode(room, radius, radius, radius - 4, radius);
