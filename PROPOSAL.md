@@ -5,15 +5,25 @@ This project will be an RPG in which you explore dungeons and complete overworld
 ## Needs to have:
 - Proceduraly Generated Dungeons 
 - 4 Different Bosses
+    - With generic model
 - Multiple Enemy Types with AI
+    - One size fits all AI for all types of enemys
 - Dynamic Lighting and Exploration
+    - includes minimap that updates as you explore
+    - lighting adjusts such that if you have for example a torch the screen will be brighter around you
 - Materials, and Mob drop system with trade
+    - When you kill an enemy it drops a "mob drop" you can trade for cash or you could harvest material ssuch as ore from dungeon rooms.
 - Weapons and Armor upgrades
+    - In the guild hall or shops you can either recive armour from task and achivmnets via purchase or crafting.
 - Guild Hall
+    - Overworld Tasks and Quests
+- sfx and music
+- textures
+- save files
 
 ## Nice to have:
 - Overworld Exploration
+    - includes overworld tasks like farming
 - Charectoristic AI's for different enemy types
-- 3D?
-- Overworld Tasks and Quests
 - Multiplayer
+- procedural textures using wave function collapse algorithm
