@@ -1,35 +1,73 @@
 /* eslint-disable no-undef */
 class MiniMap {
   constructor(_radius, _map){
-    this.raster = this.generateCircleEgdes(_radius);
+    this.raster = generateCircle(_radius);
+    this.map = _map;
   }
-  generateCircleEgdes(radius){
-    let dist = 1-radius;
-    let raster = generateEmptyGrid(2*radius - 1, 2*radius - 1);
-    let x = 0;
-    let y = radius-1;
-    raster[y+radius-1][x+radius-1] = 1;
-    raster[x+radius-1][y+radius-1] = 1;
-    raster[radius-1-x][radius-1-y] = 1;
-    raster[radius-1-y][radius-1-x] = 1;
-    while(x <= y){
-      if(dist < 0){
-        dist += 2*x+3;
+  generateImage(pos){
+    pos[0] = Math.floor(pos[0]);
+    pos[1] = Math.floor(pos[1]);
+    let img = createImage(this.raster.length, this.raster[0].length);
+    img.loadPixels();
+    let i=0;
+    for(let y=0; y<this.raster.length; y++){
+      for(let x=0; x<this.raster[y].length; x++){
+        if(this.raster[y][x] !== undefined){
+          let [u, v] = this.raster[y][x];
+          u = u+pos[0];
+          v = v+pos[1];
+          img.pixels[i+3] = 127;
+          if(u > -1 && u < this.map[0].length && v > -1 && v < this.map.length){
+            if(this.map[v][u] === 1){
+              img.pixels[i] = 255;
+              img.pixels[i+1] = 255;
+              img.pixels[i+2] = 255;
+              img.pixels[i+3] = 255;
+            }
+          }
+        }
+        i+=4;
       }
-      else {
-        dist += 2*(x-y)+5;
-        y -= 1;
-      }
-      x += 1;
-      raster[y+radius-1][x+radius-1] = 1;
-      raster[x+radius-1][y+radius-1] = 1;
-      raster[radius-1-x][radius-1-y] = 1;
-      raster[radius-1-y][radius-1-x] = 1;
-      raster[x+radius-1][radius-1-y] = 1;
-      raster[radius-1-y][x+radius-1] = 1;
-      raster[radius-1-x][y+radius-1] = 1;
-      raster[y+radius-1][radius-1-x] = 1;
     }
-    return raster;
+    i = Math.floor(0.5*this.raster.length*this.raster.length)*4;
+    img.pixels[i+1] = 0;
+    img.pixels[i+2] = 0;
+    img.updatePixels();
+    return img;
   }
+}
+
+function generateCircle(radius){
+  let dist = 1-radius;
+  let length = radius*2-1;
+  let raster = new Array(length).fill(null);
+  let x = 0;
+  let y = radius-1;
+  raster = fillLine(raster, -y, y+1, x, length);
+  while(x <= y){
+    if(dist < 0){
+      dist += 2*x+3;
+    }
+    else {
+      dist += 2*(x-y)+5;
+      raster = fillLine(raster, -x, x+1, -y, length);
+      raster = fillLine(raster, -x, x+1, y, length);
+      y -= 1;
+    }
+    x += 1;
+    raster = fillLine(raster, -y, y+1, -x, length);
+    raster = fillLine(raster, -y, y+1, x, length);
+  }
+  return raster;
+}
+
+function fillLine(raster, x1, x2, y, length){
+  let row = new Array(length).fill(undefined);
+  let i = x1+0.5*(length-1);
+  for(let x = x1; x < x2; x++){
+    row[i] = [x, y];
+    i+=1;
+  }
+  raster[y+0.5*(length-1)] = row;
+  return raster;
 }
