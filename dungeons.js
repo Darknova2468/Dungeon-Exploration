@@ -51,9 +51,9 @@ class DungeonMap {
     
     // Adjust the position
     this.offset = [-minX+1, -minY+1];
-    // this.dungeon.forEach(room => {
-    //   //
-    // });
+    this.dungeon.forEach(room => {
+      room.pos = [Math.floor(room.pos[0] + this.offset[0]), Math.floor(room.pos[1] + this.offset[1])];
+    });
 
     // Generate the grid
     this.minimap = generateEmptyGrid(Math.floor(maxX-minX)+2, Math.floor(maxY-minY)+2);
@@ -65,8 +65,8 @@ class DungeonMap {
       room.connections.forEach(connection => {
         if(connection[2] === 1) {
           let pos2 = this.dungeon[connection[0]].pos;
-          generateCaveEdge(this.minimap, pos1[1] + this.offset[1], pos1[0] + this.offset[0],
-            pos2[1] + this.offset[1], pos2[0] + this.offset[0]);
+          generateCaveEdge(this.minimap, pos1[1], pos1[0],
+            pos2[1], pos2[0]);
         }
       });
     });
@@ -122,15 +122,16 @@ class Line {
 
 //integrates a raster of 1s and 0s into a larger array
 function integrateRaster(minimap, raster, pos, offset){
-  pos[0] = Math.floor(pos[0]+offset[0]-raster.length/2);
-  pos[1] = Math.floor(pos[1]+offset[1]-raster[0].length/2);
+  let pos1 = [Math.floor(pos[0]-(raster.length-1)/2),
+    Math.floor(pos[1]-(raster[0].length-1)/2)];
   for(let y=0; y<raster.length; y++){
     for(let x=0; x<raster[y].length; x++){
       // Overlay nodes with higher priority
-      minimap[y+pos[1]][x+pos[0]] = max(minimap[y+pos[1]][x+pos[0]], raster[y][x]);
+      minimap[y+pos1[1]][x+pos1[0]] = max(minimap[y+pos1[1]][x+pos1[0]], raster[y][x]);
       // minimap[y+pos[1]][x+pos[0]] ||= raster[y][x];
     }
   }
+  // minimap[pos[1]][pos[0]] = cellTypes.exit;
   return minimap;
 }
 
