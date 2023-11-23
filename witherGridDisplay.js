@@ -8,6 +8,7 @@ const ySize = 75; // Number of squares down
 
 const cellTypes = {
   exit: 2,
+  node: 3,
 };
 
 let grid; // = new Array(ySize); // The grid that is displayed
@@ -64,6 +65,9 @@ function displayGrid(grid) {
       else if(cell_type === cellTypes.exit) {
         fill("blue");
       }
+      else if(cell_type === cellTypes.node) {
+        fill("purple");
+      }
       let xCoord = startX + j * squareSize;
       let yCoord = startY + i * squareSize;
       rect(xCoord, yCoord, squareSize, squareSize);
@@ -81,5 +85,5 @@ function windowResized() {
   squareSize = min((height - 2*padding) / ySize, (width - 2*padding) / xSize);
   startX = max(padding, width/2 - squareSize * xSize / 2);
   startY = max(padding, height/2 - squareSize * ySize / 2);
-  displayGrid(grid);
+  // displayGrid(myDungeon.minimap);
 }
