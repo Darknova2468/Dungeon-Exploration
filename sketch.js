@@ -10,7 +10,7 @@ let myDungeon;
 let minimap;
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(windowWidth, windowHeight);
   noSmooth();
   myDungeon = new DungeonMap(5, 0.3);
   minimap = new MiniMap(30, myDungeon.minimap);
@@ -18,6 +18,7 @@ function setup() {
 
 function draw() {
   background(64);
+  displayGrid(myDungeon.minimap);
   let img = minimap.generateImage(myDungeon.playerPos);
-  image(img, width*15/20, height*1/20, width/5, height/5);
+  image(img, width-height*5/20, height*1/20, height/5, height/5);
 }
