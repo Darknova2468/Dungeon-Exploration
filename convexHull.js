@@ -33,6 +33,8 @@ function getAngle(dy, dx) {
 }
 
 function compareAngles(a, b) {
+  // console.log(a);
+  // console.log(b);
   if(isCollinear(pivot, a, b)) {
     return dist(pivot[0], pivot[1], b[0], b[1]) - dist(pivot[0], pivot[1], a[0], a[1]);
   }
@@ -71,7 +73,6 @@ function getConvexHull(nodes, extractCoords) {
   pivot = points[0];
   // console.log(pivot);
   points = [points[0]].concat(points.slice(1, n).sort(compareAngles));
-  // console.log(points);
   // return points;
 
   // Running the algorithm

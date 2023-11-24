@@ -13,10 +13,26 @@ function getEffectiveEdgeNode(grid, node) {
 
 function getAdjacentBounds(nodes, adj, i, j) {
   // Note that edge nodes should not be part of this
+  console.log(adj[i]);
   pivot = nodes[i];
-  let points = adj[i].map((x) => nodes[x[0]]);
+  target = nodes[j];
+  let posToIndex = []; let points = [];
+  for(let connection of adj[i]) {
+    let i = connection[0];
+    let pos = nodes[i];
+    posToIndex[pos] = i;
+    points.push(pos);
+  }
+  points.sort(compareAngles);
   console.log(points);
-  points = points.sort(compareAngles);
+  // console.log(Object.keys(points).find((i) => nodes[i] === target));
+  let edgeIndex = Object.keys(points).find((key) => points[key] === target);
+  edgeIndex = parseInt(edgeIndex);
+  let lowerEdge = points[(edgeIndex + 1) % points.length];
+  let upperEdge = points[(edgeIndex + points.length - 1) % points.length];
+  console.log(`${i} ${j} ${edgeIndex} : ${lowerEdge} ${target} ${upperEdge}`);
+
+  // Get adjacent edges
   return points;
 }
 
@@ -67,7 +83,7 @@ function generateLabyrinthEdges(dungeonMap) {
   // Start labyrinth generation
   for(let edge of labyrinthEdges) {
     let ineqs = [];
-    console.log(edge[0]);
-    console.log(getAdjacentBounds(nodes, adj, edge[0], edge[1]));
+    // console.log(edge[0]);
+    let x = getAdjacentBounds(nodes, adj, edge[0], edge[1]);
   }
 }
