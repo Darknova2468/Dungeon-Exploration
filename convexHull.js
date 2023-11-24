@@ -15,7 +15,8 @@ function getVec(p1, p2) {
 }
 
 function ccw_test(p1, p2, p3) {
-  // console.log(crossDet(getVec(p1, p2), getVec(p1, p3)));
+  // NOTE: clockwise when displayed due to CS coordinates.
+  // Mathematically counterclockwise however.
   return crossDet(getVec(p1, p2), getVec(p1, p3)) < 0;
 }
 
@@ -33,7 +34,7 @@ function getAngle(dy, dx) {
 
 function compareAngles(a, b) {
   if(isCollinear(pivot, a, b)) {
-    return dist(pivot, b) - dist(pivot, a);
+    return dist(pivot[0], pivot[1], b[0], b[1]) - dist(pivot[0], pivot[1], a[0], a[1]);
   }
   let d1x = a[0] - pivot[0];
   let d2x = b[0] - pivot[0];
@@ -43,12 +44,13 @@ function compareAngles(a, b) {
 }
 
 function getConvexHull(nodes, extractCoords) {
-  let coordsToNodes = [];
+  let coordsToIndex = [];
   let points = [];
-  for(let node of nodes) {
+  for(let i = 0; i < nodes.length; i++) {
+    let node = nodes[i];
     let coords = extractCoords(node);
     points.push(coords);
-    coordsToNodes[coords] = node;
+    coordsToIndex[coords] = i;
   }
   let i, j;
   let n = points.length;
@@ -77,7 +79,10 @@ function getConvexHull(nodes, extractCoords) {
   stack.push(points[n-1]); stack.push(points[0]); stack.push(points[1]);
   i = 2;
   while(i < n) {
-    console.log("[Convex Hull] Stack contents: ".concat(stack));
+    // eslint-disable-next-line no-undef
+    if(DEBUG) {
+      console.log("[Convex Hull] Stack contents: ".concat(stack));
+    }
     j = stack.length - 1;
     if(ccw_test(stack[j-1], stack[j], points[i])) {
       stack.push(points[i]);
@@ -91,7 +96,7 @@ function getConvexHull(nodes, extractCoords) {
   // Answer extraction
   let convexHull = [];
   for(let t of stack) {
-    convexHull.push(coordsToNodes[t]);
+    convexHull.push(coordsToIndex[t]);
   }
   convexHull.pop();
   return convexHull;

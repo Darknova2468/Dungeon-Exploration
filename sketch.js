@@ -17,6 +17,7 @@ function setup() {
 function draw() {
   background(0);
   myDungeon = new DungeonMap(6, 0.2);
+  generateLabyrinthEdges(myDungeon);
   displayGrid(myDungeon.minimap);
-  testConvexHull();
+  // testConvexHull();
 }
