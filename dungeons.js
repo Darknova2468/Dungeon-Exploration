@@ -4,7 +4,7 @@ class DungeonMap {
     //builds room nodes;
     this.dungeon = [new Room(15)];
     for(let i=1; i<_numberOfRooms-1; i++){
-      this.dungeon.push(new Room(20));
+      this.dungeon.push(new Room(floor(random(18, 23))));
     }
     this.dungeon.push(new Room(30));
 
