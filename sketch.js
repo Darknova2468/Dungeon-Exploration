@@ -13,11 +13,11 @@ function setup() {
   createCanvas(400, 400);
   noSmooth();
   myDungeon = new DungeonMap(5, 0.3);
-  minimap = new MiniMap(50, myDungeon.minimap);
+  minimap = new MiniMap(30, myDungeon.minimap);
 }
 
 function draw() {
-  background(0, 255, 255);
+  background(64);
   let img = minimap.generateImage(myDungeon.playerPos);
-  image(img, width*5/6, 0, width/6, height/6);
+  image(img, width*15/20, height*1/20, width/5, height/5);
 }
