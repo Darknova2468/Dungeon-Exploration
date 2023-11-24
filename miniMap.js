@@ -5,8 +5,8 @@ class MiniMap {
     this.map = _map;
   }
   generateImage(pos){
-    pos[0] = Math.floor(pos[0]);
-    pos[1] = Math.floor(pos[1]);
+    let posX = Math.floor(pos[0]);
+    let posY = Math.floor(pos[1]);
     let img = createImage(this.raster.length, this.raster[0].length);
     img.loadPixels();
     let i=0;
@@ -14,8 +14,8 @@ class MiniMap {
       for(let x=0; x<this.raster[y].length; x++){
         if(this.raster[y][x] !== undefined){
           let [u, v] = this.raster[y][x];
-          u = u+pos[0];
-          v = v+pos[1];
+          u = u+posX;
+          v = v+posY;
           img.pixels[i+3] = 127;
           if(u > -1 && u < this.map[0].length && v > -1 && v < this.map.length){
             if(this.map[v][u] === 1){

@@ -5,13 +5,10 @@ let startX; // Top-right x-position of grid
 let startY; // Top-right y-position of grid
 const xSize = 150; // Number of squares across
 const ySize = 75; // Number of squares down
-
 const cellTypes = {
   exit: 2,
 };
-
 let grid; // = new Array(ySize); // The grid that is displayed
-
 /**
  * Converts an empty array to a uniform 2d array.
  * @param {Array} grid The grid to fill.
@@ -25,7 +22,6 @@ function generateEmptyGrid(x = xSize, y = ySize, toFill = 0) {
   }
   return emptyGrid;
 }
-
 /**
  * Randomizes the grid.
  * @param {Array.<Array.<number>>} grid The grid to randomize.
@@ -38,13 +34,11 @@ function randomizeGrid(grid) {
     }
   }
 }
-
 function updateDimensions(y = ySize, x = xSize) {
   squareSize = min((height - 2*padding) / y, (width - 2*padding) / x);
   startX = max(padding, width/2 - squareSize * x / 2);
   startY = max(padding, height/2 - squareSize * y / 2);
 }
-
 /**
  * Displays a grid.
  * @param {Array.<Array.<number>>} grid The grid to display.
@@ -75,7 +69,6 @@ function displayGrid(grid) {
         .toString().concat(" seconds.")));
   }
 }
-
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   squareSize = min((height - 2*padding) / ySize, (width - 2*padding) / xSize);
