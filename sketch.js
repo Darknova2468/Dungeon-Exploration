@@ -7,13 +7,17 @@
 // - describe what you did to take this project "above and beyond"
 
 let myDungeon;
+let minimap;
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
-  myDungeon = new DungeonMap(6, 0.2);
+  createCanvas(400, 400);
+  noSmooth();
+  myDungeon = new DungeonMap(5, 0.3);
+  minimap = new MiniMap(30, myDungeon.minimap);
 }
 
 function draw() {
-  background(0);
-  displayGrid(myDungeon.minimap);
+  background(64);
+  let img = minimap.generateImage(myDungeon.playerPos);
+  image(img, width*15/20, height*1/20, width/5, height/5);
 }
