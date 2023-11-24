@@ -3,8 +3,8 @@ const DEBUG = false;
 
 let caveNodeHardBound = 3;
 let caveNodeSoftBound = 5;
-let caveEdgeHardBound = 6;
-let caveEdgeSoftBound = 0;
+let caveEdgeHardBound = 4;
+let caveEdgeSoftBound = 5;
 
 const fillPortion = 0.6; // Portion of solid rock for cave generation
 
