@@ -15,6 +15,10 @@ function getMidpoint(p1, p2) {
   return [Math.floor((p1[0]+p2[0])/2), Math.floor((p1[1]+p2[1])/2)];
 }
 
+function getIndex(l, target, getAttribute = (x) => x) {
+  return parseInt(Object.keys(l).find((key) => getAttribute(l[key]) === target));
+}
+
 function getAdjacentBounds(nodes, adj, i, j) {
   // Note that edge nodes should not be part of this
   // console.log(adj[i]);
@@ -36,15 +40,16 @@ function getAdjacentBounds(nodes, adj, i, j) {
   // }
   // console.log(Object.keys(points).find((i) => nodes[i] === target));
   // Get adjacent edges
-  let edgeIndex = Object.keys(points).find((key) => points[key] === target);
-  edgeIndex = parseInt(edgeIndex);
+  let edgeIndex = getIndex(points, target);
   let lowerEdge = points[(edgeIndex + 1) % points.length];
   let upperEdge = points[(edgeIndex + points.length - 1) % points.length];
-  if(adj[posToIndex[lowerEdge]][1]) {
+  if(adj[i][getIndex(adj[i], posToIndex[lowerEdge], (x) => x[0])][1]) {
     lowerEdge = getMidpoint(lowerEdge, target);
+    console.log("Midpoint set!")
   }
-  if(adj[posToIndex[upperEdge]][1]) {
+  if(adj[i][getIndex(adj[i], posToIndex[upperEdge], (x) => x[0])][1]) {
     upperEdge = getMidpoint(upperEdge, target);
+    console.log("Midpoint set!")
   }
   // console.log(`${i} ${j} ${edgeIndex} : ${lowerEdge} ${target} ${upperEdge}`);
 
@@ -99,8 +104,37 @@ function generateLabyrinthEdges(dungeonMap) {
 
   // Start labyrinth generation
   for(let edge of labyrinthEdges) {
-    let ineqs = [];
-    // console.log(edge[0]);
-    let x = getAdjacentBounds(nodes, adj, edge[0], edge[1]);
+    // let ineqs = [];
+    // // console.log(edge[0]);
+    // ineqs.push(getAdjacentBounds(nodes, adj, edge[0], edge[1]));
+    // ineqs.push(getAdjacentBounds(nodes, adj, edge[1], edge[0]));
+    let ineqs = getAdjacentBounds(nodes, adj, edge[0], edge[1])
+      .concat(getAdjacentBounds(nodes, adj, edge[1], edge[0]));
+    let labyGrid = generateEmptyGrid(grid[0].length, grid.length, false);
+    for(let y = 0; y < grid.length; y++) {
+      for(let x = 0; x < grid[0].length; x++) {
+        let satisfies = true;
+        for(let bound of ineqs) {
+          if(ccw_test(bound[1], bound[0], [x, y]) !== bound[2] && !isCollinear(bound[1], bound[0], [x, y])) {
+            satisfies = false;
+            break;
+          }
+        }
+        if(satisfies) {
+          labyGrid[y][x] = true;
+        }
+      }
+    }
+
+    // Display region (debug only)
+    // let labyId = random();
+    // for(let y = 0; y < grid.length; y++) {
+    //   for(let x = 0; x < grid[0].length; x++) {
+    //     if(labyGrid[y][x]) {
+    //       grid[y][x] = labyId;
+    //     }
+    //   }
+    // }
+    // console.log(ineqs);
   }
 }
