@@ -111,8 +111,16 @@ function generateLabyrinthEdges(dungeonMap) {
     let ineqs = getAdjacentBounds(nodes, adj, edge[0], edge[1])
       .concat(getAdjacentBounds(nodes, adj, edge[1], edge[0]));
     let labyGrid = generateEmptyGrid(grid[0].length, grid.length, false);
+    let radius1 = dungeonMap.dungeon[edge[0]].radius + 2;
+    let radius2 = dungeonMap.dungeon[edge[1]].radius + 2;
     for(let y = 0; y < grid.length; y++) {
       for(let x = 0; x < grid[0].length; x++) {
+        // Check modular bounds
+        if(x%2 + y%2) {
+          continue;
+        }
+
+        // Check inequality bounds
         let satisfies = true;
         for(let bound of ineqs) {
           if(ccw_test(bound[1], bound[0], [x, y]) !== bound[2] && !isCollinear(bound[1], bound[0], [x, y])) {
@@ -120,21 +128,34 @@ function generateLabyrinthEdges(dungeonMap) {
             break;
           }
         }
-        if(satisfies) {
+        if(!satisfies) {
+          continue;
+        }
+
+        // Check whitespaces; condition will be changed later
+        let dist1 = dist(x, y, nodes[edge[0]][0], nodes[edge[0]][1]);
+        let dist2 = dist(x, y, nodes[edge[1]][0], nodes[edge[1]][1]);
+        if(radius1 * 0.6 < dist1 && dist1 < radius1
+        || radius2 * 0.6 < dist2 && dist2 < radius2) {
+          labyGrid[y][x] = true;
+          continue;
+        }
+        else if(getWallsWithin(grid, y, x, 1) === 8 && grid[y][x] === 0) {
           labyGrid[y][x] = true;
         }
+        // console.log(getWallsWithin(grid, y, x, 1))
       }
     }
 
     // Display region (debug only)
-    // let labyId = random();
-    // for(let y = 0; y < grid.length; y++) {
-    //   for(let x = 0; x < grid[0].length; x++) {
-    //     if(labyGrid[y][x]) {
-    //       grid[y][x] = labyId;
-    //     }
-    //   }
-    // }
+    let labyId = random(0.2, 0.8);
+    for(let y = 0; y < grid.length; y++) {
+      for(let x = 0; x < grid[0].length; x++) {
+        if(labyGrid[y][x]) {
+          grid[y][x] = labyId;
+        }
+      }
+    }
     // console.log(ineqs);
   }
 }
