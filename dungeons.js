@@ -2,11 +2,11 @@
 class DungeonMap {
   constructor(_numberOfRooms, _twoPathChance){
     //builds room nodes;
-    this.dungeon = [new Room(15)];
+    this.dungeon = [new Room(7)];
     for(let i=1; i<_numberOfRooms-1; i++){
-      this.dungeon.push(new Room(floor(random(18, 23))));
+      this.dungeon.push(new Room(floor(random(9, 12))));
     }
-    this.dungeon.push(new Room(30));
+    this.dungeon.push(new Room(12));
 
     //adds procedural distances
     for(let i=1; i<_numberOfRooms; i++){
@@ -81,25 +81,25 @@ class Room {
   }
   addConnection(numberOfConnections, index, numberOfRooms, dungeon, check){
     //pushes connections to node
-    let distance = random() < 0.7 ? 10:Math.floor(random(20, 30));
+    let distance = random() < 0.7 ? 5:Math.floor(random(10, 15));
     if(check){
-      this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>10)]);
+      this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>5)]);
     }
     else {
       if(numberOfConnections === 1){      
         if(random() < 0.5 && index+1 < numberOfRooms){
-          this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>10)]);
-          this.connections.push([index+1, dungeon[index+1].radius+this.radius+10, 0]);
+          this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>5)]);
+          this.connections.push([index+1, dungeon[index+1].radius+this.radius+5, 0]);
         }
         else {
-          this.connections.push([index, dungeon[index].radius+this.radius+10, 0]);
-          this.connections.push([index+1, dungeon[index+1].radius+this.radius+distance, 1+(distance>10)]);
+          this.connections.push([index, dungeon[index].radius+this.radius+5, 0]);
+          this.connections.push([index+1, dungeon[index+1].radius+this.radius+distance, 1+(distance>5)]);
         }
       }
       else {
-        this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>10)]);
-        distance = random() < 0.7 ? 10:Math.floor(random(20, 30));
-        this.connections.push([index+1, dungeon[index+1].radius+this.radius+distance, 1+(distance>10)]);
+        this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>5)]);
+        distance = random() < 0.7 ? 5:Math.floor(random(10, 15));
+        this.connections.push([index+1, dungeon[index+1].radius+this.radius+distance, 1+(distance>5)]);
       }
     }
   }
@@ -161,4 +161,18 @@ function generatePrecursorDungeonRoom(radius) {
     room = evaluateNext(room);
   }
   return room;
+}
+
+/**
+ * Converts an empty array to a uniform 2d array.
+ * @param {Array} grid The grid to fill.
+ * @param {number} x The number of cells per row.
+ * @param {number} toFill The number to fill the cells with.
+ */
+function generateEmptyGrid(x = xSize, y = ySize, toFill = 0) {
+  let emptyGrid = new Array(y);
+  for(let i = 0; i < y; i++) {
+    emptyGrid[i] = new Array(x).fill(toFill);
+  }
+  return emptyGrid;
 }
