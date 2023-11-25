@@ -66,7 +66,7 @@ function displayGrid(grid) {
         fill("blue");
       }
       else if(cell_type === cellTypes.node) {
-        fill("purple");
+        fill("pink");
       }
       let xCoord = startX + j * squareSize;
       let yCoord = startY + i * squareSize;
@@ -78,6 +78,17 @@ function displayGrid(grid) {
       .concat(((millis() - startTime) / 1000)
         .toString().concat(" seconds.")));
   }
+}
+
+let doneFirstLabyrinth = false;
+
+function displayTextOnGrid(x, y, label) {
+  if(doneFirstLabyrinth) {
+    return;
+  }
+  textAlign(LEFT, TOP);
+  stroke("blue");
+  text(label, startX + x * squareSize, startY + y * squareSize);
 }
 
 function windowResized() {

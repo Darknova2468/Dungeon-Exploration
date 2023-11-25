@@ -11,9 +11,13 @@ function getEffectiveEdgeNode(grid, node) {
   // console.log(node);
 }
 
+function getMidpoint(p1, p2) {
+  return [Math.floor((p1[0]+p2[0])/2), Math.floor((p1[1]+p2[1])/2)];
+}
+
 function getAdjacentBounds(nodes, adj, i, j) {
   // Note that edge nodes should not be part of this
-  console.log(adj[i]);
+  // console.log(adj[i]);
   pivot = nodes[i];
   target = nodes[j];
   let posToIndex = []; let points = [];
@@ -23,17 +27,30 @@ function getAdjacentBounds(nodes, adj, i, j) {
     posToIndex[pos] = i;
     points.push(pos);
   }
+  // let a = structuredClone(points);
   points.sort(compareAngles);
-  console.log(points);
+  // console.log(a);
+  // console.log(points);
+  // for(let i = 0; i < points.length; i++) {
+  //   displayTextOnGrid(points[i][0], points[i][1], i);
+  // }
   // console.log(Object.keys(points).find((i) => nodes[i] === target));
+  // Get adjacent edges
   let edgeIndex = Object.keys(points).find((key) => points[key] === target);
   edgeIndex = parseInt(edgeIndex);
   let lowerEdge = points[(edgeIndex + 1) % points.length];
   let upperEdge = points[(edgeIndex + points.length - 1) % points.length];
-  console.log(`${i} ${j} ${edgeIndex} : ${lowerEdge} ${target} ${upperEdge}`);
+  if(adj[posToIndex[lowerEdge]][1]) {
+    lowerEdge = getMidpoint(lowerEdge, target);
+  }
+  if(adj[posToIndex[upperEdge]][1]) {
+    upperEdge = getMidpoint(upperEdge, target);
+  }
+  // console.log(`${i} ${j} ${edgeIndex} : ${lowerEdge} ${target} ${upperEdge}`);
 
-  // Get adjacent edges
-  return points;
+  // doneFirstLabyrinth = true;
+  return [[pivot, lowerEdge, true], [pivot, upperEdge, false]];
+  // return points;
 }
 
 /**

@@ -35,14 +35,18 @@ function getAngle(dy, dx) {
 function compareAngles(a, b) {
   // console.log(a);
   // console.log(b);
-  if(isCollinear(pivot, a, b)) {
-    return dist(pivot[0], pivot[1], b[0], b[1]) - dist(pivot[0], pivot[1], a[0], a[1]);
-  }
+  // if(isCollinear(pivot, a, b)) {
+  //   return dist(pivot[0], pivot[1], b[0], b[1]) - dist(pivot[0], pivot[1], a[0], a[1]);
+  // }
   let d1x = a[0] - pivot[0];
   let d2x = b[0] - pivot[0];
   let d1y = a[1] - pivot[1];
   let d2y = b[1] - pivot[1];
-  return getAngle(d2y, d2x) - getAngle(d1y, d1x);
+  let angleDiff = getAngle(d2y, d2x) - getAngle(d1y, d1x);
+  if(Math.abs(angleDiff) < 1e-8) {
+    return dist(pivot[0], pivot[1], b[0], b[1]) - dist(pivot[0], pivot[1], a[0], a[1]);
+  }
+  return angleDiff;
 }
 
 function getConvexHull(nodes, extractCoords) {
