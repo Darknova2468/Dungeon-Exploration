@@ -58,6 +58,46 @@ function getAdjacentBounds(nodes, adj, i, j) {
   // return points;
 }
 
+function getEdges(nodes, i, j) {
+  let l = [];
+  for(let iDisp of [-1, 0, 1]) {
+    for(let jDisp of [-1, 0, 1]) {
+      if((iDisp === 0) ^ (jDisp !== 0)) {
+        continue;
+      }
+      let newI = i + iDisp;
+      let newJ = j + jDisp;
+      if(verifyIndices(nodes, newI, newJ) && nodes[newI][newJ] === 1) {
+        l.push([random(), [i, j], [newI, newJ]]);
+      }
+    }
+  }
+  return l;
+}
+
+function runPrim(grid, nodes, i, j) {
+  let pq = new Heap(getEdges(nodes, i, j), (a, b) => a[0] - b[0]);
+  nodes[i][j] = 2;
+  grid[2*i][2*j] = 1;
+  while(pq.heap.length > 1) {
+    let edge = pq.pop();
+    let i0 = edge[1][0]; let j0 = edge[1][1];
+    let i1 = edge[2][0]; let j1 = edge[2][1];
+    if(nodes[i1][j1] !== 1) {
+      continue;
+    }
+    let alreadyClear = (grid[2*i1][2*j1] === 1);
+    nodes[i1][j1] = 2;
+    grid[2*i1][2*j1] = 1;
+    grid[i0+i1][j0+j1] = 1;
+    if(!alreadyClear) {
+      for(let t of getEdges(nodes, i1, j1)) {
+        pq.push(t);
+      }
+    }
+  }
+}
+
 /**
  * Generates labyrinth edges in a grid.
  * @param {Room} dungeonMap The dungeon map to operate on.
@@ -148,17 +188,25 @@ function generateLabyrinthEdges(dungeonMap) {
     }
 
     // Display region (debug only)
-    let labyId = random(0.2, 0.8);
-    for(let y = 0; y < labyGrid.length; y++) {
-      for(let x = 0; x < labyGrid[0].length; x++) {
-        if(labyGrid[y][x]) {
-          grid[2*y][2*x] = labyId;
-        }
-      }
-    }
+    // let labyId = random(0.2, 0.8);
+    // for(let y = 0; y < labyGrid.length; y++) {
+    //   for(let x = 0; x < labyGrid[0].length; x++) {
+    //     if(labyGrid[y][x]) {
+    //       grid[2*y][2*x] = labyId;
+    //     }
+    //   }
+    // }
     // console.log(ineqs);
 
     // Starts Prim's algorithm
-    
+    // We switch to ij coordinates here because it works better with previously
+    // defined framework
+    for(let i = 0; i < labyGrid.length; i++) {
+      for(let j = 0; j < labyGrid.length; j++) {
+        if(labyGrid[i][j] === 1) {
+          runPrim(grid, labyGrid, i, j);
+        }
+      }
+    }
   }
 }
