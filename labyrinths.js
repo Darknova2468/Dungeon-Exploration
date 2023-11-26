@@ -154,13 +154,15 @@ function generateLabyrinthEdges(dungeonMap) {
       Math.floor(grid.length/2), 0);
     let radius1 = dungeonMap.dungeon[edge[0]].radius + 2;
     let radius2 = dungeonMap.dungeon[edge[1]].radius + 2;
+    let midpoint = [(nodes[edge[0]][0] + nodes[edge[1]][0])/2, (nodes[edge[0]][1] + nodes[edge[1]][1])/2];
+    let circularDist = dist(nodes[edge[0]][0], nodes[edge[0]][1], midpoint[0], midpoint[1]);
+    console.log(midpoint);
     for(let y = 0; y < labyGrid.length; y++) {
       for(let x = 0; x < labyGrid[0].length; x++) {
         let gridX = 2 * x;
         let gridY = 2 * y;
-        // Check modular bounds
 
-        // Check inequality bounds
+        // Check linear inequality bounds
         let satisfies = true;
         for(let bound of ineqs) {
           if(ccw_test(bound[1], bound[0], [gridX, gridY]) !== bound[2] && !isCollinear(bound[1], bound[0], [gridX, gridY])) {
@@ -169,6 +171,11 @@ function generateLabyrinthEdges(dungeonMap) {
           }
         }
         if(!satisfies) {
+          continue;
+        }
+
+        // Check circular inequality bounds
+        if(dist(2*x, 2*y, midpoint[0], midpoint[1]) >= circularDist) {
           continue;
         }
 
