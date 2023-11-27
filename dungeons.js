@@ -75,6 +75,8 @@ class DungeonMap {
       let raster = generatePrecursorDungeonRoom(room.radius);
       this.minimap = integrateRaster(this.minimap, raster, room.pos, this.offset);
     });
+
+    generateLabyrinthEdges(this);
   }
 }
 
