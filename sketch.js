@@ -23,6 +23,7 @@ function setup() {
   noStroke();
   noSmooth();
   myDungeon = new DungeonMap(5, 0.3);
+  generateLabyrinthEdges(myDungeon);
   minimap = new MiniMap(30, myDungeon.minimap);
   player = new Player(myDungeon.playerPos, 0, 0, 5, myDungeon.minimap);
   myBackground = tileSet.generateImage(myDungeon.minimap);

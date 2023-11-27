@@ -49,26 +49,31 @@ class DungeonMap {
       maxY = max(maxY, room.pos[1]+room.radius);
     });
     
-    //creates map
-    let offset = [-minX+1, -minY+1];
+    // Adjust the position
+    this.offset = [-minX+1, -minY+1];
+    this.dungeon.forEach(room => {
+      room.pos = [Math.floor(room.pos[0] + this.offset[0]), Math.floor(room.pos[1] + this.offset[1])];
+    });
+
+    //creates Map
     this.minimap = generateEmptyGrid(Math.floor(maxX-minX)+2, Math.floor(maxY-minY)+2);
 
-    this.playerPos = offset;
+    this.playerPos = this.offset;
     
     this.dungeon.forEach(room => {
       let pos1 = room.pos;
       room.connections.forEach(connection => {
         if(connection[2] === 1) {
           let pos2 = this.dungeon[connection[0]].pos;
-          generateCaveEdge(this.minimap, pos1[1] + offset[1], pos1[0] + offset[0],
-            pos2[1] + offset[1], pos2[0] + offset[0]);
+          generateCaveEdge(this.minimap, pos1[1], pos1[0],
+            pos2[1], pos2[0]);
         }
       });
     });
     
     this.dungeon.forEach(room => {
       let raster = generatePrecursorDungeonRoom(room.radius);
-      this.minimap = integrateRaster(this.minimap, raster, room.pos, offset);
+      this.minimap = integrateRaster(this.minimap, raster, room.pos, this.offset);
     });
   }
 }
@@ -116,14 +121,15 @@ class Line {
 }
 
 //integrates a raster of 1s and 0s into a larger array
-function integrateRaster(minimap, raster, pos, offset){
-  pos[0] = Math.floor(pos[0]+offset[0]-raster.length/2);
-  pos[1] = Math.floor(pos[1]+offset[1]-raster[0].length/2);
+function integrateRaster(minimap, raster, pos){
+  let pos1 = [Math.floor(pos[0]-(raster.length-1)/2),
+    Math.floor(pos[1]-(raster[0].length-1)/2)];
   for(let y=0; y<raster.length; y++){
     for(let x=0; x<raster[y].length; x++){
-      minimap[y+pos[1]][x+pos[0]] ||= raster[y][x];
+      minimap[y+pos1[1]][x+pos1[0]] ||= raster[y][x];
     }
   }
+  // minimap[pos[1]][pos[0]] = cellTypes.exit;
   return minimap;
 }
 
