@@ -16,4 +16,10 @@ class Player {
       this.pos[1] += j*distance;
     }
   }
+  display(screenCenter, screenSize, scale){
+    let [x, y] = [screenCenter[0]-this.pos[0], screenCenter[1]-this.pos[1]];
+    let xRatio = screenSize[0]/scale;
+    let yRatio = screenSize[1]/scale;
+    circle((xRatio*0.5+x)*scale, (yRatio*0.5+y)*scale, scale*0.9);
+  }
 }

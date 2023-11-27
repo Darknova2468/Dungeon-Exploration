@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 class TileSet{
   constructor(_path, _size){
     this.size = _size;
