@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const DEBUG = false;
-const SHOWCENTRE = true;
+const SHOWCENTRE = false;
 
 let caveNodeHardBound = 3;
 let caveNodeSoftBound = 5;
@@ -150,5 +150,7 @@ function generateCaveNode(grid, i, j, hr = caveNodeHardBound, sr = caveNodeSoftB
       }
     }
   }
-  setGrid(grid, i, j, cellTypes.exit);
+  if(SHOWCENTRE) {
+    setGrid(grid, i, j, cellTypes.exit);
+  }
 }

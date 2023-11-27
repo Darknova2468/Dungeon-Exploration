@@ -1,4 +1,8 @@
+/* eslint-disable no-extra-parens */
 /* eslint-disable no-undef */
+
+// Eslint disabled for those because names are already defined in other files
+// and the parantheses are necessary
 
 function getEffectiveEdgeNode(grid, node) {
   // Get candidate edge nodes
@@ -22,8 +26,8 @@ function getIndex(l, target, getAttribute = (x) => x) {
 function getAdjacentBounds(nodes, adj, i, j) {
   // Note that edge nodes should not be part of this
   // console.log(adj[i]);
-  pivot = nodes[i];
-  target = nodes[j];
+  pivot = nodes[i]; // Defined in convexHull
+  let target = nodes[j];
   let posToIndex = []; let points = [];
   for(let connection of adj[i]) {
     let i = connection[0];
@@ -156,7 +160,6 @@ function generateLabyrinthEdges(dungeonMap) {
     let radius2 = dungeonMap.dungeon[edge[1]].radius + 2;
     let midpoint = [(nodes[edge[0]][0] + nodes[edge[1]][0])/2, (nodes[edge[0]][1] + nodes[edge[1]][1])/2];
     let circularDist = dist(nodes[edge[0]][0], nodes[edge[0]][1], midpoint[0], midpoint[1]);
-    console.log(midpoint);
     for(let y = 0; y < labyGrid.length; y++) {
       for(let x = 0; x < labyGrid[0].length; x++) {
         let gridX = 2 * x;
