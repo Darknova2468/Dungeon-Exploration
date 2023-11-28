@@ -26,6 +26,7 @@ function setup() {
   minimap = new MiniMap(30, myDungeon.minimap);
   player = new Player(myDungeon.playerPos, myDungeon.minimap);
   entities.push(player);
+  entities.push(new Slime([player.pos[0], player.pos[1]], 1, myDungeon.minimap));
   tileSet = new TileSet("CaveTiles.png", [16, 16]);
   myBackground = new Scene(myDungeon.minimap, [16, 8], tileSet);
 }
