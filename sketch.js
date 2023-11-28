@@ -22,20 +22,19 @@ function setup() {
   fill(255);
   noStroke();
   noSmooth();
-  noLoop();
   myDungeon = new DungeonMap(5, 0.3);
   minimap = new MiniMap(30, myDungeon.minimap);
   player = new Player(myDungeon.playerPos, myDungeon.minimap);
   entities.push(player);
   tileSet = new TileSet("CaveTiles.png", [16, 16]);
-  myBackground = new Scene(myDungeon.minimap, [16, 8], 5, [16, 16], tileSet);
+  myBackground = new Scene(myDungeon.minimap, [16, 8], tileSet);
 }
 
 function draw() {
   background(0);
   player.move([keyIsDown(68)-keyIsDown(65) ,keyIsDown(83)-keyIsDown(87)], 1/frameRate());
-  image(myBackground.generateScene(player.pos, [16, 8]), 0, 0, width, height);
-  renderEntities([width, height], myBackground.scale[1]);
+  image(myBackground.generateScene(player.pos), 0, 0, width, height);
+  renderEntities([width, height], width/myBackground.scale[0]);
   let img = minimap.generateImage(player.pos);
   image(img, width-height*5/20, height*1/20, height/5, height/5);
   text("fps: " + Math.floor(frameRate()), width-height*3/20, height*6/20);
