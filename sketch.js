@@ -38,5 +38,7 @@ function draw() {
   renderEntities([width, height], width/myBackground.scale[0]);
   let img = minimap.generateImage(player.pos);
   image(img, width-height*5/20, height*1/20, height/5, height/5);
+  fill("white");
   text("fps: " + Math.floor(frameRate()), width-height*3/20, height*6/20);
+  moveEnemies();
 }
