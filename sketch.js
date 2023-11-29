@@ -25,7 +25,6 @@ function setup() {
   myDungeon = new DungeonMap(5, 0.3);
   minimap = new MiniMap(30, myDungeon.minimap);
   player = new Player(myDungeon.playerPos, myDungeon.minimap);
-  tileSet = new TileSet("CaveTiles.png", [16, 16]);
   myBackground = new Scene(myDungeon.minimap, [32, 16], tileSet);
 }
 
