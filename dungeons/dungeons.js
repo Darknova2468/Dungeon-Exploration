@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
 class DungeonMap {
   constructor(_numberOfRooms, _twoPathChance){
+    this.enemies = [];
+
     //builds room nodes;
     this.dungeon = [new Room(7)];
     for(let i=1; i<_numberOfRooms-1; i++){
@@ -77,6 +79,18 @@ class DungeonMap {
     });
 
     generateLabyrinthEdges(this);
+
+    this.enemies.push(new Slime([this.playerPos[0]+2, this.playerPos[1]+2], 1, this.minimap));
+  }
+  move(player, time){
+    this.enemies.forEach(enemy => {
+      enemy.operate(player, time);
+    });
+  }
+  display(screenCenter, screenSize, scale){
+    this.enemies.forEach(enemy => {
+      enemy.display(screenCenter, screenSize, scale);
+    }); 
   }
 }
 

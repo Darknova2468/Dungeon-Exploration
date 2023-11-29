@@ -1,16 +1,14 @@
-let entities = [];
-
+const radius = 2;
 
 class Entity {
-  constructor(_pos, _health, _defence, _speed, _collisionMap, _colour, _type, _radius){
+  constructor(_pos, _health, _defence, _speed, _collisionMap, _colour){
     this.pos = _pos;
     this.health = _health;
     this.defence = _defence;
     this.speed = _speed;
     this.collisionMap = _collisionMap;
     this.colour = _colour;
-    this.type = _type;
-    this.radius = _radius;
+    this.radius = radius;
   }
   move(direction, time){
     let [i, j] = direction;
@@ -30,73 +28,47 @@ class Entity {
     fill(this.colour);
     circle((xRatio*0.5+x)*scale, (yRatio*0.5+y)*scale, scale*0.9);
   }
-
-  operate() {}
 }
 
 class Player extends Entity {
   constructor(_pos, _collisionMap){
-    super(_pos, 10, 0, 5, _collisionMap, color(255,255,255), "player", 1);
+    super(_pos, 10, 0, 5, _collisionMap, color(255,255,255), "player");
   }
 }
 
-class Enemy extends Entity {
-  constructor(_pos, _level, _health, _defence, _speed, _collisionMap, _colour, _species, _radius){
-    super(_pos, _health, _defence, _speed, _collisionMap, _colour, "enemy", _radius);
-    this.level = _level;
-    this.species = _species;
-  }
-}
-
-class Slime extends Enemy {
+class Slime extends Entity {
   constructor(_pos, _level, _collisionMap) {
-    let _radius = 1;
-    if(_level >= 20) {
-      _radius = 3;
-    }
-    else if(_level >= 10) {
-      _radius = 2;
-    }
-    super(_pos, _level, _level * 2, 0, 4, _collisionMap, "green", "slime", _radius);
-    this.speed = 100;
-    this.jump_radius = _radius * 1.5;
-    this.jumping_time = 1000;
-    this.cooldown_time = 3000;
-    this.jump_timer = millis();
-    this.jump_state = false;
-    this.start = [];
-    this.end = [];
+    super(_pos, Math.floor(4*Math.log10(_level+1)), 0, 0, _collisionMap, "green", "slime");
+    this.detectionRange = 100;
+    this.attackRange = 0;
   }
-
-  jump() {
-    if(!this.jump_state && millis() - this.jump_timer > this.cooldown_time) {
-      let theta = random(-Math.PI/(6*this.level), Math.PI/(6*this.level));
-      let disp = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
-      disp = [Math.cos(theta) * disp[0] - Math.sin(theta) * disp[1],
-        Math.sin(theta) * disp[0] + Math.cos(theta) * disp[1]];
-      this.move(disp, 1/frameRate());
-      this.jump_timer = millis();
+  operate(player, time) {
+    const distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
+    if(distance > this.detectionRange) {
+      this.idle();
+    }
+    else if(distance > this.attackRange){
+      this.move(player.pos, time);
+    }
+    else {
+      this.attack();
     }
   }
+  idle() {
 
-  operate() {
-    super.operate();
-    this.jump();
+  }
+  move(pos, time){
+    let mag = dist(pos[0], pos[1], this.pos[0], this.pos[1]);
+    let dx = (pos[0]-this.pos[0])/mag*this.speed*time;
+    let dy = (pos[1]-this.pos[1])/mag*this.speed*time;
+    if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0){
+      this.pos[0] += dx;
+    }
+    if(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])] !== 0){
+      this.pos[1] += dy;
+    }
+  }
+  attack() {
+
   }
 }
-
-function renderEntities(screenSize, scale) {
-  for(let entity of entities) {
-    entity.display(player.pos, screenSize, scale);
-  }
-}
-
-function moveEnemies() {
-  for(let entity of entities) {
-    entity.operate();
-  }
-}
-
-/**
- * define a start and end create a function that interpolates the movment from start to end based on a value t, where t is from 0-1 so we can change the time it takes to jump
- */
