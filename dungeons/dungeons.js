@@ -62,6 +62,7 @@ class DungeonMap {
 
     this.playerPos = this.offset;
     
+    // Generate edges
     this.dungeon.forEach(room => {
       let pos1 = room.pos;
       room.connections.forEach(connection => {
@@ -73,11 +74,13 @@ class DungeonMap {
       });
     });
     
+    // Generate cave nodes
     this.dungeon.forEach(room => {
       let raster = generatePrecursorDungeonRoom(room.radius);
       this.minimap = integrateRaster(this.minimap, raster, room.pos, this.offset);
     });
 
+    // Generate labyrinths
     generateLabyrinthEdges(this);
 
     this.enemies.push(new Slime([this.playerPos[0]+2, this.playerPos[1]+2], 1, this.minimap));

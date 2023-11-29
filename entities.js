@@ -33,7 +33,7 @@ class Entity {
 
 class Player extends Entity {
   constructor(_pos, _collisionMap){
-    super(_pos, 10, 0, 5, _collisionMap, color(255,255,255), "player");
+    super(_pos, 10, 0, 15, _collisionMap, color(255,255,255), "player");
   }
 }
 
