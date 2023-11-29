@@ -26,7 +26,7 @@ function setup() {
   minimap = new MiniMap(30, myDungeon.minimap);
   player = new Player(myDungeon.playerPos, myDungeon.minimap);
   tileSet = new TileSet("CaveTiles.png", [16, 16]);
-  myBackground = new Scene(myDungeon.minimap, [16, 8], tileSet);
+  myBackground = new Scene(myDungeon.minimap, [32, 16], tileSet);
 }
 
 function draw() {
@@ -35,9 +35,9 @@ function draw() {
   image(myBackground.generateScene(player.pos), 0, 0, width, height);
   //display entities
   player.move([keyIsDown(68)-keyIsDown(65) ,keyIsDown(83)-keyIsDown(87)], 1/frameRate());
-  player.display(player.pos, [width, height], 16);
   myDungeon.move(player, 1/frameRate());
-  myDungeon.display(player.pos, [width, height], 16);
+  player.display(player.pos, myBackground.scale, [16, 16]);
+  myDungeon.display(player.pos, myBackground.scale, [16, 16]);
   //displays minimap
   image(minimap.generateImage(player.pos), width-height*5/20, height*1/20, height/5, height/5);
   fill("white");

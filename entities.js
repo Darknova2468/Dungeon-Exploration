@@ -20,13 +20,14 @@ class Entity {
       this.pos[0] += i*distance;
     }
   }
-  display(screenCenter, screenSize, scale){
-    scale *= this.radius;
+  display(screenCenter, screenSize, size){
     let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
-    let xRatio = screenSize[0]/scale;
-    let yRatio = screenSize[1]/scale;
+    x += screenSize[0]*0.5;
+    y += screenSize[1]*0.5;
+    let scaleX = width/screenSize[0];
+    let scaleY = height/screenSize[1];
     fill(this.colour);
-    circle((xRatio*0.5+x)*scale, (yRatio*0.5+y)*scale, scale*0.9);
+    ellipse(x*scaleX, y*scaleX, scaleX*0.75, scaleY*0.75);
   }
 }
 
