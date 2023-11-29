@@ -14,6 +14,34 @@ class TileSet{
   }
 }
 
+class AnimateSet{
+  constructor(_path, _size){
+    this.size = _size;
+    this.animations = [];
+    loadImage(_path, (tileSet) => {
+      for (let j = 0; j < tileSet.height; j += _size[1]) {
+        let assets = [];
+        for (let i = 0; i < tileSet.width; i += _size[0]) {
+          let newAsset = tileSet.get(i, j, _size[0], _size[1]);
+          if(!this.isEmpty(newAsset)){
+            assets.push(newAsset);
+          }
+        }
+        this.animations.push(assets);
+      }
+    });
+  }
+  isEmpty(img){
+    img.loadPixels();
+    for(let i=0; i<img.pixels.length; i++){
+      if(img.pixels[i] !== 0){
+        return false;
+      }
+    }
+    return true;
+  }
+}
+
 class Scene {
   constructor(_map, _scale, _tileSet){
     this.myMap = _map;
