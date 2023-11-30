@@ -68,6 +68,7 @@ class DungeonMap {
       room.connections.forEach(connection => {
         if(connection[2] === 1) {
           let pos2 = this.dungeon[connection[0]].pos;
+          console.log(pos1[0], pos2[0]);
           generateCaveEdge(this.minimap, pos1[1], pos1[0],
             pos2[1], pos2[0]);
         }
@@ -141,8 +142,8 @@ class Line {
 
 //integrates a raster of 1s and 0s into a larger array
 function integrateRaster(minimap, raster, pos){
-  let pos1 = [Math.floor(pos[0]-(raster.length-1)/2),
-    Math.floor(pos[1]-(raster[0].length-1)/2)];
+  let pos1 = [Math.floor(pos[0]-(raster.length+1)/2),
+    Math.floor(pos[1]-(raster[0].length+1)/2)];
   for(let y=0; y<raster.length; y++){
     for(let x=0; x<raster[y].length; x++){
       minimap[y+pos1[1]][x+pos1[0]] ||= raster[y][x];
@@ -198,6 +199,6 @@ function generateEmptyGrid(x = xSize, y = ySize, toFill = 0) {
   let emptyGrid = new Array(y);
   for(let i = 0; i < y; i++) {
     emptyGrid[i] = new Array(x).fill(toFill);
-  }
+  }x
   return emptyGrid;
 }

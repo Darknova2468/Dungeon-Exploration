@@ -160,6 +160,9 @@ function floodFillExclude(grid, i, j) {
 function generateCaveNode(grid, i, j, hr = caveNodeHardBound, sr = caveNodeSoftBound) {
   let y = grid.length;
   let x = grid[0].length;
+
+  // TEMPORARY
+  // sr = 0;
   for(let a = 0; a < y; a++) {
     for(let b = 0; b < x; b++) {
       if(dist(i, j, a, b) <= hr) {
@@ -172,5 +175,6 @@ function generateCaveNode(grid, i, j, hr = caveNodeHardBound, sr = caveNodeSoftB
       }
     }
   }
+  setGrid(grid, i, j, 3);
   floodFillExclude(grid, i, j);
 }
