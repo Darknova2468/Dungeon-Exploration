@@ -1,15 +1,14 @@
 class Entity {
-  constructor(_pos, _health, _defence, _speed, _collisionMap, _colour, _animationSet){
+  constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet){
     this.pos = _pos;
     this.health = _health;
     this.defence = _defence;
     this.speed = _speed;
     this.collisionMap = _collisionMap;
-    this.colour = _colour;
     this.animationSet = _animationSet;
-    this.isMoving = null;
+    this.isMoving = 0;
     this.direction = [0, 0];
-    this.animationSpeed = frameRate()/10;
+    this.animationSpeed = 4;
   }
   display(screenCenter, screenSize){
     let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
@@ -24,27 +23,34 @@ class Entity {
       scale(1-2*(this.direction[0] === 1), 1);
     }
     catch {
-      fill(this.colour);
+      console.log(Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.isMoving+this.direction[1]].length);
+      console.log(this.animationSet.animations[this.isMoving+this.direction[1]]);
+      fill(this.animationSet);
       ellipse((x+0.5)*scaleX, (y+0.5)*scaleX, scaleX*0.75, scaleY*0.75);
     }
-  }
-  setAnimationSpeed(frameRate){
-    this.animationSpeed = frameRate/10;
   }
 }
 
 class Player extends Entity {
   constructor(_pos, _collisionMap, _animationSet){
-    super(_pos, 10, 0, 3.5, _collisionMap, color(255,255,255), _animationSet);
+    super(_pos, 10, 0, 3.5, _collisionMap, _animationSet);
   }
   move(direction, time, isRolling){
     let [i, j] = direction;
     this.direction[0] = i===0 ? this.direction[0]:i===-1 ? 1:0;
     this.direction[1] = j===0 ? this.direction[1]:j===-1 ? 1:0;
-    let distance = sqrt(i*i + j*j)!== 0 ? time*this.speed/sqrt(i*i + j*j) : 0;
-    this.isMoving = i === 0 && j === 0 ? 5:0;
-    this.isMoving = isRolling && this.isMoving !== 5 ? 3:this.isMoving;
     this.speed = isRolling && this.isMoving !== 5 ? 5:3.5;
+    let distance = sqrt(i*i + j*j)!== 0 ? time*this.speed/sqrt(i*i + j*j) : 0;
+    if(i === 0 && j !== 0 && !isRolling){
+      this.isMoving = 5;
+      if(j > 1){
+        this.direction[1] = 1;
+      }
+    }
+    else {
+      this.isMoving = i === 0 && j === 0 ? 7:0;
+      this.isMoving = isRolling && this.isMoving !== 7 ? 3:this.isMoving;
+    }
     if(this.collisionMap[Math.floor(this.pos[1]+j*distance)][Math.floor(this.pos[0])] !== 0){
       this.pos[1] += j*distance;
     }
@@ -55,20 +61,23 @@ class Player extends Entity {
 }
 
 class Slime extends Entity {
-  constructor(_pos, _level, _collisionMap) {
-    super(_pos, Math.floor(4*Math.log10(_level+1)), 0, 0, _collisionMap, "green", "slime");
-    this.detectionRange = 10;
-    this.attackRange = 2;
+  constructor(_pos, _level, _collisionMap, _textureSet) {
+    super(_pos, Math.floor(4*Math.log10(_level+1)), 0, 1.5, _collisionMap, _textureSet);
+    this.detectionRange = 7;
+    this.attackRange = 1;
   }
   operate(player, time) {
     const distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
     if(distance > this.detectionRange) {
+      this.isMoving = 0;
       this.idle();
     }
     else if(distance > this.attackRange){
+      this.isMoving = 1;
       this.move(player.pos, time);
     }
     else {
+      this.isMoving = 0;
       this.attack();
     }
   }
