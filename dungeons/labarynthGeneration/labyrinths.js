@@ -11,8 +11,6 @@ function getEffectiveEdgeNode(grid, node) {
   return candidates.reduce((prev, curr) => {
     return dist(prev[0], prev[1], x, y) < dist(curr[0], curr[1], x, y) ? prev : curr;
   });
-  // console.log(candidates);
-  // console.log(node);
 }
 
 function getMidpoint(p1, p2) {
@@ -25,7 +23,6 @@ function getIndex(l, target, getAttribute = (x) => x) {
 
 function getAdjacentBounds(nodes, adj, i, j) {
   // Note that edge nodes should not be part of this
-  // console.log(adj[i]);
   pivot = nodes[i]; // Defined in convexHull
   let target = nodes[j];
   let posToIndex = []; let points = [];
@@ -35,31 +32,17 @@ function getAdjacentBounds(nodes, adj, i, j) {
     posToIndex[pos] = i;
     points.push(pos);
   }
-  // let a = structuredClone(points);
   points.sort(compareAngles);
-  // console.log(a);
-  // console.log(points);
-  // for(let i = 0; i < points.length; i++) {
-  //   displayTextOnGrid(points[i][0], points[i][1], i);
-  // }
-  // console.log(Object.keys(points).find((i) => nodes[i] === target));
-  // Get adjacent edges
   let edgeIndex = getIndex(points, target);
   let lowerEdge = points[(edgeIndex + 1) % points.length];
   let upperEdge = points[(edgeIndex + points.length - 1) % points.length];
   if(adj[i][getIndex(adj[i], posToIndex[lowerEdge], (x) => x[0])][1]) {
     lowerEdge = getMidpoint(lowerEdge, target);
-    // console.log("Midpoint set!")
   }
   if(adj[i][getIndex(adj[i], posToIndex[upperEdge], (x) => x[0])][1]) {
     upperEdge = getMidpoint(upperEdge, target);
-    // console.log("Midpoint set!")
   }
-  // console.log(`${i} ${j} ${edgeIndex} : ${lowerEdge} ${target} ${upperEdge}`);
-
-  // doneFirstLabyrinth = true;
   return [[pivot, lowerEdge, true], [pivot, upperEdge, false]];
-  // return points;
 }
 
 function getEdges(nodes, i, j) {
@@ -79,9 +62,33 @@ function getEdges(nodes, i, j) {
   return l;
 }
 
-function runPrim(grid, nodes, i, j) {
+function checkOrthogonalAdjacents(grid, i, j, iNode = 0, jNode = 0) {
+  for(let iDisp of [-1, 0, 1]) {
+    for(let jDisp of [-1, 0, 1]) {
+      if((iDisp !== 0) && (jDisp !== 0)) {
+        continue;
+      }
+      // Check dot product (edge condition only)
+      if(Math.abs(iDisp * iNode + jDisp * jNode) > 1e-8) {
+        continue;
+      }
+      let newI = i + iDisp;
+      let newJ = j + jDisp;
+      if(verifyIndices(grid, newI, newJ) && grid[newI][newJ] === 1) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function runPrim(grid, nodes, i, j, p1, p2, r1, r2) {
+  let sourceHit = false; let targetHit = false;
   let pq = new Heap(getEdges(nodes, i, j), (a, b) => a[0] - b[0]);
   nodes[i][j] = 2;
+  if(checkOrthogonalAdjacents(grid, 2*i, 2*j)) {
+    return false;
+  }
   grid[2*i][2*j] = 1;
   while(pq.heap.length > 1) {
     let edge = pq.pop();
@@ -90,16 +97,37 @@ function runPrim(grid, nodes, i, j) {
     if(nodes[i1][j1] !== 1) {
       continue;
     }
-    let alreadyClear = (grid[2*i1][2*j1] === 1);
+    let alreadyClear = checkOrthogonalAdjacents(grid, 2*i1, 2*j1)
+      || checkOrthogonalAdjacents(grid, i0 + i1, j0 + j1, i1 - i0, j1 - j0);
+
+    if(alreadyClear) {
+      if(dist(p1[0], p1[1], 2*j1, 2*i1) < r1 + 3) {
+        if(sourceHit) {
+          continue;
+        }
+        sourceHit = true;
+      }
+      else if(dist(p2[0], p2[1], 2*j1, 2*i1) < r2 + 3) {
+        if(targetHit) {
+          continue;
+        }
+        targetHit = true;
+      }
+      else {
+        continue;
+      }
+    }
+    // Finalize the edge
     nodes[i1][j1] = 2;
-    grid[2*i1][2*j1] = 1;
-    grid[i0+i1][j0+j1] = 1;
+    grid[2*i1][2*j1] = 1;// + debugSpecial;
+    grid[i0+i1][j0+j1] = 1;// + debugSpecial;
     if(!alreadyClear) {
       for(let t of getEdges(nodes, i1, j1)) {
         pq.push(t);
       }
     }
   }
+  return sourceHit && targetHit;
 }
 
 /**
@@ -139,27 +167,20 @@ function generateLabyrinthEdges(dungeonMap) {
     adj.push([]);
     adj[i].push([j+n, false]);
     adj[j+n].push([i, false]);
-
-    // Debugging
-    // let a = getEffectiveEdgeNode(grid, outerNode);
-    // grid[a[1]][a[0]] = cellTypes.exit;
   }
-  // console.log(labyrinthEdges);
 
   // Start labyrinth generation
   for(let edge of labyrinthEdges) {
-    // let ineqs = [];
-    // // console.log(edge[0]);
-    // ineqs.push(getAdjacentBounds(nodes, adj, edge[0], edge[1]));
-    // ineqs.push(getAdjacentBounds(nodes, adj, edge[1], edge[0]));
     let ineqs = getAdjacentBounds(nodes, adj, edge[0], edge[1])
       .concat(getAdjacentBounds(nodes, adj, edge[1], edge[0]));
     let labyGrid = generateEmptyGrid(Math.floor(grid[0].length/2),
       Math.floor(grid.length/2), 0);
-    let radius1 = dungeonMap.dungeon[edge[0]].radius + 2;
-    let radius2 = dungeonMap.dungeon[edge[1]].radius + 2;
-    let midpoint = [(nodes[edge[0]][0] + nodes[edge[1]][0])/2, (nodes[edge[0]][1] + nodes[edge[1]][1])/2];
-    let circularDist = dist(nodes[edge[0]][0], nodes[edge[0]][1], midpoint[0], midpoint[1]);
+    let radius1 = dungeonMap.dungeon[edge[0]].radius+1;
+    let radius2 = dungeonMap.dungeon[edge[1]].radius+1;
+    let p1 = nodes[edge[0]];
+    let p2 = nodes[edge[1]];
+    let midpoint = [(p1[0] + p2[0])/2, (p1[1] + p2[1])/2];
+    let circularDist = dist(p1[0], p1[1], midpoint[0], midpoint[1]);
     for(let y = 0; y < labyGrid.length; y++) {
       for(let x = 0; x < labyGrid[0].length; x++) {
         let gridX = 2 * x;
@@ -185,24 +206,26 @@ function generateLabyrinthEdges(dungeonMap) {
         // Check whitespaces; condition will be changed later
         let dist1 = dist(gridX, gridY, nodes[edge[0]][0], nodes[edge[0]][1]);
         let dist2 = dist(gridX, gridY, nodes[edge[1]][0], nodes[edge[1]][1]);
-        if(radius1 * 0.6 < dist1 && dist1 < radius1
-        || radius2 * 0.6 < dist2 && dist2 < radius2) {
+        if(dist1 < radius1 || dist2 < radius2) {
           labyGrid[y][x] = 1;
           continue;
         }
         else if(getWallsWithin(grid, gridY, gridX, 1) === 8 && grid[gridY][gridX] === 0) {
           labyGrid[y][x] = 1;
         }
-        // console.log(getWallsWithin(grid, y, x, 1))
       }
     }
 
-    for(let i = 0; i < labyGrid.length; i++) {
-      for(let j = 0; j < labyGrid.length; j++) {
+    let foundSpanning = false;
+    for(let i = 0; (i < labyGrid.length) && !foundSpanning; i++) {
+      for(let j = 0; (j < labyGrid.length) && !foundSpanning; j++) {
         if(labyGrid[i][j] === 1) {
-          runPrim(grid, labyGrid, i, j);
+          foundSpanning = runPrim(grid, labyGrid, i, j, p1, p2, radius1, radius2);
         }
       }
+    }
+    if(!foundSpanning) {
+      console.log("Labyrinth execution failed");
     }
   }
 }

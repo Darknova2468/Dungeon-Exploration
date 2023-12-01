@@ -43,4 +43,8 @@ function draw() {
   image(minimap.generateImage(player.pos), width-height*5/20, height*1/20, height/5, height/5);
   fill("white");
   text("fps: " + Math.floor(frameRate()), width-height*3/20, height*6/20);
+  // updateDimensions(myDungeon.minimap);
+  // oldGrid = structuredClone(myDungeon.minimap);
+  // generateLabyrinthEdges(myDungeon);
+  // displayGrid(myDungeon.minimap)
 }

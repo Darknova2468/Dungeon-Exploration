@@ -4,7 +4,7 @@ const DEBUG = false;
 let caveNodeHardBound = 2;
 let caveNodeSoftBound = 4;
 let caveEdgeHardBound = 2;
-let caveEdgeSoftBound = 3;
+let caveEdgeSoftBound = -1; // No soft bound
 
 const fillPortion = 0.6; // Portion of solid rock for cave generation
 
@@ -134,9 +134,37 @@ function generateCaveEdge(grid, i1, j1, i2, j2) {
   }
 }
 
+function floodFillExclude(grid, i, j) {
+  let newGrid = generateEmptyGrid(grid[0].length, grid.length);
+  let stack = [[i, j]];
+  while(stack.length > 0) {
+    let [i, j] = stack.pop();
+    for(let iDisp of [-1, 0, 1]) {
+      for(let jDisp of [-1, 0, 1]) {
+        if((iDisp === 0) ^ (jDisp !== 0)) {
+          continue;
+        }
+        let newI = i + iDisp;
+        let newJ = j + jDisp;
+        if(verifyIndices(grid, newI, newJ) && grid[newI][newJ] === 1
+          && newGrid[newI][newJ] === 0) {
+          stack.push([newI, newJ]);
+          newGrid[newI][newJ] = 1;
+        }
+      }
+    }
+  }
+  updateDimensions(grid.size, grid[0].size);
+  displayGrid(newGrid);
+  return newGrid;
+}
+
 function generateCaveNode(grid, i, j, hr = caveNodeHardBound, sr = caveNodeSoftBound) {
   let y = grid.length;
   let x = grid[0].length;
+
+  // TEMPORARY
+  // sr = 0;
   for(let a = 0; a < y; a++) {
     for(let b = 0; b < x; b++) {
       if(dist(i, j, a, b) <= hr) {
@@ -149,4 +177,18 @@ function generateCaveNode(grid, i, j, hr = caveNodeHardBound, sr = caveNodeSoftB
       }
     }
   }
+  for(let i = 0; i < 3; i++) {
+    grid = evaluateNext(grid);
+  }
+  // let newGrid = floodFillExclude(grid, i, j);
+  // for(let a = 0; a < y; a++) {
+  //   for(let b = 0; b < x; b++) {
+  //     if(verifyIndices(grid, a, b)) {
+  //       setGrid(grid, a, b, newGrid[a][b]);
+  //     }
+  //   }
+  // }
+  grid = floodFillExclude(grid, i, j);
+  // setGrid(grid, i, j, 3);
+  return grid;
 }
