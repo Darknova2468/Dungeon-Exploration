@@ -154,7 +154,10 @@ function floodFillExclude(grid, i, j) {
       }
     }
   }
-  grid = newGrid;
+  console.log(newGrid);
+  updateDimensions(grid.size, grid[0].size);
+  displayGrid(newGrid);
+  return newGrid;
 }
 
 function generateCaveNode(grid, i, j, hr = caveNodeHardBound, sr = caveNodeSoftBound) {
@@ -175,6 +178,18 @@ function generateCaveNode(grid, i, j, hr = caveNodeHardBound, sr = caveNodeSoftB
       }
     }
   }
+  for(let i = 0; i < 3; i++) {
+    grid = evaluateNext(grid);
+  }
+  // let newGrid = floodFillExclude(grid, i, j);
+  // for(let a = 0; a < y; a++) {
+  //   for(let b = 0; b < x; b++) {
+  //     if(verifyIndices(grid, a, b)) {
+  //       setGrid(grid, a, b, newGrid[a][b]);
+  //     }
+  //   }
+  // }
+  grid = floodFillExclude(grid, i, j);
   setGrid(grid, i, j, 3);
-  floodFillExclude(grid, i, j);
+  return grid;
 }

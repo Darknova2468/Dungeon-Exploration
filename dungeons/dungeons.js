@@ -182,10 +182,7 @@ function between(point, bound1, bound2){
 //generates a single organic shaped room
 function generatePrecursorDungeonRoom(radius) {
   let room = generateEmptyGrid(2*radius - 1, 2*radius - 1);
-  generateCaveNode(room, radius, radius, radius - 4, radius);
-  for(let i = 0; i < 3; i++) {
-    room = evaluateNext(room);
-  }
+  room = generateCaveNode(room, radius, radius, radius - 4, radius);
   return room;
 }
 
@@ -199,6 +196,6 @@ function generateEmptyGrid(x = xSize, y = ySize, toFill = 0) {
   let emptyGrid = new Array(y);
   for(let i = 0; i < y; i++) {
     emptyGrid[i] = new Array(x).fill(toFill);
-  }x
+  }
   return emptyGrid;
 }

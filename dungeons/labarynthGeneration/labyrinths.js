@@ -79,22 +79,39 @@ function getEdges(nodes, i, j) {
   return l;
 }
 
-function checkOrthogonalAdjacents(grid, i, j) {
-  let l = []
+// function checkOrthogonalAdjacents(grid, i, j) {
+//   for(let iDisp of [-1, 0, 1]) {
+//     for(let jDisp of [-1, 0, 1]) {
+//       if((iDisp !== 0) && (jDisp !== 0)) {
+//         continue;
+//       }
+//       let newI = i + iDisp;
+//       let newJ = j + jDisp;
+//       if(verifyIndices(grid, newI, newJ) && grid[newI][newJ] === 1) {
+//         return true;
+//       }
+//     }
+//   }
+//   return false;
+// }
+
+function checkOrthogonalAdjacents(grid, i, j, iNode = 0, jNode = 0) {
   for(let iDisp of [-1, 0, 1]) {
     for(let jDisp of [-1, 0, 1]) {
       if((iDisp !== 0) && (jDisp !== 0)) {
         continue;
       }
+      // Check dot product (edge condition only)
+      if(Math.abs(iDisp * iNode + jDisp * jNode) > 1e-8) {
+        continue;
+      }
       let newI = i + iDisp;
       let newJ = j + jDisp;
-      l.push([iDisp, jDisp]);
       if(verifyIndices(grid, newI, newJ) && grid[newI][newJ] === 1) {
         return true;
       }
     }
   }
-  // console.log(l);
   return false;
 }
 
@@ -116,7 +133,8 @@ function runPrim(grid, nodes, i, j, p1, p2, r1, r2) {
       continue;
     }
     // let alreadyClear = grid[2*i1][2*j1] === 1 || getWallsWithin(grid, 2*i1, 2*j1, 1) !== 8;
-    let alreadyClear = checkOrthogonalAdjacents(grid, 2*i1, 2*j1);
+    let alreadyClear = checkOrthogonalAdjacents(grid, 2*i1, 2*j1)
+      || checkOrthogonalAdjacents(grid, i0 + i1, j0 + j1, i1 - i0, j1 - j0);
     // console.log(getWallsWithin(grid, 2*i1, 2*j1, 1));
     // let alreadyClear = (grid[2*i1][2*j1] === 1 || grid[i0+i1][j0+j1] === 1);
 
