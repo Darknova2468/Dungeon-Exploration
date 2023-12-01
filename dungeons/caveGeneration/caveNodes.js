@@ -154,7 +154,6 @@ function floodFillExclude(grid, i, j) {
       }
     }
   }
-  console.log(newGrid);
   updateDimensions(grid.size, grid[0].size);
   displayGrid(newGrid);
   return newGrid;
@@ -190,6 +189,6 @@ function generateCaveNode(grid, i, j, hr = caveNodeHardBound, sr = caveNodeSoftB
   //   }
   // }
   grid = floodFillExclude(grid, i, j);
-  setGrid(grid, i, j, 3);
+  // setGrid(grid, i, j, 3);
   return grid;
 }

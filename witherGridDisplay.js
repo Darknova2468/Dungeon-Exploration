@@ -16,19 +16,19 @@ const cellTypes = {
 
 let grid; // = new Array(ySize); // The grid that is displayed
 
-/**
- * Converts an empty array to a uniform 2d array.
- * @param {Array} grid The grid to fill.
- * @param {number} x The number of cells per row.
- * @param {number} toFill The number to fill the cells with.
- */
-function generateEmptyGrid(x = xSize, y = ySize, toFill = 0) {
-  let emptyGrid = new Array(y);
-  for(let i = 0; i < y; i++) {
-    emptyGrid[i] = new Array(x).fill(toFill);
-  }
-  return emptyGrid;
-}
+// /**
+//  * Converts an empty array to a uniform 2d array.
+//  * @param {Array} grid The grid to fill.
+//  * @param {number} x The number of cells per row.
+//  * @param {number} toFill The number to fill the cells with.
+//  */
+// function generateEmptyGrid(x = xSize, y = ySize, toFill = 0) {
+//   let emptyGrid = new Array(y);
+//   for(let i = 0; i < y; i++) {
+//     emptyGrid[i] = new Array(x).fill(toFill);
+//   }
+//   return emptyGrid;
+// }
 
 /**
  * Randomizes the grid.
@@ -83,10 +83,19 @@ function displayGrid(grid) {
   }
 }
 
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-  squareSize = min((height - 2*padding) / ySize, (width - 2*padding) / xSize);
-  startX = max(padding, width/2 - squareSize * xSize / 2);
-  startY = max(padding, height/2 - squareSize * ySize / 2);
-  displayGrid(grid);
-}
+// function windowResized() {
+//   resizeCanvas(windowWidth, windowHeight);
+//   squareSize = min((height - 2*padding) / ySize, (width - 2*padding) / xSize);
+//   startX = max(padding, width/2 - squareSize * xSize / 2);
+//   startY = max(padding, height/2 - squareSize * ySize / 2);
+//   displayGrid(grid);
+// }
+
+// function keyPressed() {
+//   if(keyCode === 13) {
+//     displayGrid(myDungeon.minimap);
+//   }
+//   else if(keyCode === 88) {
+//     displayGrid(oldGrid);
+//   }
+// }

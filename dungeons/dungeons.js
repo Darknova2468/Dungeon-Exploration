@@ -82,7 +82,7 @@ class DungeonMap {
     });
 
     // Generate labyrinths
-    // generateLabyrinthEdges(this);
+    generateLabyrinthEdges(this);
 
     this.enemies.push(new Slime([this.playerPos[0]+2, this.playerPos[1]+2], 1, this.minimap));
   }
