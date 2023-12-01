@@ -80,13 +80,21 @@ function getEdges(nodes, i, j) {
 }
 
 function checkOrthogonalAdjacents(grid, i, j) {
-  for(let [di, dj] of [[0,0], [1,0], [-1,0], [0,1], [0,-1]]) {
-    let newI = i + di;
-    let newJ = j + dj;
-    if(verifyIndices(grid, newI, newJ) && grid[newI][newJ] === 1) {
-      return true;
+  let l = []
+  for(let iDisp of [-1, 0, 1]) {
+    for(let jDisp of [-1, 0, 1]) {
+      if((iDisp !== 0) && (jDisp !== 0)) {
+        continue;
+      }
+      let newI = i + iDisp;
+      let newJ = j + jDisp;
+      l.push([iDisp, jDisp]);
+      if(verifyIndices(grid, newI, newJ) && grid[newI][newJ] === 1) {
+        return true;
+      }
     }
   }
+  // console.log(l);
   return false;
 }
 
@@ -95,7 +103,7 @@ function runPrim(grid, nodes, i, j, p1, p2, r1, r2) {
   // console.log(nodes);
   let pq = new Heap(getEdges(nodes, i, j), (a, b) => a[0] - b[0]);
   nodes[i][j] = 2;
-  if(grid[2*i][2*j] === 1) {
+  if(checkOrthogonalAdjacents(grid, 2*i, 2*j)) {
     // console.log("-")
     return false;
   }
@@ -112,39 +120,42 @@ function runPrim(grid, nodes, i, j, p1, p2, r1, r2) {
     // console.log(getWallsWithin(grid, 2*i1, 2*j1, 1));
     // let alreadyClear = (grid[2*i1][2*j1] === 1 || grid[i0+i1][j0+j1] === 1);
 
-    let debugSpecial = 0;
+    // let debugSpecial = 0;
 
     if(alreadyClear) {
-      console.log("Hit empty space!");
+      // console.log("Hit empty space!");
       // grid[p1[1]][p1[0]] = 2;
-      debugSpecial = 1;
-      if(dist(p1[0], p1[1], 2*j1, 2*i1) < r1 + 2) {
+      // debugSpecial = 1;
+      if(dist(p1[0], p1[1], 2*j1, 2*i1) < r1 + 3) {
         if(sourceHit) {
           continue;
         }
         sourceHit = true;
-        debugSpecial = 2;
+        // debugSpecial = 2;
       }
-      if(dist(p2[0], p2[1], 2*j1, 2*i1) < r2 + 2) {
+      else if(dist(p2[0], p2[1], 2*j1, 2*i1) < r2 + 3) {
         if(targetHit) {
           continue;
         }
         targetHit = true;
-        debugSpecial = 2;
+        // debugSpecial = 2;
       }
-      console.log("End condition")
+      else {
+        continue;
+      }
+      // console.log("End condition");
     }
     // Finalize the edge
     nodes[i1][j1] = 2;
-    grid[2*i1][2*j1] = 1 + debugSpecial;
-    grid[i0+i1][j0+j1] = 1 + debugSpecial;
+    grid[2*i1][2*j1] = 1;// + debugSpecial;
+    grid[i0+i1][j0+j1] = 1;// + debugSpecial;
     if(!alreadyClear) {
       for(let t of getEdges(nodes, i1, j1)) {
         pq.push(t);
       }
     }
   }
-  console.log(sourceHit && targetHit);
+  // console.log(sourceHit && targetHit);
   return sourceHit && targetHit;
 }
 

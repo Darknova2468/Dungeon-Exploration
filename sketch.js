@@ -29,6 +29,8 @@ function setup() {
   noLoop();
 }
 
+let oldGrid;
+
 function draw() {
   background(0);
   //display background
@@ -43,5 +45,16 @@ function draw() {
   // fill("white");
   // text("fps: " + Math.floor(frameRate()), width-height*3/20, height*6/20);
   updateDimensions(myDungeon.minimap);
+  oldGrid = structuredClone(myDungeon.minimap);
+  generateLabyrinthEdges(myDungeon);
   displayGrid(myDungeon.minimap)
+}
+
+function keyPressed() {
+  if(keyCode === 13) {
+    displayGrid(myDungeon.minimap);
+  }
+  else if(keyCode === 88) {
+    displayGrid(oldGrid);
+  }
 }

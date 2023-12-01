@@ -68,7 +68,7 @@ class DungeonMap {
       room.connections.forEach(connection => {
         if(connection[2] === 1) {
           let pos2 = this.dungeon[connection[0]].pos;
-          console.log(pos1[0], pos2[0]);
+          // console.log(pos1[0], pos2[0]);
           generateCaveEdge(this.minimap, pos1[1], pos1[0],
             pos2[1], pos2[0]);
         }
@@ -82,7 +82,7 @@ class DungeonMap {
     });
 
     // Generate labyrinths
-    generateLabyrinthEdges(this);
+    // generateLabyrinthEdges(this);
 
     this.enemies.push(new Slime([this.playerPos[0]+2, this.playerPos[1]+2], 1, this.minimap));
   }
