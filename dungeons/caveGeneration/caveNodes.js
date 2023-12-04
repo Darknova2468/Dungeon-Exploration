@@ -155,7 +155,7 @@ function floodFillExclude(grid, i, j) {
     }
   }
   updateDimensions(grid.size, grid[0].size);
-  displayGrid(newGrid);
+  // displayGrid(newGrid);
   return newGrid;
 }
 

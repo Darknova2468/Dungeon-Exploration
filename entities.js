@@ -71,13 +71,16 @@ function dotProduct(a, b) {
 
 function scaleVector(a, mag = 1, b = [0,0]) {
   let d = dist(b[0], b[1], a[0], a[1]);
+  if(d === 0) {
+    return [0, 0];
+  }
   return [mag * (a[0] - b[0]) / d, mag * (a[1] - b[1]) / d];
 }
 
 function weighVector(weights, vec, shaper = (x) => x) {
   let w;
   for(let i = 0; i < 8; i++) {
-    w = dotProduct(scaleVector(vec), ENEMY_MOVEMENT_OPTIONS[i]);
+    w = dotProduct(vec, ENEMY_MOVEMENT_OPTIONS[i]);
     weights[i] += shaper(w);
     // console.log(w);
   }
@@ -85,9 +88,10 @@ function weighVector(weights, vec, shaper = (x) => x) {
 
 class Slime extends Entity {
   constructor(_pos, _level, _collisionMap, _textureSet) {
-    super(_pos, Math.floor(4*Math.log10(_level+1)), 0, 1.5, _collisionMap, _textureSet);
-    this.detectionRange = 20;
+    super(_pos, Math.floor(4*Math.log10(_level+1)), 0, 3, _collisionMap, _textureSet);
+    this.detectionRange = 60;
     this.attackRange = 1;
+    this.prevDirection = [0, 0];
   }
   operate(player, time) {
     let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
@@ -105,9 +109,22 @@ class Slime extends Entity {
       //   weights[i] += w;
       //   console.log(w);
       // }
-      weighVector(weights, pursuitVector);
+      weighVector(weights, scaleVector(pursuitVector));
+      for(let i = -2; i <= 2; i++) {
+        for(let j = -2; j <= 2; j++) {
+          let blockX = Math.floor(this.pos[0]) + j;
+          let blockY = Math.floor(this.pos[1]) + i;
+          if(this.collisionMap[blockY][blockX] === 0) {
+            blockX += 0.5;
+            blockY += 0.5;
+            let d = dist(blockX, blockY, this.pos[0], this.pos[1]);
+            weighVector(weights, scaleVector([blockX - this.pos[0], blockY - this.pos[1]], 1/d**3), (x) => -x);
+          }
+        }
+      }
+      weighVector(weights, scaleVector(this.prevDirection, 1));
       let maxDir = ENEMY_MOVEMENT_OPTIONS[weights.indexOf(Math.max(...weights))];
-      console.log(maxDir);
+      this.prevDirection = maxDir;
       this.move(maxDir, time);
 
       // this.move(player.pos, time);
