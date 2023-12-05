@@ -34,7 +34,7 @@ function setup() {
 }
 
 function draw() {
-  background(0);
+  background(10, 10, 30);
   player.move([keyIsDown(68)-keyIsDown(65) ,keyIsDown(83)-keyIsDown(87)], 1/frameRate(), keyIsDown(16));
   myDungeon.move(player, 1/frameRate());
   image(myBackground.generateScene(player.pos), 0, 0, width, height);
