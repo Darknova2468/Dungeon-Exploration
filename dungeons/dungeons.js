@@ -85,6 +85,7 @@ class DungeonMap {
     generateLabyrinthEdges(this);
 
     this.enemies.push(new Slime([this.playerPos[0]+2, this.playerPos[1]+2], 1, this.minimap, _enemyTileSet));
+    this.enemies.push(new Goblin([this.playerPos[0]+2, this.playerPos[1]-2], 1, this.minimap, _enemyTileSet));
   }
   move(player, time){
     this.enemies.forEach(enemy => {

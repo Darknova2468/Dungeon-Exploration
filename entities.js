@@ -9,8 +9,14 @@ class Entity {
     this.isMoving = 0;
     this.direction = [0, 0];
     this.animationSpeed = 4;
+    this.draft = false; // Should only be true when textures are not implemented
+    this.draftCol = "black";
   }
   display(screenCenter, screenSize){
+    if(this.draft) { // Remove when all entities are implemented
+      this.displayDraft(screenCenter, screenSize);
+      return;
+    }
     let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
     x += screenSize[0]*0.5-0.5+(this.direction[0] === 1);
     y += screenSize[1]*0.5-0.5;
@@ -28,6 +34,15 @@ class Entity {
       fill(this.animationSet);
       ellipse((x+0.5)*scaleX, (y+0.5)*scaleX, scaleX*0.75, scaleY*0.75);
     }
+  }
+  displayDraft(screenCenter, screenSize) {
+    let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
+    x += screenSize[0]*0.5-0.5+(this.direction[0] === 1);
+    y += screenSize[1]*0.5-0.5;
+    let scaleX = width/screenSize[0];
+    let scaleY = height/screenSize[1];
+    fill(this.draftCol);
+    ellipse((x+0.5)*scaleX, (y+0.5)*scaleX, scaleX*0.75, scaleY*0.75);
   }
 }
 
@@ -107,7 +122,7 @@ class Weights {
     this.weighVector(scaleVector(pursuitVector));
   }
 
-  weighObstacles(collisionMap, pos, radius = 2) {
+  weighObstacles(collisionMap, pos, radius = 2, scaling = 3) {
     for(let i = -radius; i <= radius; i++) {
       for(let j = -radius; j <= radius; j++) {
         let blockX = Math.floor(pos[0]) + j;
@@ -117,7 +132,7 @@ class Weights {
           blockX += 0.5;
           blockY += 0.5;
           let d = dist(blockX, blockY, pos[0], pos[1]);
-          this.weighVector(scaleVector([blockX - pos[0], blockY - pos[1]], 1/d**3), (x) => -x);
+          this.weighVector(scaleVector([blockX - pos[0], blockY - pos[1]], 1/d**scaling), (x) => -x);
         }
       }
     }
@@ -135,12 +150,12 @@ class Weights {
 class Slime extends Entity {
   constructor(_pos, _level, _collisionMap, _textureSet) {
     super(_pos, Math.floor(4*Math.log10(_level+1)), 0, 1.5, _collisionMap, _textureSet);
-    this.detectionRange = 60; // TEMPORARY
+    this.detectionRange = 8; // TEMPORARY
     this.attackRange = 0.5;
     this.prevDirection = [0, 0];
 
     // Jumping variables
-    this.canJump = true;
+    this.canJump = false;
     this.jumping = false;
     this.defaultSpeed = this.speed;
     this.jumpSpeed = 4 * this.speed;
@@ -181,7 +196,7 @@ class Slime extends Entity {
     else {
       // Chase
       let weights = new Weights();
-      weights.weighObstacles(this.collisionMap, this.pos);
+      weights.weighObstacles(this.collisionMap, this.pos, 1, 5);
       weights.weighPursuitVector(pursuitVector);
       weights.weighMomentum(this.prevDirection);
       let maxDir = weights.getMaxDir();
@@ -219,13 +234,55 @@ class Slime extends Entity {
       this.pos[1] += dy;
     }
   }
-  // moveTo(pos, time){
-  //   let [dx, dy] = scaleVector(pos, this.speed * time, this.pos);
-  //   if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0){
-  //     this.pos[0] += dx;
-  //   }
-  //   if(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])] !== 0){
-  //     this.pos[1] += dy;
-  //   }
-  // }
+}
+
+class Goblin extends Entity {
+  constructor(_pos, _level, _collisionMap, _textureSet) {
+    super(_pos, Math.floor(4*Math.log10(_level+1)), 0, 4, _collisionMap, _textureSet);
+    this.detectionRange = 12;
+    this.attackRange = 1;
+    this.prevDirection = [0, 0];
+    this.draft = true;
+    this.draftCol = "brown";
+  }
+  operate(player, time) {
+    let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
+    let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
+    if(distance > this.detectionRange) {
+      this.isMoving = 0;
+      this.idle(time);
+    }
+    else if(distance > this.attackRange){
+      this.isMoving = 1;
+      this.combat(player, time, distance, pursuitVector);
+    }
+  }
+  combat(player, time, distance, pursuitVector) {
+    if(distance <= this.attackRange) {
+      // Attack
+      this.attack(player, time);
+    }
+    else {
+      // Chase
+      let weights = new Weights();
+      weights.weighObstacles(this.collisionMap, this.pos, 1, 5);
+      weights.weighPursuitVector(pursuitVector);
+      weights.weighMomentum(this.prevDirection);
+      let maxDir = weights.getMaxDir();
+      this.prevDirection = maxDir;
+      this.move(maxDir, time);
+    }
+  }
+  attack(player, time) {
+
+  }
+  move(pos, time){
+    let [dx, dy] = scaleVector(pos, this.speed * time);
+    if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0){
+      this.pos[0] += dx;
+    }
+    if(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])] !== 0){
+      this.pos[1] += dy;
+    }
+  }
 }
