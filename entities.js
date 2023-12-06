@@ -51,8 +51,10 @@ class Player extends Entity {
     super(_pos, 10, 0, 3.5, _collisionMap, _animationSet);
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
+    this.movementDirection = [0, 0]; // Unrelated to texturing
   }
   move(direction, time, isRolling){
+    this.movementDirection = [0, 0];
     let [i, j] = direction;
     this.direction[0] = i===0 ? this.direction[0]:i===-1 ? 1:0;
     this.direction[1] = j===0 ? this.direction[1]:j===-1 ? 1:0;
@@ -69,11 +71,15 @@ class Player extends Entity {
       this.isMoving = isRolling && this.isMoving !== 7 ? 3:this.isMoving;
     }
     if(this.collisionMap[Math.floor(this.pos[1]+j*distance)][Math.floor(this.pos[0])] !== 0){
-      this.pos[1] += j*distance;
+      // this.pos[1] += j*distance;
+      this.movementDirection[1] = j*distance;
     }
     if(this.collisionMap[Math.floor(this.pos[1])][Math.floor(this.pos[0]+i*distance)] !== 0){
-      this.pos[0] += i*distance;
+      // this.pos[0] += i*distance;
+      this.movementDirection[0] = i*distance;
     }
+    this.pos[0] += this.movementDirection[0];
+    this.pos[1] += this.movementDirection[1];
   }
 }
 
@@ -118,11 +124,15 @@ class Weights {
     }
   }
 
-  weighPursuitVector(pursuitVector) {
-    this.weighVector(scaleVector(pursuitVector));
+  weighPursuitVector(pursuitVector, scaling = 1) {
+    this.weighVector(scaleVector(pursuitVector), (x) => scaling * x);
   }
 
-  weighObstacles(collisionMap, pos, radius = 2, scaling = 3) {
+  weighStrafe(pursuitVector, scaling = 1) {
+    this.weighVector(scaleVector(pursuitVector), (x) => scaling * (1 - Math.abs(x)));
+  }
+
+  weighObstacles(collisionMap, pos, radius = 2, expScaling = 3) {
     for(let i = -radius; i <= radius; i++) {
       for(let j = -radius; j <= radius; j++) {
         let blockX = Math.floor(pos[0]) + j;
@@ -132,10 +142,23 @@ class Weights {
           blockX += 0.5;
           blockY += 0.5;
           let d = dist(blockX, blockY, pos[0], pos[1]);
-          this.weighVector(scaleVector([blockX - pos[0], blockY - pos[1]], 1/d**scaling), (x) => -x);
+          this.weighVector(scaleVector([blockX - pos[0], blockY - pos[1]], 1/d**expScaling), (x) => -x);
         }
       }
     }
+  }
+
+  weighBalancedApproach(pursuitVector, sigmoidMidpoint, steepness = 1) {
+    // Finds the logistic curve
+    let f = 1 / (1 + Math.exp(-steepness * (dist(pursuitVector[0], pursuitVector[1], 0, 0) - sigmoidMidpoint)));
+    // console.log(f);
+    this.weighPursuitVector(pursuitVector, f);
+    this.weighStrafe(pursuitVector, 1-f);
+  }
+
+  weighTargetDirection(player, scaling) {
+    // console.log(player.movementDirection);
+    this.weighVector(scaleVector(player.movementDirection, scaling));
   }
 
   weighMomentum(prevDirection) {
@@ -238,9 +261,10 @@ class Slime extends Entity {
 
 class Goblin extends Entity {
   constructor(_pos, _level, _collisionMap, _textureSet) {
-    super(_pos, Math.floor(4*Math.log10(_level+1)), 0, 4, _collisionMap, _textureSet);
+    super(_pos, Math.floor(4*Math.log10(_level+1)), 0, 4.5, _collisionMap, _textureSet);
     this.detectionRange = 12;
     this.attackRange = 1;
+    this.combatBalanceRadius = 2;
     this.prevDirection = [0, 0];
     this.draft = true;
     this.draftCol = "brown";
@@ -265,9 +289,11 @@ class Goblin extends Entity {
     else {
       // Chase
       let weights = new Weights();
-      weights.weighObstacles(this.collisionMap, this.pos, 1, 5);
-      weights.weighPursuitVector(pursuitVector);
+      weights.weighObstacles(this.collisionMap, this.pos, 2, 3);
+      // weights.weighStrafe(pursuitVector);
       weights.weighMomentum(this.prevDirection);
+      weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius);
+      weights.weighTargetDirection(player, 2 / distance);
       let maxDir = weights.getMaxDir();
       this.prevDirection = maxDir;
       this.move(maxDir, time);
@@ -276,6 +302,8 @@ class Goblin extends Entity {
   attack(player, time) {
 
   }
+  idle(time) {
+  } 
   move(pos, time){
     let [dx, dy] = scaleVector(pos, this.speed * time);
     if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0){
