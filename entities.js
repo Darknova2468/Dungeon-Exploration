@@ -34,12 +34,14 @@ class Entity {
 class Player extends Entity {
   constructor(_pos, _collisionMap, _animationSet){
     super(_pos, 10, 0, 3.5, _collisionMap, _animationSet);
+    this.rollSpeed = 5;
+    this.defaultSpeed = 3.5;
   }
   move(direction, time, isRolling){
     let [i, j] = direction;
     this.direction[0] = i===0 ? this.direction[0]:i===-1 ? 1:0;
     this.direction[1] = j===0 ? this.direction[1]:j===-1 ? 1:0;
-    this.speed = isRolling && this.isMoving !== 5 ? 5:3.5;
+    this.speed = isRolling && this.isMoving !== 5 ? this.rollSpeed : this.defaultSpeed;
     let distance = sqrt(i*i + j*j)!== 0 ? time*this.speed/sqrt(i*i + j*j) : 0;
     if(i === 0 && j !== 0 && !isRolling){
       this.isMoving = 5;
@@ -143,7 +145,7 @@ class Slime extends Entity {
     this.defaultSpeed = this.speed;
     this.jumpSpeed = 4 * this.speed;
     this.jumpCooldown = 3000;
-    this.jumpTime = 450;
+    this.jumpTime = 700 / this.defaultSpeed;
     this.jumpTimer = millis();
     this.jumpRange = 3;
     this.jumpSplashRadius = this.radius * 1.5;
