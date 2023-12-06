@@ -136,11 +136,25 @@ class Slime extends Entity {
     this.detectionRange = 60; // TEMPORARY
     this.attackRange = 0.5;
     this.prevDirection = [0, 0];
+
+    // Jumping variables
+    this.canJump = true;
+    this.jumping = false;
+    this.defaultSpeed = this.speed;
+    this.jumpSpeed = 4 * this.speed;
+    this.jumpCooldown = 3000;
+    this.jumpTime = 450;
+    this.jumpTimer = millis();
+    this.jumpRange = 3;
+    this.jumpSplashRadius = this.radius * 1.5;
   }
   operate(player, time) {
     let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
     let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
-    if(distance > this.detectionRange) {
+    if(this.jumping) {
+      this.jump(time);
+    }
+    else if(distance > this.detectionRange) {
       this.isMoving = 0;
       this.idle(time);
     }
@@ -153,6 +167,11 @@ class Slime extends Entity {
 
   }
   combat(player, time, distance, pursuitVector) {
+    if(this.canJump && distance <= this.jumpRange
+      && millis() - this.jumpTimer > this.jumpCooldown) {
+      // Jump
+      this.jump(time, distance);
+    }
     if(distance <= this.attackRange) {
       // Attack
       this.attack(player, time);
@@ -167,6 +186,24 @@ class Slime extends Entity {
       this.prevDirection = maxDir;
       this.move(maxDir, time);
     }
+  }
+  jump(time, d = this.jumpRange) {
+    if(!this.jumping) {
+      this.jumpTimer = millis() + this.jumpTime * (d / this.jumpRange);
+      this.jumping = true;
+      this.speed = this.jumpSpeed;
+    }
+    if(millis() < this.jumpTimer) {
+      this.move(this.prevDirection, time);
+    }
+    else {
+      this.jumping = false;
+      this.speed = this.defaultSpeed;
+      this.splash(time);
+    }
+  }
+  splash(time) {
+
   }
   attack(player, time) {
 
