@@ -77,77 +77,100 @@ function scaleVector(a, mag = 1, b = [0,0]) {
   return [mag * (a[0] - b[0]) / d, mag * (a[1] - b[1]) / d];
 }
 
-function weighVector(weights, vec, shaper = (x) => x) {
-  let w;
-  for(let i = 0; i < 8; i++) {
-    w = dotProduct(vec, ENEMY_MOVEMENT_OPTIONS[i]);
-    weights[i] += shaper(w);
-    // console.log(w);
+// function weighVector(weights, vec, shaper = (x) => x) {
+//   let w;
+//   for(let i = 0; i < 8; i++) {
+//     w = dotProduct(vec, ENEMY_MOVEMENT_OPTIONS[i]);
+//     weights[i] += shaper(w);
+//     // console.log(w);
+//   }
+// }
+
+class Weights {
+  constructor() {
+    this.resolution = 8; // May be tweaked later
+    this.weights = Array(this.resolution).fill(0);
+  }
+
+  weighVector(vec, shaper = (x) => x) {
+    let w;
+    for(let i = 0; i < this.resolution; i++) {
+      w = dotProduct(vec, ENEMY_MOVEMENT_OPTIONS[i]);
+      this.weights[i] += shaper(w);
+      // console.log(w);
+    }
+  }
+
+  weighPursuitVector(pursuitVector) {
+    this.weighVector(scaleVector(pursuitVector));
+  }
+
+  weighObstacles(collisionMap, pos, radius = 2) {
+    for(let i = -radius; i <= radius; i++) {
+      for(let j = -radius; j <= radius; j++) {
+        let blockX = Math.floor(pos[0]) + j;
+        let blockY = Math.floor(pos[1]) + i;
+        if(collisionMap[blockY][blockX] === 0) {
+          // Centre at the centre of the square
+          blockX += 0.5;
+          blockY += 0.5;
+          let d = dist(blockX, blockY, pos[0], pos[1]);
+          this.weighVector(scaleVector([blockX - pos[0], blockY - pos[1]], 1/d**3), (x) => -x);
+        }
+      }
+    }
+  }
+
+  weighMomentum(prevDirection) {
+    this.weighVector(scaleVector(prevDirection, 1));
+  }
+
+  getMaxDir() {
+    return ENEMY_MOVEMENT_OPTIONS[this.weights.indexOf(Math.max(...this.weights))];
   }
 }
 
 class Slime extends Entity {
   constructor(_pos, _level, _collisionMap, _textureSet) {
-    super(_pos, Math.floor(4*Math.log10(_level+1)), 0, 3, _collisionMap, _textureSet);
-    this.detectionRange = 60;
-    this.attackRange = 1;
+    super(_pos, Math.floor(4*Math.log10(_level+1)), 0, 1.5, _collisionMap, _textureSet);
+    this.detectionRange = 60; // TEMPORARY
+    this.attackRange = 0.5;
     this.prevDirection = [0, 0];
   }
   operate(player, time) {
     let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
     let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
-    let weights = Array(8).fill(0);
     if(distance > this.detectionRange) {
       this.isMoving = 0;
-      this.idle();
-      return;
+      this.idle(time);
     }
     else if(distance > this.attackRange){
       this.isMoving = 1;
-      // for(let i = 0; i < 8; i++) {
-      //   w = dotProduct(scaleVector(pursuitVector), enemy_movement_options[i]);
-      //   weights[i] += w;
-      //   console.log(w);
-      // }
-      weighVector(weights, scaleVector(pursuitVector));
-      for(let i = -2; i <= 2; i++) {
-        for(let j = -2; j <= 2; j++) {
-          let blockX = Math.floor(this.pos[0]) + j;
-          let blockY = Math.floor(this.pos[1]) + i;
-          if(this.collisionMap[blockY][blockX] === 0) {
-            blockX += 0.5;
-            blockY += 0.5;
-            let d = dist(blockX, blockY, this.pos[0], this.pos[1]);
-            weighVector(weights, scaleVector([blockX - this.pos[0], blockY - this.pos[1]], 1/d**3), (x) => -x);
-          }
-        }
-      }
-      weighVector(weights, scaleVector(this.prevDirection, 1));
-      let maxDir = ENEMY_MOVEMENT_OPTIONS[weights.indexOf(Math.max(...weights))];
-      this.prevDirection = maxDir;
-      this.move(maxDir, time);
+      this.combat(player, time, distance, pursuitVector);
+    }
+  }
+  idle(time) {
 
-      // this.move(player.pos, time);
+  }
+  combat(player, time, distance, pursuitVector) {
+    if(distance <= this.attackRange) {
+      // Attack
+      this.attack(player, time);
     }
     else {
-      this.isMoving = 0;
-      this.attack();
+      // Chase
+      let weights = new Weights();
+      weights.weighObstacles(this.collisionMap, this.pos);
+      weights.weighPursuitVector(pursuitVector);
+      weights.weighMomentum(this.prevDirection);
+      let maxDir = weights.getMaxDir();
+      this.prevDirection = maxDir;
+      this.move(maxDir, time);
     }
   }
-  idle() {
+  attack(player, time) {
 
   }
-  // move(pos, time){
-  //   let mag = dist(pos[0], pos[1], this.pos[0], this.pos[1]);
-  //   let dx = (pos[0]-this.pos[0])/mag*this.speed*time;
-  //   let dy = (pos[1]-this.pos[1])/mag*this.speed*time;
-  //   if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0){
-  //     this.pos[0] += dx;
-  //   }
-  //   if(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])] !== 0){
-  //     this.pos[1] += dy;
-  //   }
-  // }
   move(pos, time){
     let [dx, dy] = scaleVector(pos, this.speed * time);
     if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0){
@@ -157,16 +180,13 @@ class Slime extends Entity {
       this.pos[1] += dy;
     }
   }
-  moveTo(pos, time){
-    let [dx, dy] = scaleVector(pos, this.speed * time, this.pos);
-    if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0){
-      this.pos[0] += dx;
-    }
-    if(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])] !== 0){
-      this.pos[1] += dy;
-    }
-  }
-  attack() {
-
-  }
+  // moveTo(pos, time){
+  //   let [dx, dy] = scaleVector(pos, this.speed * time, this.pos);
+  //   if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0){
+  //     this.pos[0] += dx;
+  //   }
+  //   if(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])] !== 0){
+  //     this.pos[1] += dy;
+  //   }
+  // }
 }
