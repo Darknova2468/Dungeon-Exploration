@@ -175,6 +175,9 @@ class Slime extends Entity {
     super(_pos, Math.floor(4*Math.log10(_level+1)), 0, 1.5, _collisionMap, _textureSet);
     this.detectionRange = 8; // TEMPORARY
     this.attackRange = 0.5;
+    this.attackTimer = millis();
+    this.attackCooldown = 300;
+    this.combatBalanceRadius = 0.5;
     this.prevDirection = [0, 0];
 
     // Jumping variables
@@ -198,7 +201,7 @@ class Slime extends Entity {
       this.isMoving = 0;
       this.idle(time);
     }
-    else if(distance > this.attackRange){
+    else {
       this.isMoving = 1;
       this.combat(player, time, distance, pursuitVector);
     }
@@ -212,15 +215,16 @@ class Slime extends Entity {
       // Jump
       this.jump(time, distance);
     }
-    if(distance <= this.attackRange) {
+    if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
       // Attack
       this.attack(player, time);
+      this.attackTimer = millis();
     }
     else {
       // Chase
       let weights = new Weights();
       weights.weighObstacles(this.collisionMap, this.pos, 1, 5);
-      weights.weighPursuitVector(pursuitVector);
+      weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, 0.7);
       weights.weighMomentum(this.prevDirection);
       let maxDir = weights.getMaxDir();
       this.prevDirection = maxDir;
@@ -246,7 +250,7 @@ class Slime extends Entity {
 
   }
   attack(player, time) {
-
+    console.log("[Slime] Attacks.");
   }
   move(pos, time){
     let [dx, dy] = scaleVector(pos, this.speed * time);
@@ -261,13 +265,13 @@ class Slime extends Entity {
 
 class Goblin extends Entity {
   constructor(_pos, _level, _collisionMap, _textureSet) {
-    super(_pos, Math.floor(4*Math.log10(_level+1)), 0, 4.5, _collisionMap, _textureSet);
+    super(_pos, _level + 4, 0, 4.5, _collisionMap, _textureSet);
     this.detectionRange = 12;
     this.attackRange = 1;
     this.combatBalanceRadius = 2;
     this.prevDirection = [0, 0];
     this.draft = true;
-    this.draftCol = "brown";
+    this.draftCol = "chocolate";
 
     // Goblin bully tactics
     this.thrusting = false;
@@ -324,7 +328,7 @@ class Goblin extends Entity {
     }
   }
   attack(player, time) {
-
+    console.log("[Goblin] Attacks.");
   }
   idle(time) {
     this.thrusting = false;
@@ -342,3 +346,186 @@ class Goblin extends Entity {
   }
 }
 
+class Zombie extends Entity {
+  constructor(_pos, _level, _collisionMap, _textureSet) {
+    super(_pos, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, _collisionMap, _textureSet);
+    // Default parameters
+    this.detectionRange = 10;
+    this.combatBalanceRadius = 2;
+    this.prevDirection = [0, 0];
+    this.draft = true;
+    this.draftCol = "darkolivegreen";
+    this.attackRange = 2;
+    this.attackTimer = millis();
+    this.attackCooldown = 700;
+
+    // Characteristic AI variables here
+  }
+  operate(player, time) {
+    let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
+    let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
+    if(distance > this.detectionRange) {
+      this.isMoving = 0;
+      this.idle(time);
+    }
+    else {
+      this.isMoving = 1;
+      this.combat(player, time, distance, pursuitVector);
+    }
+  }
+  combat(player, time, distance, pursuitVector) {
+    if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
+      // Attack
+      this.attack(player, time);
+      this.attackTimer = millis();
+    }
+    else {
+      // Chase
+      let weights = new Weights();
+      weights.weighObstacles(this.collisionMap, this.pos, 2, 3); // Tweak for different AI
+      weights.weighMomentum(this.prevDirection);
+      weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, 0.7);
+      let maxDir = weights.getMaxDir();
+      this.prevDirection = maxDir;
+      this.move(maxDir, time);
+    }
+  }
+  attack(player, time) {
+    console.log("[Zombie] Attacks.");
+  }
+  idle(time) {
+
+  } 
+  move(pos, time){
+    let [dx, dy] = scaleVector(pos, this.speed * time);
+    if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0){
+      this.pos[0] += dx;
+    }
+    if(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])] !== 0){
+      this.pos[1] += dy;
+    }
+  }
+}
+
+class Skeleton extends Entity {
+  constructor(_pos, _level, _collisionMap, _textureSet) {
+    super(_pos, Math.floor(_level + 4), 2, 2, _collisionMap, _textureSet);
+    // Default parameters
+    this.detectionRange = 10;
+    this.combatBalanceRadius = 5;
+    this.prevDirection = [0, 0];
+    this.draft = true;
+    this.draftCol = "blanchedalmond";
+    this.attackRange = 1.5;
+    this.attackTimer = millis();
+    this.attackCooldown = 1000;
+
+    // Characteristic AI variables here
+  }
+  operate(player, time) {
+    let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
+    let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
+    if(distance > this.detectionRange) {
+      this.isMoving = 0;
+      this.idle(time);
+    }
+    else {
+      this.isMoving = 1;
+      this.combat(player, time, distance, pursuitVector);
+    }
+  }
+  combat(player, time, distance, pursuitVector) {
+    if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
+      // Attack
+      this.attack(player, time);
+      this.attackTimer = millis();
+    }
+    else {
+      // Chase
+      let weights = new Weights();
+      weights.weighObstacles(this.collisionMap, this.pos, 2, 3); // Tweak for different AI
+      weights.weighMomentum(this.prevDirection);
+      weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, 0.7);
+      let maxDir = weights.getMaxDir();
+      this.prevDirection = maxDir;
+      this.move(maxDir, time);
+    }
+  }
+  attack(player, time) {
+    console.log("[Skeleton] Attacks.");
+  }
+  idle(time) {
+
+  } 
+  move(pos, time){
+    let [dx, dy] = scaleVector(pos, this.speed * time);
+    if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0){
+      this.pos[0] += dx;
+    }
+    if(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])] !== 0){
+      this.pos[1] += dy;
+    }
+  }
+}
+
+// For personal reference
+// class Enemy extends Entity {
+//   constructor(_pos, _level, _collisionMap, _textureSet) {
+//     super(_pos, Math.floor(<Health>, <Defense>, <Speed>, _collisionMap, _textureSet);
+//     // Default parameters
+//     this.detectionRange = <Detection range>;
+//     this.combatBalanceRadius = <Preferred combat distance>;
+//     this.prevDirection = [0, 0];
+//     this.draft = true;
+//     this.draftCol = "<Insert colour here>";
+//     this.attackRange = <Attack range>;
+//     this.attackTimer = millis();
+//     this.attackCooldown = 700;
+
+//     // Characteristic AI variables here
+//   }
+//   operate(player, time) {
+//     let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
+//     let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
+//     if(distance > this.detectionRange) {
+//       this.isMoving = 0;
+//       this.idle(time);
+//     }
+//     else {
+//       this.isMoving = 1;
+//       this.combat(player, time, distance, pursuitVector);
+//     }
+//   }
+//   combat(player, time, distance, pursuitVector) {
+//     if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
+//       // Attack
+//       this.attack(player, time);
+//       this.attackTimer = millis();
+//     }
+//     else {
+//       // Chase
+//       let weights = new Weights();
+//       weights.weighObstacles(this.collisionMap, this.pos, 2, 3); // Tweak for different AI
+//       weights.weighMomentum(this.prevDirection);
+//       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, 0.7);
+//       let maxDir = weights.getMaxDir();
+//       this.prevDirection = maxDir;
+//       this.move(maxDir, time);
+//     }
+//   }
+//   attack(player, time) {
+//     console.log("[<Insert enemy name here> Attacks.]");
+//   }
+//   idle(time) {
+
+//   } 
+//   move(pos, time){
+//     let [dx, dy] = scaleVector(pos, this.speed * time);
+//     if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0){
+//       this.pos[0] += dx;
+//     }
+//     if(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])] !== 0){
+//       this.pos[1] += dy;
+//     }
+//   }
+// }
