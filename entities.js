@@ -45,11 +45,19 @@ class Entity {
     fill(this.draftCol);
     ellipse((x+0.5)*scaleX, (y+0.5)*scaleX, scaleX*0.75, scaleY*0.75);
   }
+  damage(amountDamage, damageType) {
+    // damageType unused for now
+    amountDamage *= 5/(this.defence + 5);
+    this.health -= amountDamage;
+    if(this.health <= 0) {
+      this.isAlive = false;
+    }
+  }
 }
 
 class Player extends Entity {
   constructor(_pos, _collisionMap, _animationSet){
-    super(_pos, 10, 0, 3.5, _collisionMap, _animationSet);
+    super(_pos, 10, 5, 3.5, _collisionMap, _animationSet);
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
@@ -178,11 +186,12 @@ class Slime extends Entity {
     this.attackRange = 0.5;
     this.attackTimer = millis();
     this.attackCooldown = 300;
+    this.attackDamage = 1;
     this.combatBalanceRadius = 0.5;
     this.prevDirection = [0, 0];
 
     // Jumping variables
-    this.canJump = false;
+    this.canJump = true;
     this.jumping = false;
     this.defaultSpeed = this.speed;
     this.jumpSpeed = 4 * this.speed;
@@ -252,6 +261,7 @@ class Slime extends Entity {
   }
   attack(player, time) {
     console.log("[Slime] Attacks.");
+    player.damage(1, "Bludgeoning");
   }
   move(pos, time){
     let [dx, dy] = scaleVector(pos, this.speed * time);
@@ -269,6 +279,7 @@ class Goblin extends Entity {
     super(_pos, _level + 4, 0, 4.5, _collisionMap, _textureSet);
     this.detectionRange = 12;
     this.attackRange = 1;
+    this.attackDamage = 3;
     this.combatBalanceRadius = 2;
     this.prevDirection = [0, 0];
     this.draft = true;
@@ -330,6 +341,7 @@ class Goblin extends Entity {
   }
   attack(player, time) {
     console.log("[Goblin] Attacks.");
+    player.damage(this.attackDamage, "Slashing");
   }
   idle(time) {
     this.thrusting = false;
@@ -359,6 +371,7 @@ class Zombie extends Entity {
     this.attackRange = 2;
     this.attackTimer = millis();
     this.attackCooldown = 700;
+    this.attackDamage = 2;
 
     // Characteristic AI variables here
   }
@@ -393,6 +406,7 @@ class Zombie extends Entity {
   }
   attack(player, time) {
     console.log("[Zombie] Attacks.");
+    player.damage(this.attackDamage, "Slashing");
   }
   idle(time) {
 
@@ -420,6 +434,7 @@ class Skeleton extends Entity {
     this.attackRange = 1.5;
     this.attackTimer = millis();
     this.attackCooldown = 1000;
+    this.attackDamage = 1;
 
     // I am Skeletor.
     this.throwRange = 8;
@@ -427,6 +442,7 @@ class Skeleton extends Entity {
     this.throwCooldown = 5000;
     this.throwStunTime = 1000;
     this.throwSpeed = 10;
+    this.throwDamage = 4;
     this.thrownBones = [];
   }
   operate(player, time) {
@@ -472,10 +488,11 @@ class Skeleton extends Entity {
   }
   attack(player, time) {
     console.log("[Skeleton] Attacks.");
+    player.damage(this.attackDamage, "Slashing");
   }
   throw(player, time, pursuitVector) {
     console.log("[Skeleton] Throws a bone.");
-    this.thrownBones.push(new Bone(this.pos, scaleVector(pursuitVector, this.throwSpeed), this.throwRange, this.collisionMap, ""));
+    this.thrownBones.push(new Bone(this.pos, scaleVector(pursuitVector, this.throwSpeed), this.throwRange, this.throwDamage, this.collisionMap, ""));
   }
   display(screenCenter, screenSize) {
     super.display(screenCenter, screenSize);
@@ -498,22 +515,26 @@ class Skeleton extends Entity {
 }
 
 class Bone extends Entity {
-  constructor(_pos, _dir, _maxDist, _collisionMap, _textureSet) {
+  constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap, _textureSet) {
     super(structuredClone(_pos), 0, 0, 0, _collisionMap, _textureSet);
     this.initPos = structuredClone(this.pos);
     this.dir = _dir;
+    this.hitDamage = _hitDmg;
     this.speed = Math.sqrt(_dir[0]*_dir[0] + _dir[1]*_dir[1]);
     this.maxDist = _maxDist;
     this.attackRange = 0.5;
     this.draft = true;
     this.draftCol = "white";
+    this.hitTimer = millis();
+    this.hitCooldown = 50;
   }
 
   operate(player, time) {
     this.move(this.dir, time);
     let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
-    if(distance < this.attackRange) {
+    if(distance < this.attackRange && millis() - this.hitTimer > this.hitCooldown) {
       this.hit(player, time);
+      this.hitTimer = millis();
     }
     if(dist(this.pos[0], this.pos[1], this.initPos[0], this.initPos[1]) > this.maxDist) {
       this.isAlive = false;
@@ -522,6 +543,7 @@ class Bone extends Entity {
 
   hit(player, time) {
     console.log("[Thrown bone] Hitting!");
+    player.damage(this.hitDamage, "Piercing");
   }
 
   move(pos, time){

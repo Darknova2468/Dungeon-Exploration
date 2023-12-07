@@ -33,7 +33,24 @@ function setup() {
   myBackground = new Scene(myDungeon.minimap, [16, 8], tileSet);
 }
 
+let gameActive = true;
+
 function draw() {
+  if(!gameActive) {
+    background(100, 0, 0, 10);
+    fill("white");
+    textAlign(CENTER, CENTER);
+    text("YOU DIED", width/2, height/2);
+    return;
+  }
+  else if(!player.isAlive) {
+    background(100, 0, 0, 100);
+    fill("white");
+    textAlign(CENTER, CENTER);
+    text("YOU DIED", width/2, height/2);
+    gameActive = false;
+    return;
+  }
   background(0);
   let dt = 1 / frameRate();
   if(dt > 0.2) {
@@ -46,7 +63,10 @@ function draw() {
   myDungeon.display(player.pos, myBackground.scale, [16, 16]);
   image(minimap.generateImage(player.pos), width-height*5/20, height*1/20, height/5, height/5);
   fill("white");
+  textSize(12);
   text("fps: " + Math.floor(frameRate()), width-height*3/20, height*6/20);
+  textSize(20);
+  text("Health: " + Math.ceil(player.health), height*3/20, height*3/20);
   // updateDimensions(myDungeon.minimap);
   // oldGrid = structuredClone(myDungeon.minimap);
   // generateLabyrinthEdges(myDungeon);
