@@ -7,6 +7,7 @@ class Entity {
     this.collisionMap = _collisionMap;
     this.animationSet = _animationSet;
     this.isMoving = 0;
+    this.isAlive = true;
     this.direction = [0, 0];
     this.animationSpeed = 4;
     this.draft = false; // Should only be true when textures are not implemented
@@ -420,12 +421,21 @@ class Skeleton extends Entity {
     this.attackTimer = millis();
     this.attackCooldown = 1000;
 
-    // Characteristic AI variables here
+    // I am Skeletor.
+    this.throwRange = 8;
+    this.throwTimer = millis();
+    this.throwCooldown = 5000;
+    this.throwStunTime = 1000;
+    this.throwSpeed = 10;
+    this.thrownBones = [];
   }
   operate(player, time) {
     let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
     let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
-    if(distance > this.detectionRange) {
+    if(millis() - this.throwTimer < this.throwStunTime) {
+      this.isMoving = 0;
+    }
+    else if(distance > this.detectionRange) {
       this.isMoving = 0;
       this.idle(time);
     }
@@ -433,9 +443,18 @@ class Skeleton extends Entity {
       this.isMoving = 1;
       this.combat(player, time, distance, pursuitVector);
     }
+    for(let bone of this.thrownBones) {
+      bone.operate(player, time);
+    }
+    this.thrownBones = this.thrownBones.filter((b) => b.isAlive);
   }
   combat(player, time, distance, pursuitVector) {
-    if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
+    if(distance <= this.throwRange && millis() - this.throwTimer > this.throwCooldown) {
+      // Throw
+      this.throw(player, time, pursuitVector);
+      this.throwTimer = millis();
+    }
+    else if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
       // Attack
       this.attack(player, time);
       this.attackTimer = millis();
@@ -454,6 +473,16 @@ class Skeleton extends Entity {
   attack(player, time) {
     console.log("[Skeleton] Attacks.");
   }
+  throw(player, time, pursuitVector) {
+    console.log("[Skeleton] Throws a bone.");
+    this.thrownBones.push(new Bone(this.pos, scaleVector(pursuitVector, this.throwSpeed), this.throwRange, this.collisionMap, ""));
+  }
+  display(screenCenter, screenSize) {
+    super.display(screenCenter, screenSize);
+    for(let bone of this.thrownBones) {
+      bone.display(screenCenter, screenSize);
+    }
+  }
   idle(time) {
 
   } 
@@ -465,13 +494,53 @@ class Skeleton extends Entity {
     if(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])] !== 0){
       this.pos[1] += dy;
     }
+  } 
+}
+
+class Bone extends Entity {
+  constructor(_pos, _dir, _maxDist, _collisionMap, _textureSet) {
+    super(structuredClone(_pos), 0, 0, 0, _collisionMap, _textureSet);
+    this.initPos = structuredClone(this.pos);
+    this.dir = _dir;
+    this.speed = Math.sqrt(_dir[0]*_dir[0] + _dir[1]*_dir[1]);
+    this.maxDist = _maxDist;
+    this.attackRange = 0.5;
+    this.draft = true;
+    this.draftCol = "white";
+  }
+
+  operate(player, time) {
+    this.move(this.dir, time);
+    let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
+    if(distance < this.attackRange) {
+      this.hit(player, time);
+    }
+    if(dist(this.pos[0], this.pos[1], this.initPos[0], this.initPos[1]) > this.maxDist) {
+      this.isAlive = false;
+    }
+  }
+
+  hit(player, time) {
+    console.log("[Thrown bone] Hitting!");
+  }
+
+  move(pos, time){
+    let [dx, dy] = scaleVector(pos, this.speed * time);
+    if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0
+      && this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])] !== 0){
+      this.pos[0] += dx;
+      this.pos[1] += dy;
+    }
+    else {
+      this.isAlive = false;
+    }
   }
 }
 
 // For personal reference
 // class Enemy extends Entity {
 //   constructor(_pos, _level, _collisionMap, _textureSet) {
-//     super(_pos, Math.floor(<Health>, <Defense>, <Speed>, _collisionMap, _textureSet);
+//     super(_pos, Math.floor(<Health>), <Defense>, <Speed>, _collisionMap, _textureSet);
 //     // Default parameters
 //     this.detectionRange = <Detection range>;
 //     this.combatBalanceRadius = <Preferred combat distance>;
