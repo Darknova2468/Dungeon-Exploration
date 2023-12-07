@@ -268,6 +268,14 @@ class Goblin extends Entity {
     this.prevDirection = [0, 0];
     this.draft = true;
     this.draftCol = "brown";
+
+    // Goblin bully tactics
+    this.thrusting = false;
+    this.backing = false;
+    this.fleeing = false;
+    this.thrustChance = 0.02;
+    this.attackTimer = millis();
+    this.attackCooldown = 700;
   }
   operate(player, time) {
     let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
@@ -276,24 +284,40 @@ class Goblin extends Entity {
       this.isMoving = 0;
       this.idle(time);
     }
-    else if(distance > this.attackRange){
+    else {
       this.isMoving = 1;
       this.combat(player, time, distance, pursuitVector);
     }
   }
   combat(player, time, distance, pursuitVector) {
-    if(distance <= this.attackRange) {
+    if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
       // Attack
       this.attack(player, time);
+      this.thrusting = false;
+      this.backing = true;
+      this.attackTimer = millis();
     }
     else {
       // Chase
       let weights = new Weights();
       weights.weighObstacles(this.collisionMap, this.pos, 2, 3);
-      // weights.weighStrafe(pursuitVector);
       weights.weighMomentum(this.prevDirection);
-      weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius);
-      weights.weighTargetDirection(player, 2 / distance);
+      if(distance > this.combatBalanceRadius) {
+        this.backing = false;
+      }
+      if(!this.backing && !this.fleeing && distance < this.combatBalanceRadius && random() < this.thrustChance) {
+        this.thrusting = true;
+      }
+      if(this.thrusting) {
+        weights.weighPursuitVector(pursuitVector);
+      }
+      else if(this.backing || this.fleeing) {
+        weights.weighPursuitVector(pursuitVector, -1);
+      }
+      else {
+        weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, 0.7);
+        weights.weighTargetDirection(player, 2 / distance);
+      }
       let maxDir = weights.getMaxDir();
       this.prevDirection = maxDir;
       this.move(maxDir, time);
@@ -303,6 +327,9 @@ class Goblin extends Entity {
 
   }
   idle(time) {
+    this.thrusting = false;
+    this.backing = false;
+    this.fleeing = false;
   } 
   move(pos, time){
     let [dx, dy] = scaleVector(pos, this.speed * time);
@@ -314,3 +341,4 @@ class Goblin extends Entity {
     }
   }
 }
+
