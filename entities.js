@@ -57,7 +57,7 @@ class Entity {
 
 class Player extends Entity {
   constructor(_pos, _collisionMap, _animationSet){
-    super(_pos, 10, 5, 3.5, _collisionMap, _animationSet);
+    super(_pos, 100, 500, 3.5, _collisionMap, _animationSet);
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
@@ -157,12 +157,16 @@ class Weights {
     }
   }
 
-  weighBalancedApproach(pursuitVector, sigmoidMidpoint, steepness = 1) {
-    // Finds the logistic curve
-    let f = 1 / (1 + Math.exp(-steepness * (dist(pursuitVector[0], pursuitVector[1], 0, 0) - sigmoidMidpoint)));
+  weighBalancedApproach(pursuitVector, pursuitMidpoint, retreatMidpoint = 0, strafeMultiplier = 1, steepness = 0.7) {
+    // Finds the pursuit logistic curve
+    let pursuitPortion = 1 / (1 + Math.exp(-steepness * (dist(pursuitVector[0], pursuitVector[1], 0, 0) - pursuitMidpoint)));
+
+    // Finds the retreat logistic curve
+    let retreatPortion = 1 - 1 / (1 + Math.exp(-steepness * (dist(pursuitVector[0], pursuitVector[1], 0, 0) - retreatMidpoint)));
     // console.log(f);
-    this.weighPursuitVector(pursuitVector, f);
-    this.weighStrafe(pursuitVector, 1-f);
+    this.weighPursuitVector(pursuitVector, pursuitPortion);
+    this.weighPursuitVector(pursuitVector, -retreatPortion);
+    this.weighStrafe(pursuitVector, strafeMultiplier * (1-pursuitPortion - retreatPortion));
   }
 
   weighTargetDirection(player, scaling) {
@@ -234,7 +238,8 @@ class Slime extends Entity {
       // Chase
       let weights = new Weights();
       weights.weighObstacles(this.collisionMap, this.pos, 1, 5);
-      weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, 0.7);
+      // Retreat midpoint of -1e9 since slimes don't retreat
+      weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, -1e9);
       weights.weighMomentum(this.prevDirection);
       let maxDir = weights.getMaxDir();
       this.prevDirection = maxDir;
@@ -286,6 +291,7 @@ class Goblin extends Entity {
     this.draftCol = "chocolate";
 
     // Goblin bully tactics
+    this.thrustRadius = 3;
     this.thrusting = false;
     this.backing = false;
     this.fleeing = false;
@@ -321,17 +327,21 @@ class Goblin extends Entity {
       if(distance > this.combatBalanceRadius) {
         this.backing = false;
       }
-      if(!this.backing && !this.fleeing && distance < this.combatBalanceRadius && random() < this.thrustChance) {
+
+      // Thrust
+      if(!this.backing && !this.fleeing && distance < this.thrustRadius && random() < this.thrustChance) {
         this.thrusting = true;
       }
       if(this.thrusting) {
         weights.weighPursuitVector(pursuitVector);
       }
+
+      // Back off or flee
       else if(this.backing || this.fleeing) {
         weights.weighPursuitVector(pursuitVector, -1);
       }
       else {
-        weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, 0.7);
+        weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius);
         weights.weighTargetDirection(player, 2 / distance);
       }
       let maxDir = weights.getMaxDir();
@@ -364,16 +374,18 @@ class Zombie extends Entity {
     super(_pos, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, _collisionMap, _textureSet);
     // Default parameters
     this.detectionRange = 10;
-    this.combatBalanceRadius = 2;
+    this.combatBalanceRadius = 1;
     this.prevDirection = [0, 0];
     this.draft = true;
     this.draftCol = "darkolivegreen";
-    this.attackRange = 2;
+    this.attackRange = 1.5;
     this.attackTimer = millis();
     this.attackCooldown = 700;
     this.attackDamage = 2;
 
-    // Characteristic AI variables here
+    // Zombies stop when attacking and bite if close
+    this.strafeMultiplier = -1;
+    this.biteRadius = 0.7;
   }
   operate(player, time) {
     let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
@@ -390,23 +402,27 @@ class Zombie extends Entity {
   combat(player, time, distance, pursuitVector) {
     if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
       // Attack
-      this.attack(player, time);
+      this.attack(player, time, distance);
       this.attackTimer = millis();
     }
-    else {
+    else if(distance > this.biteRadius) {
       // Chase
       let weights = new Weights();
       weights.weighObstacles(this.collisionMap, this.pos, 2, 3); // Tweak for different AI
       weights.weighMomentum(this.prevDirection);
-      weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, 0.7);
+      weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, 0, this.strafeMultiplier, 20);
       let maxDir = weights.getMaxDir();
       this.prevDirection = maxDir;
       this.move(maxDir, time);
     }
   }
-  attack(player, time) {
+  attack(player, time, distance) {
     console.log("[Zombie] Attacks.");
-    player.damage(this.attackDamage, "Slashing");
+    player.damage(this.attackDamage, "Bludgeoning");
+    if(distance <= this.biteRadius) {
+      player.damage(this.attackDamage, "Piercing");
+      console.log("[Zombie] Bites.");
+    }
   }
   idle(time) {
 
@@ -424,10 +440,10 @@ class Zombie extends Entity {
 
 class Skeleton extends Entity {
   constructor(_pos, _level, _collisionMap, _textureSet) {
-    super(_pos, Math.floor(_level + 4), 2, 2, _collisionMap, _textureSet);
+    super(_pos, Math.floor(_level + 4), 2, 2.5, _collisionMap, _textureSet);
     // Default parameters
     this.detectionRange = 10;
-    this.combatBalanceRadius = 5;
+    this.combatBalanceRadius = 6;
     this.prevDirection = [0, 0];
     this.draft = true;
     this.draftCol = "blanchedalmond";
@@ -437,12 +453,13 @@ class Skeleton extends Entity {
     this.attackDamage = 1;
 
     // I am Skeletor.
+    this.retreatMidpoint = 4;
     this.throwRange = 8;
     this.throwTimer = millis();
     this.throwCooldown = 5000;
     this.throwStunTime = 1000;
     this.throwSpeed = 10;
-    this.throwDamage = 4;
+    this.throwDamage = 5;
     this.thrownBones = [];
   }
   operate(player, time) {
@@ -480,7 +497,8 @@ class Skeleton extends Entity {
       let weights = new Weights();
       weights.weighObstacles(this.collisionMap, this.pos, 2, 3); // Tweak for different AI
       weights.weighMomentum(this.prevDirection);
-      weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, 0.7);
+      // Skeletons keep their distance
+      weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, this.retreatMidpoint);
       let maxDir = weights.getMaxDir();
       this.prevDirection = maxDir;
       this.move(maxDir, time);
@@ -598,7 +616,7 @@ class Bone extends Entity {
 //       let weights = new Weights();
 //       weights.weighObstacles(this.collisionMap, this.pos, 2, 3); // Tweak for different AI
 //       weights.weighMomentum(this.prevDirection);
-//       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, 0.7);
+//       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius);
 //       let maxDir = weights.getMaxDir();
 //       this.prevDirection = maxDir;
 //       this.move(maxDir, time);
