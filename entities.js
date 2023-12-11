@@ -43,16 +43,18 @@ class Entity {
     this.health -= amountDamage;
     if(this.health <= 0) {
       this.isAlive = false;
+      this.health = 0;
     }
   }
 }
 
 class Player extends Entity {
   constructor(_pos, _collisionMap, _animationSet){
-    super(_pos, 10, 0, 3.5, _collisionMap, _animationSet);
+    super(_pos, 10, 500, 3.5, _collisionMap, _animationSet);
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
+    this.holding = new Sword(this);
   }
   move(direction, time, isRolling){
     this.movementDirection = [0, 0];
@@ -81,6 +83,13 @@ class Player extends Entity {
     }
     this.pos[0] += this.movementDirection[0];
     this.pos[1] += this.movementDirection[1];
+  }
+
+  attack(enemies, time) {
+    if(mouseIsPressed) {
+      let targetVector = [mouseX - this.x, mouseY - this.y];
+      this.holding.attack(enemies, targetVector, time);
+    }
   }
 }
 
@@ -181,7 +190,7 @@ class Slime extends Entity {
     this.detectionRange = 8; // TEMPORARY
     this.attackRange = 0.5;
     this.attackTimer = millis();
-    this.attackCooldown = 300;
+    this.attackCooldown = 600;
     this.attackDamage = 1;
     this.combatBalanceRadius = 0.5;
     this.prevDirection = [0, 0];
@@ -195,13 +204,14 @@ class Slime extends Entity {
     this.jumpTime = 700 / this.defaultSpeed;
     this.jumpTimer = millis();
     this.jumpRange = 3;
+    this.radius = 1;
     this.jumpSplashRadius = this.radius * 1.5;
   }
   operate(player, time) {
     let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
     let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
     if(this.jumping) {
-      this.jump(time);
+      this.jump(player, time);
     }
     else if(distance > this.detectionRange) {
       this.isMoving = 0;
@@ -219,7 +229,7 @@ class Slime extends Entity {
     if(this.canJump && distance <= this.jumpRange
       && millis() - this.jumpTimer > this.jumpCooldown) {
       // Jump
-      this.jump(time, distance);
+      this.jump(player, time, distance);
     }
     if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
       // Attack
@@ -238,7 +248,7 @@ class Slime extends Entity {
       this.move(maxDir, time);
     }
   }
-  jump(time, d = this.jumpRange) {
+  jump(player, time, d = this.jumpRange) {
     if(!this.jumping) {
       this.jumpTimer = millis() + this.jumpTime * (d / this.jumpRange);
       this.jumping = true;
@@ -250,11 +260,15 @@ class Slime extends Entity {
     else {
       this.jumping = false;
       this.speed = this.defaultSpeed;
-      this.splash(time);
+      this.splash(player, time);
     }
   }
-  splash(time) {
-
+  splash(player, time) {
+    let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
+    if(distance < this.jumpSplashRadius) {
+      console.log("[Slime] Splash attacks!");
+      player.damage(3, "Bludgeoning");
+    }
   }
   attack(player, time) {
     console.log("[Slime] Attacks.");
@@ -452,7 +466,7 @@ class Skeleton extends Entity {
     this.throwCooldown = 5000;
     this.throwStunTime = 1000;
     this.throwSpeed = 10;
-    this.throwDamage = 5;
+    this.throwDamage = 10;
     this.thrownBones = [];
   }
   operate(player, time) {
@@ -555,6 +569,7 @@ class Bone extends Entity {
   hit(player, time) {
     console.log("[Thrown bone] Hitting!");
     player.damage(this.hitDamage, "Piercing");
+    this.isAlive = false;
   }
 
   move(pos, time){
