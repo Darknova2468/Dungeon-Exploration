@@ -4,11 +4,11 @@ class DungeonMap {
     this.enemies = [];
 
     //builds room nodes;
-    this.dungeon = [new Room(7)];
+    this.dungeon = [new Room(6)];
     for(let i=1; i<_numberOfRooms-1; i++){
-      this.dungeon.push(new Room(floor(random(9, 12))));
+      this.dungeon.push(new Room(floor(random(7, 9))));
     }
-    this.dungeon.push(new Room(12));
+    this.dungeon.push(new Room(10));
 
     //adds procedural distances
     for(let i=1; i<_numberOfRooms; i++){
@@ -110,25 +110,25 @@ class Room {
   }
   addConnection(numberOfConnections, index, numberOfRooms, dungeon, check){
     //pushes connections to node
-    let distance = random() < 0.7 ? 5:Math.floor(random(10, 15));
+    let distance = random() < 0.5 ? 3:Math.floor(random(8, 12));
     if(check){
-      this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>5)]);
+      this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>3)]);
     }
     else {
       if(numberOfConnections === 1){      
         if(random() < 0.5 && index+1 < numberOfRooms){
-          this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>5)]);
-          this.connections.push([index+1, dungeon[index+1].radius+this.radius+5, 0]);
+          this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>3)]);
+          this.connections.push([index+1, dungeon[index+1].radius+this.radius+3, 0]);
         }
         else {
-          this.connections.push([index, dungeon[index].radius+this.radius+5, 0]);
-          this.connections.push([index+1, dungeon[index+1].radius+this.radius+distance, 1+(distance>5)]);
+          this.connections.push([index, dungeon[index].radius+this.radius+3, 0]);
+          this.connections.push([index+1, dungeon[index+1].radius+this.radius+distance, 1+(distance>3)]);
         }
       }
       else {
-        this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>5)]);
-        distance = random() < 0.7 ? 5:Math.floor(random(10, 15));
-        this.connections.push([index+1, dungeon[index+1].radius+this.radius+distance, 1+(distance>5)]);
+        this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>3)]);
+        distance = random() < 0.7 ? 3:Math.floor(random(8, 12));
+        this.connections.push([index+1, dungeon[index+1].radius+this.radius+distance, 1+(distance>3)]);
       }
     }
   }
