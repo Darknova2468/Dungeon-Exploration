@@ -57,7 +57,7 @@ class Entity {
 
 class Player extends Entity {
   constructor(_pos, _collisionMap, _animationSet){
-    super(_pos, 100, 500, 3.5, _collisionMap, _animationSet);
+    super(_pos, 10, 0, 3.5, _collisionMap, _animationSet);
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
