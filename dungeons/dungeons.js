@@ -85,12 +85,25 @@ class DungeonMap {
     generateLabyrinthEdges(this);
 
     // Temporary enemy testing
-    this.enemies.push(new Skeleton([this.playerPos[0]+2, this.playerPos[1]+2], 1, this.minimap, _enemyTileSet));
-    this.enemies.push(new Skeleton([this.playerPos[0]+2, this.playerPos[1]-2], 1, this.minimap, _enemyTileSet));
-    this.enemies.push(new Skeleton([this.playerPos[0]-2, this.playerPos[1]-2], 1, this.minimap, _enemyTileSet));
-    this.enemies.push(new Skeleton([this.playerPos[0]-2, this.playerPos[1]+2], 1, this.minimap, _enemyTileSet));
+    // this.enemies.push(new Slime([this.playerPos[0]+2, this.playerPos[1]+2], 1, this.minimap, _enemyTileSet));
+    // this.enemies.push(new Slime([this.playerPos[0]+2, this.playerPos[1]-2], 1, this.minimap, _enemyTileSet));
+    // this.enemies.push(new Slime([this.playerPos[0]-2, this.playerPos[1]-2], 1, this.minimap, _enemyTileSet));
+    // this.enemies.push(new Slime([this.playerPos[0]-2, this.playerPos[1]+2], 1, this.minimap, _enemyTileSet));
+    for(let i = 0; i < 3; i++) {
+      this.enemies.push(new Slime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, _enemyTileSet));
+    }
+    for(let i = 0; i < 2; i++) {
+      this.enemies.push(new Zombie([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, _enemyTileSet));
+    }
+    for(let i = 0; i < 2; i++) {
+      this.enemies.push(new Goblin([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, _enemyTileSet));
+    }
+    for(let i = 0; i < 1; i++) {
+      this.enemies.push(new Skeleton([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, _enemyTileSet));
+    }
   }
   move(player, time){
+    this.enemies = this.enemies.filter(enemy => enemy.isAlive);
     this.enemies.forEach(enemy => {
       enemy.operate(player, time);
     });
