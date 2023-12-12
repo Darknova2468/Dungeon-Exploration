@@ -89,10 +89,10 @@ class DungeonMap {
       this.enemies.push(new Slime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, _enemyTileSet[0]));
     }
     for(let i = 0; i < 2; i++) {
-      this.enemies.push(new Zombie([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, "chocolate"));
+      this.enemies.push(new Zombie([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, _enemyTileSet[1]));
     }
     for(let i = 0; i < 2; i++) {
-      this.enemies.push(new Goblin([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, _enemyTileSet[1]));
+      this.enemies.push(new Goblin([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, "chocolate"));
     }
     for(let i = 0; i < 1; i++) {
       this.enemies.push(new Skeleton([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, "blanchedalmond"));
