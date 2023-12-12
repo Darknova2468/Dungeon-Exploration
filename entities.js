@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 class Entity {
   constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet){
     this.pos = _pos;
@@ -6,27 +7,26 @@ class Entity {
     this.speed = _speed;
     this.collisionMap = _collisionMap;
     this.animationSet = _animationSet;
-    this.isMoving = 0;
+    this.animationNum = [0, 0];
     this.isAlive = true;
-    this.direction = [0, 0];
     this.animationSpeed = 4;
-    this.draft = false; // Should only be true when textures are not implemented
-    this.draftCol = "black";
   }
   display(screenCenter, screenSize){
-    if(this.draft) { // Remove when all entities are implemented
-      this.displayDraft(screenCenter, screenSize);
-      return;
-    }
     let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
-    x += screenSize[0]*0.5-0.5+(this.direction[0] === 1);
-    y += screenSize[1]*0.5-0.5;
     let scaleX = width/screenSize[0];
     let scaleY = height/screenSize[1];
-    let imgWidth = this.direction[0] === 0 ? scaleX: -scaleX;
-    scale(1-2*(this.direction[0] === 1), 1);
-    image(this.animationSet.animations[this.isMoving+this.direction[1]][Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.isMoving+this.direction[1]].length], x*imgWidth, y*scaleY, scaleX, scaleY);
-    scale(1-2*(this.direction[0] === 1), 1);
+    try{
+      x += screenSize[0]*0.5-0.5+(this.animationNum[1] === 1);
+      y += screenSize[1]*0.5-0.5;
+      let imgWidth = this.animationNum[1] === 0 ? scaleX: -scaleX;
+      scale(1-2*(this.animationNum[1] === 1), 1);
+      image(this.animationSet.animations[this.animationNum[0]][Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.animationNum[0]].length], x*imgWidth, y*scaleY, scaleX, scaleY);
+      scale(1-2*(this.animationNum[1] === 1), 1);
+    }
+    catch{
+      fill(this.animationSet);
+      circle(x*scaleX, y*scaleY, scaleX*0.8);
+    }
   }
   displayDraft(screenCenter, screenSize) {
     let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
@@ -59,26 +59,19 @@ class Player extends Entity {
   move(direction, time, isRolling){
     this.movementDirection = [0, 0];
     let [i, j] = direction;
-    this.direction[0] = i===0 ? this.direction[0]:i===-1 ? 1:0;
-    this.direction[1] = j===0 ? this.direction[1]:j===-1 ? 1:0;
-    this.speed = isRolling && this.isMoving !== 5 ? this.rollSpeed : this.defaultSpeed;
+    this.speed = isRolling && j !== 0 || i !== 0 ? this.rollSpeed : this.defaultSpeed;
+    
+    //animation
+    this.animationNum[1] = (i === -1)*1;
+    this.animationNum[0] = i === 0 && j === 0 ? 7: isRolling? 3:i === 0 ? 5:0; 
+    this.animationNum[0] += j === -1;
+
+    //player movement
     let distance = sqrt(i*i + j*j)!== 0 ? time*this.speed/sqrt(i*i + j*j) : 0;
-    if(i === 0 && j !== 0 && !isRolling){
-      this.isMoving = 5;
-      if(j > 1){
-        this.direction[1] = 1;
-      }
-    }
-    else {
-      this.isMoving = i === 0 && j === 0 ? 7:0;
-      this.isMoving = isRolling && this.isMoving !== 7 ? 3:this.isMoving;
-    }
     if(this.collisionMap[Math.floor(this.pos[1]+j*distance)][Math.floor(this.pos[0])] !== 0){
-      // this.pos[1] += j*distance;
       this.movementDirection[1] = j*distance;
     }
     if(this.collisionMap[Math.floor(this.pos[1])][Math.floor(this.pos[0]+i*distance)] !== 0){
-      // this.pos[0] += i*distance;
       this.movementDirection[0] = i*distance;
     }
     this.pos[0] += this.movementDirection[0];
@@ -214,11 +207,11 @@ class Slime extends Entity {
       this.jump(player, time);
     }
     else if(distance > this.detectionRange) {
-      this.isMoving = 0;
+      this.animationNum[0] = 0;
       this.idle(time);
     }
     else {
-      this.isMoving = 1;
+      this.animationNum[0] = 1;
       this.combat(player, time, distance, pursuitVector);
     }
   }
@@ -293,8 +286,6 @@ class Goblin extends Entity {
     this.attackDamage = 3;
     this.combatBalanceRadius = 2;
     this.prevDirection = [0, 0];
-    this.draft = true;
-    this.draftCol = "chocolate";
 
     // Goblin bully tactics
     this.thrustRadius = 3;
@@ -382,7 +373,6 @@ class Zombie extends Entity {
     this.detectionRange = 10;
     this.combatBalanceRadius = 1;
     this.prevDirection = [0, 0];
-    this.draftCol = "darkolivegreen";
     this.attackRange = 1.5;
     this.attackTimer = millis();
     this.attackCooldown = 700;
@@ -452,8 +442,6 @@ class Skeleton extends Entity {
     this.detectionRange = 10;
     this.combatBalanceRadius = 6;
     this.prevDirection = [0, 0];
-    this.draft = true;
-    this.draftCol = "blanchedalmond";
     this.attackRange = 1.5;
     this.attackTimer = millis();
     this.attackCooldown = 1000;

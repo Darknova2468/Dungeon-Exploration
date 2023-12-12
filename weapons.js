@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 class HeldItem {
   constructor(wielder) {
     this.wielder = wielder;

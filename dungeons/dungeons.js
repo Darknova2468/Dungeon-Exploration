@@ -86,9 +86,9 @@ class DungeonMap {
 
     // Temporary enemy testing
     this.enemies.push(new Slime([this.playerPos[0]+2, this.playerPos[1]+2], 1, this.minimap, _enemyTileSet[0]));
-    this.enemies.push(new Goblin([this.playerPos[0]+2, this.playerPos[1]-2], 1, this.minimap, _enemyTileSet));
+    this.enemies.push(new Goblin([this.playerPos[0]+2, this.playerPos[1]-2], 1, this.minimap, "chocolate"));
     this.enemies.push(new Zombie([this.playerPos[0]-2, this.playerPos[1]-2], 1, this.minimap, _enemyTileSet[1]));
-    this.enemies.push(new Skeleton([this.playerPos[0]-2, this.playerPos[1]+2], 1, this.minimap, _enemyTileSet));
+    this.enemies.push(new Skeleton([this.playerPos[0]-2, this.playerPos[1]+2], 1, this.minimap, "blanchedalmond"));
   }
   move(player, time){
     this.enemies.forEach(enemy => {
