@@ -50,11 +50,14 @@ class Entity {
 
 class Player extends Entity {
   constructor(_pos, _collisionMap, _animationSet){
-    super(_pos, 10, 500, 3.5, _collisionMap, _animationSet);
+    super(_pos, 20, 5, 3.5, _collisionMap, _animationSet);
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
     this.holding = new Sword(this);
+    
+    // Attack/use cooldowns
+    this.attackTimer = millis();
   }
   move(direction, time, isRolling){
     this.movementDirection = [0, 0];
@@ -79,9 +82,10 @@ class Player extends Entity {
   }
 
   attack(enemies, time) {
-    if(mouseIsPressed) {
-      let targetVector = [mouseX - this.x, mouseY - this.y];
-      this.holding.attack(enemies, targetVector, time);
+    if(mouseIsPressed && millis() > this.attackTimer) {
+      // Temporary direction checking; change later
+      let targetVector = [mouseX - width/2, mouseY - height/2];
+      this.attackTimer = this.holding.attack(enemies, targetVector, time);
     }
   }
 }
@@ -189,7 +193,7 @@ class Slime extends Entity {
     this.prevDirection = [0, 0];
 
     // Jumping variables
-    this.canJump = true;
+    this.canJump = false;
     this.jumping = false;
     this.defaultSpeed = this.speed;
     this.jumpSpeed = 4 * this.speed;
