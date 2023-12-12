@@ -13,11 +13,13 @@ let tileSet;
 let myBackground;
 let playerTileSet;
 let slimeTileSet;
+let zombieTileSet;
 
 function preload() {
-  tileSet = new TileSet("CaveTiles.png", [16, 16]);
-  playerTileSet = new AnimateSet("playerSheet1.png", [19, 21]);
-  slimeTileSet = new AnimateSet("slimeSheet1.png", [19, 21]);
+  tileSet = new TileSet("textures/CaveTiles.png", [16, 16]);
+  playerTileSet = new AnimateSet("textures/player.png", [19, 21]);
+  slimeTileSet = new AnimateSet("textures/slime.png", [19, 21]);
+  zombieTileSet = new AnimateSet("textures/zombie.png", [19, 21]);
 }
 
 function setup() {
@@ -27,7 +29,7 @@ function setup() {
   frameRate(30);
   noStroke();
   noSmooth();
-  myDungeon = new DungeonMap(5, 0.3, slimeTileSet);
+  myDungeon = new DungeonMap(5, 0.3, [slimeTileSet, zombieTileSet]);
   minimap = new MiniMap(30, myDungeon.minimap);
   player = new Player(myDungeon.playerPos, myDungeon.minimap, playerTileSet);
   myBackground = new Scene(myDungeon.minimap, [16, 8], tileSet);
@@ -67,9 +69,5 @@ function draw() {
   textSize(12);
   text("fps: " + Math.floor(frameRate()), width-height*3/20, height*6/20);
   textSize(20);
-  text("Health: " + Math.ceil(player.health), height*3/20, height*3/20);
-  // updateDimensions(myDungeon.minimap);
-  // oldGrid = structuredClone(myDungeon.minimap);
-  // generateLabyrinthEdges(myDungeon);
-  // displayGrid(myDungeon.minimap)
+  text("Health: " + Math.ceil(player.health), height*3/20, height*3/20);  
 }

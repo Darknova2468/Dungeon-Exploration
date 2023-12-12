@@ -24,17 +24,9 @@ class Entity {
     let scaleX = width/screenSize[0];
     let scaleY = height/screenSize[1];
     let imgWidth = this.direction[0] === 0 ? scaleX: -scaleX;
-    try{
-      scale(1-2*(this.direction[0] === 1), 1);
-      image(this.animationSet.animations[this.isMoving+this.direction[1]][Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.isMoving+this.direction[1]].length], x*imgWidth, y*scaleY, scaleX, scaleY);
-      scale(1-2*(this.direction[0] === 1), 1);
-    }
-    catch {
-      console.log(Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.isMoving+this.direction[1]].length);
-      console.log(this.animationSet.animations[this.isMoving+this.direction[1]]);
-      fill(this.animationSet);
-      ellipse((x+0.5)*scaleX, (y+0.5)*scaleX, scaleX*0.75, scaleY*0.75);
-    }
+    scale(1-2*(this.direction[0] === 1), 1);
+    image(this.animationSet.animations[this.isMoving+this.direction[1]][Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.isMoving+this.direction[1]].length], x*imgWidth, y*scaleY, scaleX, scaleY);
+    scale(1-2*(this.direction[0] === 1), 1);
   }
   displayDraft(screenCenter, screenSize) {
     let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
@@ -397,12 +389,13 @@ class Zombie extends Entity {
     this.detectionRange = 10;
     this.combatBalanceRadius = 1;
     this.prevDirection = [0, 0];
-    this.draft = true;
     this.draftCol = "darkolivegreen";
     this.attackRange = 1.5;
     this.attackTimer = millis();
     this.attackCooldown = 700;
     this.attackDamage = 2;
+    this.isMoving = 0;
+    this.direction = [0, 0];
 
     // Zombies stop when attacking and bite if close
     this.strafeMultiplier = -1;
@@ -416,7 +409,7 @@ class Zombie extends Entity {
       this.idle(time);
     }
     else {
-      this.isMoving = 1;
+      this.isMoving = 0;
       this.combat(player, time, distance, pursuitVector);
     }
   }
