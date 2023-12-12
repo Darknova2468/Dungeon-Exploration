@@ -282,6 +282,40 @@ class Slime extends Entity {
   }
 }
 
+class LavaSlime extends Slime {
+  constructor(_pos, _level, _collisionMap, _textureSet) {
+    super(_pos, _level, _collisionMap, _textureSet);
+    this.lavaSlimeBalls = [];
+    this.lavaSlimeBallSpeed = 4;
+    this.lavaSlimeBallRange = 4;
+    this.lavaSlimeBallDamage = 3;
+    this.canJump = true;
+    this.animationSet = "crimson";
+  }
+
+  jump(player, time, d = this.jumpRange) {
+    this.jumpTimer = millis();
+    let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
+    this.lavaSlimeBalls.push(new LavaSlimeBall(this.pos, scaleVector(pursuitVector, this.lavaSlimeBallSpeed), this.lavaSlimeBallRange, this.lavaSlimeBallDamage, this.collisionMap, "red"));
+    console.log("[Lava Slime] Shot a lava slime ball!");
+  }
+
+  operate(player, time) {
+    super.operate(player, time);
+    for(let lavaSlimeBall of this.lavaSlimeBalls) {
+      lavaSlimeBall.operate([player], time);
+    }
+    this.lavaSlimeBalls = this.lavaSlimeBalls.filter((b) => b.isAlive);
+  }
+
+  display(screenCenter, screenSize) {
+    super.display(screenCenter, screenSize);
+    for(let lavaSlimeBall of this.lavaSlimeBalls) {
+      lavaSlimeBall.display(screenCenter, screenSize);
+    }
+  }
+}
+
 class Goblin extends Entity {
   constructor(_pos, _level, _collisionMap, _textureSet) {
     super(_pos, _level + 4, 0, 4.5, _collisionMap, _textureSet);
@@ -476,7 +510,7 @@ class Skeleton extends Entity {
       this.combat(player, time, distance, pursuitVector);
     }
     for(let bone of this.thrownBones) {
-      bone.operate(player, time);
+      bone.operate([player], time);
     }
     this.thrownBones = this.thrownBones.filter((b) => b.isAlive);
   }
@@ -509,7 +543,7 @@ class Skeleton extends Entity {
   }
   throw(player, time, pursuitVector) {
     console.log("[Skeleton] Throws a bone.");
-    this.thrownBones.push(new Bone(this.pos, scaleVector(pursuitVector, this.throwSpeed), this.throwRange, this.throwDamage, this.collisionMap, ""));
+    this.thrownBones.push(new Bone(this.pos, scaleVector(pursuitVector, this.throwSpeed), this.throwRange, this.throwDamage, this.collisionMap, "white"));
   }
   display(screenCenter, screenSize) {
     super.display(screenCenter, screenSize);
@@ -531,37 +565,64 @@ class Skeleton extends Entity {
   } 
 }
 
-class Bone extends Entity {
-  constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap, _textureSet) {
+class Projectile extends Entity {
+  constructor(_pos, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet) {
     super(structuredClone(_pos), 0, 0, 0, _collisionMap, _textureSet);
     this.initPos = structuredClone(this.pos);
     this.dir = _dir;
     this.hitDamage = _hitDmg;
+    this.damageType = _dmgType;
     this.speed = Math.sqrt(_dir[0]*_dir[0] + _dir[1]*_dir[1]);
     this.maxDist = _maxDist;
-    this.attackRange = 0.5;
-    this.draft = true;
+    this.hitRange = _hitRange;
+    this.draft = false;
     this.draftCol = "white";
     this.hitTimer = millis();
     this.hitCooldown = 50;
+    this.canPierce = _canPierce;
+    this.explosionRadius = _explosionRadius;
+    this.explosionDamage = _explosionDamage;
+    this.explosionDamageType = _explosionDamageType;
   }
 
-  operate(player, time) {
-    this.move(this.dir, time);
-    let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
-    if(distance < this.attackRange && millis() - this.hitTimer > this.hitCooldown) {
-      this.hit(player, time);
-      this.hitTimer = millis();
+  operate(targets, time) {
+    if(!this.isAlive) {
+      return;
     }
-    if(dist(this.pos[0], this.pos[1], this.initPos[0], this.initPos[1]) > this.maxDist) {
+    this.move(this.dir, time);
+    for(let target of targets) {
+      let distance = dist(target.pos[0], target.pos[1], this.pos[0], this.pos[1]);
+      if(distance < this.hitRange && millis() - this.hitTimer > this.hitCooldown) {
+        this.hit(target, time);
+        this.hitTimer = millis();
+      }
+      if(dist(this.pos[0], this.pos[1], this.initPos[0], this.initPos[1]) > this.maxDist) {
+        this.isAlive = false;
+      }
+    }
+    if(!this.isAlive) {
+      this.explode(targets, time);
+    }
+  }
+
+  hit(target, time) {
+    console.log("[Projectile] Hitting!");
+    target.damage(this.hitDamage, this.damageType);
+    if(!this.canPierce) {
       this.isAlive = false;
     }
   }
 
-  hit(player, time) {
-    console.log("[Thrown bone] Hitting!");
-    player.damage(this.hitDamage, "Piercing");
-    this.isAlive = false;
+  explode(targets, time) {
+    if(this.explosionRadius === 0) {
+      return;
+    }
+    for(let target of targets) {
+      let distance = dist(target.pos[0], target.pos[1], this.pos[0], this.pos[1]);
+      if(distance < this.explosionRadius) {
+        target.damage(this.explosionDamage, this.explosionDamageType);
+      }
+    }
   }
 
   move(pos, time){
@@ -574,6 +635,18 @@ class Bone extends Entity {
     else {
       this.isAlive = false;
     }
+  }
+}
+
+class Bone extends Projectile {
+  constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap, _textureSet) {
+    super(_pos, _dir, _maxDist, _hitDmg, "Piercing", 0.5, false, 0, 0, null, _collisionMap, _textureSet);
+  }
+}
+
+class LavaSlimeBall extends Projectile {
+  constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap, _textureSet) {
+    super(_pos, _dir, _maxDist, _hitDmg, "Fire", 0.5, false, 0, 0, null, _collisionMap, _textureSet);
   }
 }
 
