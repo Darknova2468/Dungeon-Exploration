@@ -1,6 +1,8 @@
+/* eslint-disable no-undef */
 class Slime extends Entity {
   constructor(_pos, _level, _collisionMap, _textureSet) {
     super(_pos, Math.floor(4*Math.log10(_level+1)), 0, 1.5, _collisionMap, _textureSet);
+    this.level = _level;
     this.detectionRange = 8; // TEMPORARY
     this.attackRange = 0.5;
     this.attackTimer = millis();
@@ -136,5 +138,69 @@ class LavaSlime extends Slime {
 class LavaSlimeBall extends Projectile {
   constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap, _textureSet) {
     super(_pos, _dir, _maxDist, _hitDmg, "Fire", 0.5, false, 0, 0, null, _collisionMap, _textureSet);
+  }
+}
+
+class FrostSlime extends Slime {
+  constructor(_pos, _level, _collisionMap, _textureSet) {
+    super(_pos, _level, _collisionMap, _textureSet);
+    this.speed *= 0.5;
+    this.frozenPuddles = [];
+    this.canJump = true;
+    this.animationSet = "lightskyblue";
+  }
+
+  splash(player, time) {
+    super.splash(player, time);
+    this.frozenPuddles.push(new FrozenPuddle(this.pos, this.radius, 1, 0.5 / this.level, this.collisionMap, "powderblue"));
+  }
+
+  operate(player, time) {
+    super.operate(player, time);
+    for(let frozenPuddle of this.frozenPuddles) {
+      frozenPuddle.operate([player], time);
+    }
+    this.frozenPuddles = this.frozenPuddles.filter((b) => b.isAlive);
+  }
+
+  display(screenCenter, screenSize) {
+    super.display(screenCenter, screenSize);
+    for(let frozenPuddle of this.frozenPuddles) {
+      frozenPuddle.display(screenCenter, screenSize);
+    }
+  }
+}
+
+class FrozenPuddle extends Entity {
+  constructor(_pos, _radius, _freezeDamage, _thawRate, _collisionMap, _textureSet) {
+    super(structuredClone(_pos), 0, 0, 0, _collisionMap, _textureSet);
+    this.invincible = true;
+    this.radius = _radius;
+    this.freezeDamage = _freezeDamage;
+    this.thawRate = _thawRate;
+    this.hitTimer = millis();
+    this.hitCooldown = 500;
+    this.damageType = "Cold";
+  }
+
+  operate(targets, time) {
+    this.freezeDamage -= this.thawRate * time;
+    if(this.freezeDamage <= 0) {
+      this.isAlive = false;
+    }
+    if(!this.isAlive) {
+      return;
+    }
+    for(let target of targets) {
+      let distance = dist(target.pos[0], target.pos[1], this.pos[0], this.pos[1]);
+      if(distance < this.radius && millis() - this.hitTimer > this.hitCooldown) {
+        this.freeze(target, time);
+        this.hitTimer = millis();
+      }
+    }
+  }
+  freeze(target, time) {
+    console.log("[Projectile] Hitting!");
+    target.damage(this.freezeDamage, this.damageType);
   }
 }

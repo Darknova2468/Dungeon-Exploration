@@ -1,3 +1,4 @@
+/* eslint-disable no-extra-parens */
 /* eslint-disable no-undef */
 const DEBUG = false;
 

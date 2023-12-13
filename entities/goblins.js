@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 class Goblin extends Entity {
   constructor(_pos, _level, _collisionMap, _textureSet) {
     super(_pos, _level + 4, 0, 4.5, _collisionMap, _textureSet);

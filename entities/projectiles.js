@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 class Projectile extends Entity {
   constructor(_pos, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet) {
     super(structuredClone(_pos), 0, 0, 0, _collisionMap, _textureSet);
@@ -16,6 +17,7 @@ class Projectile extends Entity {
     this.explosionRadius = _explosionRadius;
     this.explosionDamage = _explosionDamage;
     this.explosionDamageType = _explosionDamageType;
+    this.invincible = true;
   }
 
   operate(targets, time) {

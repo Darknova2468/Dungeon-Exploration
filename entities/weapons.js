@@ -12,6 +12,8 @@ class MeleeWeapon extends HeldItem {
     this.range = range;
     this.delay = delay;
   }
+
+  attack(enemies, direction, time) {}
 }
 
 class SweepWeapon extends MeleeWeapon {

@@ -10,6 +10,7 @@ class Entity {
     this.animationNum = [0, 0];
     this.isAlive = true;
     this.animationSpeed = 4;
+    this.invincible = false;
   }
   display(screenCenter, screenSize){
     let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
@@ -41,7 +42,7 @@ class Entity {
     // damageType unused for now
     amountDamage *= 5/(this.defence + 5);
     this.health -= amountDamage;
-    if(this.health <= 0) {
+    if(this.health <= 0 && !this.invincible) {
       this.isAlive = false;
       this.health = 0;
     }

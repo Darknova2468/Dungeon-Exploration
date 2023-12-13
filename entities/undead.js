@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 class Zombie extends Entity {
   constructor(_pos, _level, _collisionMap, _textureSet) {
     super(_pos, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, _collisionMap, _textureSet);
