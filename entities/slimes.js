@@ -144,10 +144,11 @@ class LavaSlimeBall extends Projectile {
 class FrostSlime extends Slime {
   constructor(_pos, _level, _collisionMap, _textureSet) {
     super(_pos, _level, _collisionMap, _textureSet);
-    this.speed *= 0.5;
+    this.speed = 0;
+    this.defaultSpeed = 0;
     this.frozenPuddles = [];
     this.canJump = true;
-    this.animationSet = "lightskyblue";
+    // this.animationSet = "lightskyblue";
   }
 
   splash(player, time) {
@@ -157,6 +158,9 @@ class FrostSlime extends Slime {
 
   operate(player, time) {
     super.operate(player, time);
+    if(!this.jumping) {
+      this.animationNum[0] = 0;
+    }
     for(let frozenPuddle of this.frozenPuddles) {
       frozenPuddle.operate([player], time);
     }
@@ -200,7 +204,7 @@ class FrozenPuddle extends Entity {
     }
   }
   freeze(target, time) {
-    console.log("[Projectile] Hitting!");
+    console.log("[Frozen Puddle] Freezing.");
     target.damage(this.freezeDamage, this.damageType);
   }
 }
