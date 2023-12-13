@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 class Slime extends Entity {
   constructor(_pos, _level, _collisionMap, _textureSet) {
     super(_pos, Math.floor(4*Math.log10(_level+1)), 0, 1.5, _collisionMap, _textureSet);
@@ -107,7 +108,7 @@ class LavaSlime extends Slime {
     this.lavaSlimeBallRange = 4;
     this.lavaSlimeBallDamage = 3;
     this.canJump = true;
-    this.animationSet = "crimson";
+    this.animationSet = _textureSet;
   }
 
   jump(player, time, d = this.jumpRange) {
