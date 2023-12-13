@@ -88,7 +88,7 @@ class DungeonMap {
     for(let i = 0; i < 1; i++) {
       this.enemies.push(new Slime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, _enemyTileSet[0]));
     }
-    for(let i = 0; i < 10; i++) {
+    for(let i = 0; i < 1; i++) {
       this.enemies.push(new LavaSlime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, _enemyTileSet[1]));
     }
     for(let i = 0; i < 1; i++) {
@@ -102,6 +102,9 @@ class DungeonMap {
     }
     for(let i = 0; i < 1; i++) {
       this.enemies.push(new Skeleton([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, "blanchedalmond"));
+    }
+    for(let i = 0; i < 3; i++) {
+      this.enemies.push(new Phantom([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, "black"));
     }
   }
   move(player, time){

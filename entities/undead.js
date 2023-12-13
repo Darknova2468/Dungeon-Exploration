@@ -88,8 +88,56 @@ class Skeleton extends Enemy {
   }
 }
 
+class Phantom extends Enemy {
+  constructor(_pos, _level, _collisionMap, _textureSet) {
+    super(_pos, "Skeleton", _level, Math.floor(_level + 4), 0, 3, 15, 8, 3, "Necrotic", 1.5, 1000, _collisionMap, _textureSet);
+
+    // Necrotic spellcaster
+    this.retreatMidpoint = 6;
+    this.spellRange = 8;
+    this.spellTimer = millis();
+    this.spellCooldown = 7000;
+    this.spellSpeed = 5;
+    this.spellDamage = 7;
+  }
+
+  combat(player, enemies, time, distance, pursuitVector) {
+    if(distance <= this.spellRange && millis() - this.spellTimer > this.spellCooldown) {
+      // Casts a spell
+      this.cast(player, enemies, time, pursuitVector);
+      this.spellTimer = millis();
+    }
+    else if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
+      // Attack
+      this.attack(player, time);
+      this.attackTimer = millis();
+    }
+    else {
+      // Chase
+      let weights = new Weights();
+      weights.weighObstacles(this.collisionMap, this.pos, 2, 3); // Tweak for different AI
+      weights.weighMomentum(this.prevDirection);
+      // Phantoms also keep their distance
+      weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, this.retreatMidpoint);
+      let maxDir = weights.getMaxDir();
+      this.prevDirection = maxDir;
+      this.move(maxDir, time);
+    }
+  }
+  cast(player, enemies, time, pursuitVector) {
+    console.log("[Phantom] Casts a dark spell!");
+    enemies.push(new DarkSpell(this.pos, scaleVector(pursuitVector, this.spellSpeed), this.spellRange, this.spellDamage, this.collisionMap, "black"));
+  }
+}
+
 class Bone extends EnemyProjectile {
   constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap, _textureSet) {
     super(_pos, _dir, _maxDist, _hitDmg, "Piercing", 0.5, false, 0, 0, null, _collisionMap, _textureSet);
+  }
+}
+
+class DarkSpell extends EnemyProjectile {
+  constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap, _textureSet) {
+    super(_pos, _dir, _maxDist, _hitDmg, "Necrotic", 1, false, 3, 4, "Necrotic", _collisionMap, _textureSet);
   }
 }
