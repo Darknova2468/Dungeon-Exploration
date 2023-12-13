@@ -119,6 +119,7 @@ class Player extends Entity {
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
     this.holding = new Sword(this);
+    this.invincible = true;
     
     // Attack/use cooldowns
     this.attackTimer = millis();

@@ -1,35 +1,17 @@
 /* eslint-disable no-undef */
-class Zombie extends Entity {
+class Zombie extends Enemy {
   constructor(_pos, _level, _collisionMap, _textureSet) {
-    super(_pos, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, _collisionMap, _textureSet);
-    // Default parameters
-    this.detectionRange = 10;
-    this.combatBalanceRadius = 1;
-    this.prevDirection = [0, 0];
-    this.attackRange = 1.5;
-    this.attackTimer = millis();
-    this.attackCooldown = 700;
-    this.attackDamage = 2;
-    this.isMoving = 0;
-    this.direction = [0, 0];
+    // super(_pos, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, _collisionMap, _textureSet);
+    super(_pos, "Zombie", _level, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, 10, 1, 2, "Bludgeoning", 1.5, 700, _collisionMap, _textureSet);
 
     // Zombies stop when attacking and bite if close
+    this.isMoving = 0;
     this.strafeMultiplier = -1;
     this.biteRadius = 0.7;
+    this.biteDamage = 2;
+    this.biteDamageType = "Piercing";
   }
-  operate(player, enemies, time) {
-    let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
-    let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
-    if(distance > this.detectionRange) {
-      this.isMoving = 0;
-      this.idle(time);
-    }
-    else {
-      this.isMoving = 0;
-      this.combat(player, time, distance, pursuitVector);
-    }
-  }
-  combat(player, time, distance, pursuitVector) {
+  combat(player, enemies, time, distance, pursuitVector) {
     if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
       // Attack
       this.attack(player, time, distance);
@@ -47,23 +29,10 @@ class Zombie extends Entity {
     }
   }
   attack(player, time, distance) {
-    console.log("[Zombie] Attacks.");
-    player.damage(this.attackDamage, "Bludgeoning");
+    super.attack(player, time);
     if(distance <= this.biteRadius) {
-      player.damage(this.attackDamage, "Piercing");
+      player.damage(this.biteDamage, this.biteDamageType);
       console.log("[Zombie] Bites.");
-    }
-  }
-  idle(time) {
-
-  } 
-  move(pos, time){
-    let [dx, dy] = scaleVector(pos, this.speed * time);
-    if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0){
-      this.pos[0] += dx;
-    }
-    if(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])] !== 0){
-      this.pos[1] += dy;
     }
   }
 }

@@ -79,6 +79,8 @@ class LavaSlime extends Slime {
     this.lavaSlimeBallSpeed = 4;
     this.lavaSlimeBallRange = 4;
     this.lavaSlimeBallDamage = 3;
+    this.combatBalanceRadius = 5;
+    this.attackDamage = 0;
     this.canJump = true;
     this.animationSet = _textureSet;
   }
