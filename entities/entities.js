@@ -50,12 +50,15 @@ class Entity {
 }
 
 class Enemy extends Entity {
-  constructor(_pos, _name, _level, _health, _defence, _speed, _detectionRange, _combatBalanceRadius, _attackRange, _attackCooldown, _collisionMap, _textureSet) {
+  constructor(_pos, _name, _level, _health, _defence, _speed, _detectionRange, _combatBalanceRadius, _attackDamage, _attackDamageType, _attackRange, _attackCooldown, _collisionMap, _textureSet) {
     super(_pos, _health, _defence, _speed, _collisionMap, _textureSet);
     this.name = _name;
     // Default parameters
+    this.level = _level;
     this.detectionRange = _detectionRange;
     this.combatBalanceRadius = _combatBalanceRadius;
+    this.attackDamage = _attackDamage;
+    this.attackDamageType = _attackDamageType;
     this.attackRange = _attackRange;
     this.attackTimer = millis();
     this.attackCooldown = _attackCooldown;
@@ -82,7 +85,7 @@ class Enemy extends Entity {
     else {
       // Chase
       let weights = new Weights();
-      weights.weighObstacles(this.collisionMap, this.pos, 2, 3); // Tweak for different AI
+      weights.weighObstacles(this.collisionMap, this.pos, 2, 3);
       weights.weighMomentum(this.prevDirection);
       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius);
       let maxDir = weights.getMaxDir();
@@ -92,6 +95,7 @@ class Enemy extends Entity {
   }
   attack(player, time) {
     console.log(`[${this.name}] Attacks.`);
+    player.damage(this.attackDamage, this.attackDamageType);
   }
   idle(time) {
 
