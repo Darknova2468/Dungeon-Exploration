@@ -2,7 +2,6 @@
 class Slime extends Enemy {
   constructor(_pos, _level, _collisionMap, _textureSet) {
     super(_pos, "Slime", _level, Math.floor(4*Math.log10(_level+1)), 0, 1.5, 8, 0.5, 1, "Bludgeoning", 0.5, 600, _collisionMap, _textureSet);
-    this.prevDirection = [0, 0];
 
     // Jumping variables
     this.canJump = false;
@@ -120,7 +119,6 @@ class FrostSlime extends Slime {
     this.defaultSpeed = 0;
     this.frozenPuddles = [];
     this.canJump = true;
-    // this.animationSet = "lightskyblue";
   }
 
   splash(player, time) {

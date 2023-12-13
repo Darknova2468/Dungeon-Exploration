@@ -1,12 +1,8 @@
 /* eslint-disable no-undef */
-class Goblin extends Entity {
+class Goblin extends Enemy {
   constructor(_pos, _level, _collisionMap, _textureSet) {
-    super(_pos, _level + 4, 0, 4.5, _collisionMap, _textureSet);
-    this.detectionRange = 12;
-    this.attackRange = 1;
-    this.attackDamage = 3;
-    this.combatBalanceRadius = 2;
-    this.prevDirection = [0, 0];
+    // super(_pos, _level + 4, 0, 4.5, _collisionMap, _textureSet);
+    super(_pos, "Goblin", _level, _level + 4, 0, 4.5, 12, 2, 3, "Slashing", 1, 700, _collisionMap, _textureSet);
 
     // Goblin bully tactics
     this.thrustRadius = 3;
@@ -14,22 +10,8 @@ class Goblin extends Entity {
     this.backing = false;
     this.fleeing = false;
     this.thrustChance = 0.02;
-    this.attackTimer = millis();
-    this.attackCooldown = 700;
   }
-  operate(player, enemies, time) {
-    let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
-    let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
-    if(distance > this.detectionRange) {
-      this.isMoving = 0;
-      this.idle(time);
-    }
-    else {
-      this.isMoving = 1;
-      this.combat(player, time, distance, pursuitVector);
-    }
-  }
-  combat(player, time, distance, pursuitVector) {
+  combat(player, enemies, time, distance, pursuitVector) {
     if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
       // Attack
       this.attack(player, time);
@@ -67,22 +49,9 @@ class Goblin extends Entity {
       this.move(maxDir, time);
     }
   }
-  attack(player, time) {
-    console.log("[Goblin] Attacks.");
-    player.damage(this.attackDamage, "Slashing");
-  }
   idle(time) {
     this.thrusting = false;
     this.backing = false;
     this.fleeing = false;
-  } 
-  move(pos, time){
-    let [dx, dy] = scaleVector(pos, this.speed * time);
-    if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0){
-      this.pos[0] += dx;
-    }
-    if(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])] !== 0){
-      this.pos[1] += dy;
-    }
   }
 }

@@ -62,6 +62,7 @@ class Enemy extends Entity {
     this.attackRange = _attackRange;
     this.attackTimer = millis();
     this.attackCooldown = _attackCooldown;
+    this.prevDirection = [0, 0];
   }
 
   operate(player, enemies, time) {
