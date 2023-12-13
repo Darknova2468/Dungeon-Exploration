@@ -109,7 +109,7 @@ class LavaSlime extends Slime {
     this.lavaSlimeBallRange = 4;
     this.lavaSlimeBallDamage = 3;
     this.canJump = true;
-    this.animationSet = "crimson";
+    this.animationSet = _textureSet;
   }
 
   jump(player, time, d = this.jumpRange) {
