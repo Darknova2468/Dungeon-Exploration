@@ -19,7 +19,7 @@ class Slime extends Enemy {
   }
   operate(player, enemies, time) {
     if(this.jumping) {
-      this.jump(player, time);
+      this.jump(player, enemies, time);
     }
     else {
       super.operate(player, enemies, time);
@@ -29,7 +29,7 @@ class Slime extends Enemy {
     if(this.canJump && distance <= this.jumpRange
       && millis() - this.jumpTimer > this.jumpCooldown) {
       // Jump
-      this.jump(player, time, distance);
+      this.jump(player, enemies, time, distance);
     }
     if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
       // Attack
@@ -48,7 +48,7 @@ class Slime extends Enemy {
       this.move(maxDir, time);
     }
   }
-  jump(player, time, d = this.jumpRange) {
+  jump(player, enemies, time, d = this.jumpRange) {
     if(!this.jumping) {
       this.jumpTimer = millis() + this.jumpTime * (d / this.jumpRange);
       this.jumping = true;
@@ -60,10 +60,10 @@ class Slime extends Enemy {
     else {
       this.jumping = false;
       this.speed = this.defaultSpeed;
-      this.splash(player, time);
+      this.splash(player, enemies, time);
     }
   }
-  splash(player, time) {
+  splash(player, enemies, time) {
     let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
     if(distance < this.jumpSplashRadius) {
       console.log("[Slime] Splash attacks!");
@@ -85,7 +85,7 @@ class LavaSlime extends Slime {
     this.animationSet = _textureSet;
   }
 
-  jump(player, time, d = this.jumpRange) {
+  jump(player, enemies, time, d = this.jumpRange) {
     this.jumpTimer = millis();
     let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
     this.lavaSlimeBalls.push(new LavaSlimeBall(this.pos, scaleVector(pursuitVector, this.lavaSlimeBallSpeed), this.lavaSlimeBallRange, this.lavaSlimeBallDamage, this.collisionMap, "red"));
@@ -119,30 +119,18 @@ class FrostSlime extends Slime {
     super(_pos, _level, _collisionMap, _textureSet);
     this.speed = 0;
     this.defaultSpeed = 0;
-    this.frozenPuddles = [];
     this.canJump = true;
   }
 
-  splash(player, time) {
-    super.splash(player, time);
-    this.frozenPuddles.push(new FrozenPuddle(this.pos, this.radius, 1, 0.5 / this.level, this.collisionMap, "powderblue"));
+  splash(player, enemies, time) {
+    super.splash(player, enemies, time);
+    enemies.push(new FrozenPuddle(this.pos, this.radius, 1, 0.5 / this.level, this.collisionMap, "powderblue"));
   }
 
   operate(player, enemies, time) {
     super.operate(player, enemies, time);
     if(!this.jumping) {
       this.animationNum[0] = 0;
-    }
-    for(let frozenPuddle of this.frozenPuddles) {
-      frozenPuddle.operate([player], time);
-    }
-    this.frozenPuddles = this.frozenPuddles.filter((b) => b.isAlive);
-  }
-
-  display(screenCenter, screenSize) {
-    super.display(screenCenter, screenSize);
-    for(let frozenPuddle of this.frozenPuddles) {
-      frozenPuddle.display(screenCenter, screenSize);
     }
   }
 }
@@ -159,7 +147,7 @@ class FrozenPuddle extends Entity {
     this.damageType = "Cold";
   }
 
-  operate(targets, time) {
+  operate(target, enemies, time) {
     this.freezeDamage -= this.thawRate * time;
     if(this.freezeDamage <= 0) {
       this.isAlive = false;
@@ -167,12 +155,10 @@ class FrozenPuddle extends Entity {
     if(!this.isAlive) {
       return;
     }
-    for(let target of targets) {
-      let distance = dist(target.pos[0], target.pos[1], this.pos[0], this.pos[1]);
-      if(distance < this.radius && millis() - this.hitTimer > this.hitCooldown) {
-        this.freeze(target, time);
-        this.hitTimer = millis();
-      }
+    let distance = dist(target.pos[0], target.pos[1], this.pos[0], this.pos[1]);
+    if(distance < this.radius && millis() - this.hitTimer > this.hitCooldown) {
+      this.freeze(target, time);
+      this.hitTimer = millis();
     }
   }
   freeze(target, time) {

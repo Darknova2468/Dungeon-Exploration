@@ -72,3 +72,17 @@ class Projectile extends Entity {
     }
   }
 }
+
+/**
+ * Enemy version of projectile, for only a single target
+ * (the player)
+ */
+class EnemyProjectile extends Projectile {
+  constructor(_pos, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet) {
+    super(_pos, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet)
+  }
+
+  operate(target, enemies, time) {
+    super.operate([target], time);
+  }
+}
