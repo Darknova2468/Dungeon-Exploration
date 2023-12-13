@@ -49,6 +49,64 @@ class Entity {
   }
 }
 
+class Enemy extends Entity {
+  constructor(_pos, _name, _level, _health, _defence, _speed, _detectionRange, _combatBalanceRadius, _attackRange, _attackCooldown, _collisionMap, _textureSet) {
+    super(_pos, _health, _defence, _speed, _collisionMap, _textureSet);
+    this.name = _name;
+    // Default parameters
+    this.detectionRange = _detectionRange;
+    this.combatBalanceRadius = _combatBalanceRadius;
+    this.attackRange = _attackRange;
+    this.attackTimer = millis();
+    this.attackCooldown = _attackCooldown;
+  }
+
+  operate(player, time) {
+    let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
+    let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
+    if(distance > this.detectionRange) {
+      this.isMoving = 0;
+      this.idle(time);
+    }
+    else {
+      this.isMoving = 1;
+      this.combat(player, time, distance, pursuitVector);
+    }
+  }
+  combat(player, time, distance, pursuitVector) {
+    if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
+      // Attack
+      this.attack(player, time);
+      this.attackTimer = millis();
+    }
+    else {
+      // Chase
+      let weights = new Weights();
+      weights.weighObstacles(this.collisionMap, this.pos, 2, 3); // Tweak for different AI
+      weights.weighMomentum(this.prevDirection);
+      weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius);
+      let maxDir = weights.getMaxDir();
+      this.prevDirection = maxDir;
+      this.move(maxDir, time);
+    }
+  }
+  attack(player, time) {
+    console.log(`[${this.name}] Attacks.`);
+  }
+  idle(time) {
+
+  } 
+  move(pos, time){
+    let [dx, dy] = scaleVector(pos, this.speed * time);
+    if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0){
+      this.pos[0] += dx;
+    }
+    if(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])] !== 0){
+      this.pos[1] += dy;
+    }
+  }
+}
+
 class Player extends Entity {
   constructor(_pos, _collisionMap, _animationSet){
     super(_pos, 20, 5, 3.5, _collisionMap, _animationSet);
