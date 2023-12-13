@@ -17,7 +17,7 @@ class Zombie extends Entity {
     this.strafeMultiplier = -1;
     this.biteRadius = 0.7;
   }
-  operate(player, time) {
+  operate(player, enemies, time) {
     let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
     let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
     if(distance > this.detectionRange) {
@@ -90,7 +90,7 @@ class Skeleton extends Entity {
     this.throwDamage = 10;
     this.thrownBones = [];
   }
-  operate(player, time) {
+  operate(player, enemies, time) {
     let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
     let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
     if(millis() - this.throwTimer < this.throwStunTime) {

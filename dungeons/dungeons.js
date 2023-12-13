@@ -107,7 +107,7 @@ class DungeonMap {
   move(player, time){
     this.enemies = this.enemies.filter(enemy => enemy.isAlive);
     this.enemies.forEach(enemy => {
-      enemy.operate(player, time);
+      enemy.operate(player, this.enemies, time);
     });
   }
   display(screenCenter, screenSize, scale){

@@ -17,7 +17,7 @@ class Goblin extends Entity {
     this.attackTimer = millis();
     this.attackCooldown = 700;
   }
-  operate(player, time) {
+  operate(player, enemies, time) {
     let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
     let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
     if(distance > this.detectionRange) {

@@ -64,7 +64,7 @@ class Enemy extends Entity {
     this.attackCooldown = _attackCooldown;
   }
 
-  operate(player, time) {
+  operate(player, enemies, time) {
     let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
     let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
     if(distance > this.detectionRange) {
@@ -73,10 +73,10 @@ class Enemy extends Entity {
     }
     else {
       this.isMoving = 1;
-      this.combat(player, time, distance, pursuitVector);
+      this.combat(player, enemies, time, distance, pursuitVector);
     }
   }
-  combat(player, time, distance, pursuitVector) {
+  combat(player, enemies, time, distance, pursuitVector) {
     if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
       // Attack
       this.attack(player, time);

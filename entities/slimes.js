@@ -18,15 +18,15 @@ class Slime extends Enemy {
     this.jumpSplashDamage = 3;
     this.jumpSplashDamageType = "Bludgeoning";
   }
-  operate(player, time) {
+  operate(player, enemies, time) {
     if(this.jumping) {
       this.jump(player, time);
     }
     else {
-      super.operate(player, time);
+      super.operate(player, enemies, time);
     }
   }
-  combat(player, time, distance, pursuitVector) {
+  combat(player, enemies, time, distance, pursuitVector) {
     if(this.canJump && distance <= this.jumpRange
       && millis() - this.jumpTimer > this.jumpCooldown) {
       // Jump
@@ -91,8 +91,8 @@ class LavaSlime extends Slime {
     console.log("[Lava Slime] Shot a lava slime ball!");
   }
 
-  operate(player, time) {
-    super.operate(player, time);
+  operate(player, enemies, time) {
+    super.operate(player, enemies, time);
     for(let lavaSlimeBall of this.lavaSlimeBalls) {
       lavaSlimeBall.operate([player], time);
     }
@@ -128,8 +128,8 @@ class FrostSlime extends Slime {
     this.frozenPuddles.push(new FrozenPuddle(this.pos, this.radius, 1, 0.5 / this.level, this.collisionMap, "powderblue"));
   }
 
-  operate(player, time) {
-    super.operate(player, time);
+  operate(player, enemies, time) {
+    super.operate(player, enemies, time);
     if(!this.jumping) {
       this.animationNum[0] = 0;
     }
