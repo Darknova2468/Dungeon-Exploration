@@ -41,7 +41,6 @@ class Projectile extends Entity {
   }
 
   hit(target, time) {
-    console.log("[Projectile] Hitting!");
     target.damage(this.hitDamage, this.damageType);
     if(!this.canPierce) {
       this.isAlive = false;
@@ -84,5 +83,12 @@ class EnemyProjectile extends Projectile {
 
   operate(target, enemies, time) {
     super.operate([target], time);
+  }
+
+  hit(target, time) {
+    if(ENEMYDEBUG) {
+      console.log("[Projectile] Hitting!");
+    }
+    super.hit(target, time);
   }
 }

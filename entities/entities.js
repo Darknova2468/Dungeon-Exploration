@@ -1,6 +1,9 @@
 const baseResolution = [24, 24];
 
 /* eslint-disable no-undef */
+
+const ENEMYDEBUG = 0;
+
 class Entity {
   constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet){
     this.pos = _pos;
@@ -100,7 +103,9 @@ class Enemy extends Entity {
     }
   }
   attack(player, time) {
-    console.log(`[${this.name}] Attacks.`);
+    if(ENEMYDEBUG) {
+      console.log(`[${this.name}] Attacks.`);
+    }
     player.damage(this.attackDamage, this.attackDamageType);
   }
   idle(time) {
@@ -124,7 +129,7 @@ class Player extends Entity {
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
     this.holding = new Sword(this);
-    this.invincible = true;
+    // this.invincible = true;
     
     // Attack/use cooldowns
     this.attackTimer = millis();
@@ -205,7 +210,7 @@ class Weights {
       for(let j = -radius; j <= radius; j++) {
         let blockX = Math.floor(pos[0]) + j;
         let blockY = Math.floor(pos[1]) + i;
-        if(collisionMap[blockY][blockX] === 0) {
+        if(verifyIndices(collisionMap, blockY, blockX) && collisionMap[blockY][blockX] === 0) {
           // Centre at the centre of the square
           blockX += 0.5;
           blockY += 0.5;
