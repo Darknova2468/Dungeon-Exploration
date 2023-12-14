@@ -41,7 +41,6 @@ class Projectile extends Entity {
   }
 
   hit(target, time) {
-    console.log("[Projectile] Hitting!");
     target.damage(this.hitDamage, this.damageType);
     if(!this.canPierce) {
       this.isAlive = false;
@@ -79,10 +78,17 @@ class Projectile extends Entity {
  */
 class EnemyProjectile extends Projectile {
   constructor(_pos, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet) {
-    super(_pos, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet)
+    super(_pos, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet);
   }
 
   operate(target, enemies, time) {
     super.operate([target], time);
+  }
+
+  hit(target, time) {
+    if(ENEMYDEBUG) {
+      console.log("[Projectile] Hitting!");
+    }
+    super.hit(target, time);
   }
 }

@@ -32,7 +32,9 @@ class Zombie extends Enemy {
     super.attack(player, time);
     if(distance <= this.biteRadius) {
       player.damage(this.biteDamage, this.biteDamageType);
-      console.log("[Zombie] Bites.");
+      if(ENEMYDEBUG) {
+        console.log("[Zombie] Bites.");
+      }
     }
   }
 }
@@ -83,14 +85,16 @@ class Skeleton extends Enemy {
     }
   }
   throw(player, enemies, time, pursuitVector) {
-    console.log("[Skeleton] Throws a bone.");
+    if(ENEMYDEBUG) {
+      console.log("[Skeleton] Throws a bone.");
+    }
     enemies.push(new Bone(this.pos, scaleVector(pursuitVector, this.throwSpeed), this.throwRange, this.throwDamage, this.collisionMap, "white"));
   }
 }
 
 class Phantom extends Enemy {
   constructor(_pos, _level, _collisionMap, _textureSet) {
-    super(_pos, "Skeleton", _level, Math.floor(_level + 4), 0, 3, 15, 8, 3, "Necrotic", 1.5, 1000, _collisionMap, _textureSet);
+    super(_pos, "Phantom", _level, Math.floor(_level + 4), 0, 3, 15, 8, 3, "Necrotic", 1.5, 1000, _collisionMap, _textureSet);
 
     // Necrotic spellcaster
     this.retreatMidpoint = 6;
@@ -125,7 +129,9 @@ class Phantom extends Enemy {
     }
   }
   cast(player, enemies, time, pursuitVector) {
-    console.log("[Phantom] Casts a dark spell!");
+    if(ENEMYDEBUG) {
+      console.log("[Phantom] Casts a dark spell!");
+    }
     enemies.push(new DarkSpell(this.pos, scaleVector(pursuitVector, this.spellSpeed), this.spellRange, this.spellDamage, this.collisionMap, "black"));
   }
 }

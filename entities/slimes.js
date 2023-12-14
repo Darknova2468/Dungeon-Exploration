@@ -66,7 +66,9 @@ class Slime extends Enemy {
   splash(player, enemies, time) {
     let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
     if(distance < this.jumpSplashRadius) {
-      console.log("[Slime] Splash attacks!");
+      if(ENEMYDEBUG) {
+        console.log("[Slime] Splash attacks!");
+      }
       player.damage(this.jumpSplashDamage, this.jumpSplashDamageType);
     }
   }
@@ -89,7 +91,9 @@ class LavaSlime extends Slime {
     this.jumpTimer = millis();
     let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
     this.lavaSlimeBalls.push(new LavaSlimeBall(this.pos, scaleVector(pursuitVector, this.lavaSlimeBallSpeed), this.lavaSlimeBallRange, this.lavaSlimeBallDamage, this.collisionMap, "red"));
-    console.log("[Lava Slime] Shot a lava slime ball!");
+    if(ENEMYDEBUG) {
+      console.log("[Lava Slime] Shot a lava slime ball!");
+    }
   }
 
   operate(player, enemies, time) {
@@ -162,7 +166,9 @@ class FrozenPuddle extends Entity {
     }
   }
   freeze(target, time) {
-    console.log("[Frozen Puddle] Freezing.");
+    if(ENEMYDEBUG) {
+      console.log("[Frozen Puddle] Freezing.");
+    }
     target.damage(this.freezeDamage, this.damageType);
   }
 }

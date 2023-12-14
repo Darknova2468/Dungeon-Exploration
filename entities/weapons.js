@@ -1,4 +1,7 @@
 /* eslint-disable no-undef */
+
+const WEAPONDEBUG = 0;
+
 class HeldItem {
   constructor(wielder) {
     this.wielder = wielder;
@@ -23,11 +26,17 @@ class SweepWeapon extends MeleeWeapon {
   }
 
   attack(enemies, direction, time) {
+    if(WEAPONDEBUG) {
+      console.log("[Weapons] Swung");
+    }
     for(let enemy of enemies) {
       let distance = dist(enemy.pos[0], enemy.pos[1], this.wielder.pos[0], this.wielder.pos[1]);
       let targetVector = [enemy.pos[0] - this.wielder.pos[0], enemy.pos[1] - this.wielder.pos[1]];
       if(distance <= this.range && dotProduct(scaleVector(direction), scaleVector(targetVector)) > this.sweepRange) {
         enemy.damage(this.damage, "Slashing");
+        if(WEAPONDEBUG) {
+          console.log("[Weapons] An enemy was hit!");
+        }
       }
       // console.log(dotProduct(scaleVector(direction), scaleVector(targetVector)));
     }
