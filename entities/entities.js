@@ -1,3 +1,5 @@
+const baseResolution = [16, 16];
+
 /* eslint-disable no-undef */
 
 const ENEMYDEBUG = 0;
@@ -17,19 +19,22 @@ class Entity {
   }
   display(screenCenter, screenSize){
     let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
-    let scaleX = width/screenSize[0];
-    let scaleY = height/screenSize[1];
+    let posScaleX = width/screenSize[0];
+    let posScaleY = height/screenSize[1];
+    x += screenSize[0]*0.5;
+    y += screenSize[1]*0.5;
     try{
-      x += screenSize[0]*0.5-0.5+(this.animationNum[1] === 1);
-      y += screenSize[1]*0.5-0.5;
-      let imgWidth = this.animationNum[1] === 0 ? scaleX: -scaleX;
+      imageMode(CENTER);
+      let imgScaleX = width/(screenSize[0]*this.animationSet.size[0]/baseResolution[0]);
+      let imgScaleY = height/(screenSize[1]*this.animationSet.size[1]/baseResolution[1]);
+      let imgWidth = this.animationNum[1] === 0 ? posScaleX: -posScaleX;
       scale(1-2*(this.animationNum[1] === 1), 1);
-      image(this.animationSet.animations[this.animationNum[0]][Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.animationNum[0]].length], x*imgWidth, y*scaleY, scaleX, scaleY);
+      image(this.animationSet.animations[this.animationNum[0]][Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.animationNum[0]].length], x*imgWidth, y*posScaleY, imgScaleX, imgScaleY);
       scale(1-2*(this.animationNum[1] === 1), 1);
     }
     catch{
       fill(this.animationSet);
-      circle(x*scaleX, y*scaleY, scaleX*0.8);
+      circle(x*posScaleX, y*posScaleY, posScaleX*0.8);
     }
   }
   displayDraft(screenCenter, screenSize) {
@@ -132,7 +137,7 @@ class Player extends Entity {
   move(direction, time, isRolling){
     this.movementDirection = [0, 0];
     let [i, j] = direction;
-    this.speed = isRolling && j !== 0 || i !== 0 ? this.rollSpeed : this.defaultSpeed;
+    this.speed = isRolling && (j !== 0 || i !== 0) ? this.rollSpeed : this.defaultSpeed;
     
     //animation
     this.animationNum[1] = (i === -1)*1;
@@ -176,15 +181,6 @@ function scaleVector(a, mag = 1, b = [0,0]) {
   }
   return [mag * (a[0] - b[0]) / d, mag * (a[1] - b[1]) / d];
 }
-
-// function weighVector(weights, vec, shaper = (x) => x) {
-//   let w;
-//   for(let i = 0; i < 8; i++) {
-//     w = dotProduct(vec, ENEMY_MOVEMENT_OPTIONS[i]);
-//     weights[i] += shaper(w);
-//     // console.log(w);
-//   }
-// }
 
 class Weights {
   constructor() {
