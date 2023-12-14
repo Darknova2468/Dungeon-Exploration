@@ -38,7 +38,7 @@ class Zombie extends Enemy {
 }
 
 class Skeleton extends Enemy {
-  constructor(_pos, _level, _collisionMap, _textureSet) {
+  constructor(_pos, _level, _collisionMap, _textureSet, _projectileTexture) {
     // super(_pos, Math.floor(_level + 4), 2, 2.5, _collisionMap, _textureSet);
     super(_pos, "Skeleton", _level, Math.floor(_level + 4), 2, 2.5, 10, 6, 1, "Slashing", 1.5, 1000, _collisionMap, _textureSet);
 
@@ -50,6 +50,7 @@ class Skeleton extends Enemy {
     this.throwStunTime = 1000;
     this.throwSpeed = 10;
     this.throwDamage = 10;
+    this.projectileTexture = _projectileTexture;
   }
   operate(player, enemies, time) {
     if(millis() - this.throwTimer < this.throwStunTime) {
@@ -84,7 +85,7 @@ class Skeleton extends Enemy {
   }
   throw(player, enemies, time, pursuitVector) {
     console.log("[Skeleton] Throws a bone.");
-    enemies.push(new Bone(this.pos, scaleVector(pursuitVector, this.throwSpeed), this.throwRange, this.throwDamage, this.collisionMap, "white"));
+    enemies.push(new Bone(this.pos, scaleVector(pursuitVector, this.throwSpeed), this.throwRange, this.throwDamage, this.collisionMap, this.projectileTexture));
   }
 }
 

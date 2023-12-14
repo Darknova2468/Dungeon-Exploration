@@ -1,4 +1,4 @@
-const baseResolution = [16, 16];
+const baseResolution = [24, 24];
 
 /* eslint-disable no-undef */
 class Entity {
@@ -22,8 +22,8 @@ class Entity {
     y += screenSize[1]*0.5;
     try{
       imageMode(CENTER);
-      let imgScaleX = width/(screenSize[0]*this.animationSet.size[0]/baseResolution[0]);
-      let imgScaleY = height/(screenSize[1]*this.animationSet.size[1]/baseResolution[1]);
+      let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.animationSet.size[0]);
+      let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.animationSet.size[1]);
       let imgWidth = this.animationNum[1] === 0 ? posScaleX: -posScaleX;
       scale(1-2*(this.animationNum[1] === 1), 1);
       image(this.animationSet.animations[this.animationNum[0]][Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.animationNum[0]].length], x*imgWidth, y*posScaleY, imgScaleX, imgScaleY);
