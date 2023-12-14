@@ -162,6 +162,11 @@ class Player extends Entity {
       this.attackTimer = this.holding.attack(enemies, targetVector, time);
     }
   }
+
+  display(screenCenter, screenSize) {
+    super.display(screenCenter, screenSize);
+    this.holding.display(screenCenter, screenSize);
+  }
 }
 
 const DIAGNORM = 0.70710678118;
