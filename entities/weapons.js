@@ -3,8 +3,12 @@
 const WEAPONDEBUG = 0;
 
 class HeldItem {
-  constructor(wielder) {
-    this.wielder = wielder;
+  constructor(_wielder) {
+    this.wielder = _wielder;
+  }
+
+  display(screenCenter, screenSize) {
+
   }
 }
 
@@ -27,7 +31,7 @@ class SweepWeapon extends MeleeWeapon {
 
   attack(enemies, direction, time) {
     if(WEAPONDEBUG) {
-      console.log("[Weapons] Swung");
+      console.log("[Weapons] Swung.");
     }
     for(let enemy of enemies) {
       let distance = dist(enemy.pos[0], enemy.pos[1], this.wielder.pos[0], this.wielder.pos[1]);
