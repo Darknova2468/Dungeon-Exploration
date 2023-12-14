@@ -1,7 +1,6 @@
-const baseResolution = [24, 24];
-
 /* eslint-disable no-undef */
 
+const baseResolution = [24, 24];
 const ENEMYDEBUG = 0;
 
 class Entity {
@@ -34,7 +33,7 @@ class Entity {
     }
     catch{
       fill(this.animationSet);
-      circle(x*posScaleX, y*posScaleY, posScaleX*0.8);
+      circle(x*posScaleX, y*posScaleY, posScaleX*0.6);
     }
   }
   displayDraft(screenCenter, screenSize) {
@@ -245,6 +244,26 @@ class Weights {
   getMaxDir() {
     return ENEMY_MOVEMENT_OPTIONS[this.weights.indexOf(Math.max(...this.weights))];
   }
+}
+
+function sceneToDungeonPos(pos, screenCenter, screenSize) {
+  let posScaleX = width/screenSize[0];
+  let posScaleY = height/screenSize[1];
+  let [x, y] = [pos[0] / posScaleX, pos[1] / posScaleY];
+  x += screenCenter[0] - screenSize[0]*0.5;
+  y += screenCenter[1] - screenSize[1]*0.5;
+  return [x, y];
+}
+
+function dungeonToScreenPos(pos, screenCenter, screenSize) {
+  let [x, y] = [pos[0] - screenCenter[0], pos[1] - screenCenter[1]];
+  let posScaleX = width/screenSize[0];
+  let posScaleY = height/screenSize[1];
+  x += screenSize[0]*0.5;
+  y += screenSize[1]*0.5;
+  x *= posScaleX;
+  y *= posScaleY;
+  return [x, y];
 }
 
 // For personal reference
