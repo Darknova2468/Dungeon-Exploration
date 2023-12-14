@@ -40,9 +40,6 @@ function setup() {
 }
 
 let gameActive = true;
-let deathMessages = ["YOU DIED", "skill issue lol", "Try using left click next time", "I heard dodging increases your chance of survival", "You just discovered the health bar!", "Sadly, you aren't invincible.", "THE UNIVERSE HATES YOU", "It's funny watching you die yet again", "pathetic", "Here we go again", "I could've done better than you there", "I'm sending you to the timeout corner", "Try dodging next time.", "You were supposed to be the protagonist", "You're learning! too slowly though", "Have you considered moving?", "Were you trying there?", `Did something get in your eye?
-I hope it's in your lungs next time`, "laughable", "go touch grass", "You know you can't play the game while you're dead", "100K5 1iK3 Y0U G0t PWN3D 7H3R3", "rip bozo", "[CENSORED]", "Are you procrastinating on something?", "hey clown do that again", "Do you need me to sell you the skill solution?", "L + Ratio...", "I'm back, what did I miss?", "You could've blamed gravity if it existed", "maggots", `Nice hustle, tons of fun,
-Next time eat a salad!`, "They murdered your toys as well.", "At least you died for honor -- and my amusement!", "Imagine not having depth perception", "Oops! That was not medicine!", "You need a healer.", "Think fast, chucklenuts", "I would call you short if there was something left to measure."];
 let thisDeathMessage;
 
 function draw() {
@@ -57,8 +54,10 @@ function draw() {
     background(100, 0, 0, 100);
     fill("white");
     textAlign(CENTER, CENTER);
-    thisDeathMessage = random(deathMessages);
-    // thisDeathMessage = deathMessages[38];
+    thisDeathMessage = deathMessages[0];
+    if(random() > 0.645) {
+      thisDeathMessage = random(deathMessages);
+    }
     text(thisDeathMessage, width/2, height/2);
     gameActive = false;
     return;

@@ -7,9 +7,7 @@ class HeldItem {
     this.wielder = _wielder;
   }
 
-  display(screenCenter, screenSize) {
-
-  }
+  display(screenCenter, screenSize) {}
 }
 
 class MeleeWeapon extends HeldItem {
@@ -45,6 +43,10 @@ class SweepWeapon extends MeleeWeapon {
       // console.log(dotProduct(scaleVector(direction), scaleVector(targetVector)));
     }
     return this.delay + millis();
+  }
+
+  display(screenCenter, screenSize) {
+    //
   }
 }
 
