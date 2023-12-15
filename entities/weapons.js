@@ -55,7 +55,13 @@ class SweepWeapon extends MeleeWeapon {
   display(screenCenter, screenSize) {
     let directionVector;
     if(millis() - this.swingTimer >= this.swingTime) {
-      directionVector = [mouseX - width/2, mouseY - height/2];
+      // directionVector = [mouseX - width/2, mouseY - height/2];
+      if([1,4,6].includes(player.animationNum[0])) {
+        directionVector = [1, 1];
+      }
+      else {
+        directionVector = [-1, 1];
+      }
     }
     else {
       let currentAngle = map(millis(), this.swingTimer, this.swingTimer + this.swingTime, -this.semiSweepAngle + this.pointingAngle, this.semiSweepAngle + this.pointingAngle);
