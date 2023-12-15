@@ -246,6 +246,17 @@ class Weights {
     this.weighVector(scaleVector(prevDirection, 1));
   }
 
+  weighSocialDistancing(pos, others, distFactor = 1) {
+    for(let other of others) {
+      let directionVector = [other.pos[0] - pos[0], other.pos[1] - pos[1]];
+      let distance = dist(directionVector[0], directionVector[1], 0, 0);
+      if(distance === 0) {
+        continue;
+      }
+      this.weighVector(scaleVector(directionVector, 1), (x) => distFactor * (1 - 2 * Math.abs(x+0.7))/Math.pow(distance, 2));
+    }
+  }
+
   getMaxDir() {
     return ENEMY_MOVEMENT_OPTIONS[this.weights.indexOf(Math.max(...this.weights))];
   }

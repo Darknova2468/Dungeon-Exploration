@@ -23,6 +23,7 @@ class Zombie extends Enemy {
       weights.weighObstacles(this.collisionMap, this.pos, 2, 3); // Tweak for different AI
       weights.weighMomentum(this.prevDirection);
       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, 0, this.strafeMultiplier, 20);
+      weights.weighSocialDistancing(this.pos, enemies);
       let maxDir = weights.getMaxDir();
       this.prevDirection = maxDir;
       this.move(maxDir, time);
@@ -80,6 +81,7 @@ class Skeleton extends Enemy {
       weights.weighMomentum(this.prevDirection);
       // Skeletons keep their distance
       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, this.retreatMidpoint);
+      weights.weighSocialDistancing(this.pos, enemies);
       let maxDir = weights.getMaxDir();
       this.prevDirection = maxDir;
       this.move(maxDir, time);
@@ -124,6 +126,7 @@ class Phantom extends Enemy {
       weights.weighMomentum(this.prevDirection);
       // Phantoms also keep their distance
       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, this.retreatMidpoint);
+      weights.weighSocialDistancing(this.pos, enemies);
       let maxDir = weights.getMaxDir();
       this.prevDirection = maxDir;
       this.move(maxDir, time);

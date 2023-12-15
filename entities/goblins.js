@@ -42,6 +42,7 @@ class Goblin extends Enemy {
       }
       else {
         weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius);
+        weights.weighSocialDistancing(this.pos, enemies);
         weights.weighTargetDirection(player, 2 / distance);
       }
       let maxDir = weights.getMaxDir();
