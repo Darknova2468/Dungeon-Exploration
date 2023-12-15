@@ -7,6 +7,7 @@
 // - describe what you did to take this project "above and beyond"
 
 let myDungeon;
+let anotherDungeon;
 let minimap;
 let player;
 let tileSet;
@@ -38,6 +39,13 @@ function setup() {
   noStroke();
   noSmooth();
   myDungeon = new DungeonMap(5, 0.3, [slimeTileSet, fireSlimeTileSet, iceSlimeTileSet, zombieTileSet, boneTileSet, phantomTileSet]);
+  while(myDungeon.corrupted) {
+    console.log("Regenerating...");
+    // let waitTimer = millis();
+    // while(millis() - waitTimer > 2000) {}
+    myDungeon = new DungeonMap(5, 0.3, [slimeTileSet, fireSlimeTileSet, iceSlimeTileSet, zombieTileSet, boneTileSet, phantomTileSet]);
+    console.log("Finished regeneration.");
+  }
   minimap = new MiniMap(30, myDungeon.minimap);
   player = new Player(myDungeon.playerPos, myDungeon.minimap, playerTileSet);
   myBackground = new Scene(myDungeon.minimap, [16, 8], tileSet);

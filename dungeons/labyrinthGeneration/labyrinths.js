@@ -228,6 +228,6 @@ function generateLabyrinthEdges(dungeonMap) {
       console.log("Labyrinth execution failed");
       return false;
     }
-    return true;
   }
+  return true;
 }
