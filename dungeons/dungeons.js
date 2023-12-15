@@ -82,7 +82,7 @@ class DungeonMap {
     });
 
     // Generate labyrinths
-    generateLabyrinthEdges(this);
+    this.corrupted = !generateLabyrinthEdges(this);
 
     // Temporary enemy testing
     for(let i = 0; i < 3; i++) {

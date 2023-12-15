@@ -226,6 +226,8 @@ function generateLabyrinthEdges(dungeonMap) {
     }
     if(!foundSpanning) {
       console.log("Labyrinth execution failed");
+      return false;
     }
+    return true;
   }
 }

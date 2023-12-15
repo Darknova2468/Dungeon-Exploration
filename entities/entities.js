@@ -155,8 +155,8 @@ class Player extends Entity {
     this.pos[1] += this.movementDirection[1];
   }
 
-  attack(enemies, time) {
-    if(mouseIsPressed && millis() > this.attackTimer) {
+  attack(enemies, time, isRolling) {
+    if(mouseIsPressed && millis() > this.attackTimer && !isRolling) {
       // Temporary direction checking; change later
       let targetVector = [mouseX - width/2, mouseY - height/2];
       this.attackTimer = this.holding.attack(enemies, targetVector, time);
