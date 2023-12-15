@@ -22,7 +22,7 @@ class MeleeWeapon extends HeldItem {
 }
 
 class SweepWeapon extends MeleeWeapon {
-  constructor(wielder, damage, range, delay, semiSweepAngle, swingTime) {
+  constructor(wielder, damage, range, delay, semiSweepAngle, swingTime, cleaveFactor) {
     super(wielder, damage, range, delay);
     this.holdRange = 0.3;
     this.semiSweepAngle = semiSweepAngle;
@@ -30,20 +30,39 @@ class SweepWeapon extends MeleeWeapon {
     this.swingTimer = 0;
     this.swingTime = swingTime;
     this.pointingAngle = 0;
+    this.cleaveFactor = cleaveFactor;
+    this.clockwise = false;
   }
 
   attack(enemies, direction, time) {
     if(WEAPONDEBUG) {
       console.log("[Weapons] Swung.");
     }
+    this.clockwise = !this.clockwise;
+    let hitEnemies = [];
     for(let enemy of enemies) {
       let distance = dist(enemy.pos[0], enemy.pos[1], this.wielder.pos[0], this.wielder.pos[1]);
       let targetVector = [enemy.pos[0] - this.wielder.pos[0], enemy.pos[1] - this.wielder.pos[1]];
       if(this.holdRange < distance && distance <= this.range && dotProduct(scaleVector(direction), scaleVector(targetVector)) > this.sweepRange) {
+        hitEnemies.push(enemy);
+      }
+    }
+    if(hitEnemies.length === 0) {
+      this.pointingAngle = getAngle(mouseY - height/2, mouseX - width/2);
+      this.swingTimer = millis();
+      return this.delay / 2 + millis();
+    }
+    let hitFirstEnemy = false;
+    for(let enemy of hitEnemies) {
+      if(hitFirstEnemy && this.cleaveFactor > 0) {
+        enemy.damage(this.damage / Math.pow(hitEnemies.length, 1 - this.cleaveFactor), "Slashing");
+      }
+      else if(!hitFirstEnemy) {
         enemy.damage(this.damage, "Slashing");
-        if(WEAPONDEBUG) {
-          console.log("[Weapons] An enemy was hit!");
-        }
+        hitFirstEnemy = true;
+      }
+      if(WEAPONDEBUG) {
+        console.log("[Weapons] An enemy was hit!");
       }
       // console.log(dotProduct(scaleVector(direction), scaleVector(targetVector)));
     }
@@ -64,7 +83,7 @@ class SweepWeapon extends MeleeWeapon {
       }
     }
     else {
-      let currentAngle = map(millis(), this.swingTimer, this.swingTimer + this.swingTime, -this.semiSweepAngle + this.pointingAngle, this.semiSweepAngle + this.pointingAngle);
+      let currentAngle = map(millis(), this.swingTimer, this.swingTimer + this.swingTime, -this.semiSweepAngle * (2 * this.clockwise - 1) + this.pointingAngle, this.semiSweepAngle * (2 * this.clockwise - 1) + this.pointingAngle);
       directionVector = [cos(currentAngle), sin(currentAngle)];
     }
     // let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
@@ -80,13 +99,13 @@ class SweepWeapon extends MeleeWeapon {
 
 class Sword extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 5, 1.5, 700, Math.PI / 3, 200);
+    super(wielder, 5, 1.5, 700, Math.PI / 3, 200, 0.3);
   }
 }
 
 class Hyperion extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 5, 5, 150, Math.PI - 0.01, 100);
+    super(wielder, 5, 5, 150, Math.PI - 0.01, 100, 1);
   }
 
   attack(enemies, direction, time) {
