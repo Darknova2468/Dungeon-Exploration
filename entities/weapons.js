@@ -22,10 +22,14 @@ class MeleeWeapon extends HeldItem {
 }
 
 class SweepWeapon extends MeleeWeapon {
-  constructor(wielder, damage, range, delay, sweepRange) {
+  constructor(wielder, damage, range, delay, semiSweepAngle, swingTime) {
     super(wielder, damage, range, delay);
-    this.sweepRange = sweepRange;
     this.holdRange = 0.3;
+    this.semiSweepAngle = semiSweepAngle;
+    this.sweepRange = cos(this.semiSweepAngle);
+    this.swingTimer = 0;
+    this.swingTime = swingTime;
+    this.pointing = [0, 0];
   }
 
   attack(enemies, direction, time) {
@@ -43,13 +47,19 @@ class SweepWeapon extends MeleeWeapon {
       }
       // console.log(dotProduct(scaleVector(direction), scaleVector(targetVector)));
     }
+    this.pointing = [mouseX - width/2, mouseY - height/2];
+    this.swingTimer = millis();
     return this.delay + millis();
   }
 
   display(screenCenter, screenSize) {
+    let directionVector = this.pointing;
+    if(millis() - this.swingTimer >= this.swingTime) {
+      directionVector = [mouseX - width/2, mouseY - height/2];
+    }
     // let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
-    let heldDisplacement = scaleVector([mouseX - width/2, mouseY - height/2], this.holdRange);
-    let tipDisplacement = scaleVector([mouseX - width/2, mouseY - height/2], this.range);
+    let heldDisplacement = scaleVector(directionVector, this.holdRange);
+    let tipDisplacement = scaleVector(directionVector, this.range);
     let heldPos = dungeonToScreenPos([this.wielder.pos[0] + heldDisplacement[0], this.wielder.pos[1] + heldDisplacement[1]], screenCenter, screenSize);
     let tipPos = dungeonToScreenPos([this.wielder.pos[0] + tipDisplacement[0], this.wielder.pos[1] + tipDisplacement[1]], screenCenter, screenSize);
     stroke(10);
@@ -60,13 +70,13 @@ class SweepWeapon extends MeleeWeapon {
 
 class Sword extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 5, 1.5, 700, 0.5);
+    super(wielder, 5, 1.5, 700, Math.PI / 3, 200);
   }
 }
 
 class Hyperion extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 5, 5, 100, -1);
+    super(wielder, 5, 5, 100, Math.PI - 0.01, 200);
   }
 
   attack(enemies, direction, time) {
