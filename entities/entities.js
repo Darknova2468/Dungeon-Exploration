@@ -127,13 +127,19 @@ class Player extends Entity {
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
-    this.holding = new Bow(this);
+    this.holding = new Sword(this);
     // this.invincible = true;
     
     // Attack/use cooldowns
     this.attackTimer = millis();
   }
   move(direction, time, isRolling){
+    if(keyIsDown(49)){
+      this.holding = new Sword(this);
+    }
+    if(keyIsDown(50)){
+      this.holding = new Bow(this);
+    }
     this.movementDirection = [0, 0];
     let [i, j] = direction;
     this.speed = isRolling && (j !== 0 || i !== 0) ? this.rollSpeed : this.defaultSpeed;
