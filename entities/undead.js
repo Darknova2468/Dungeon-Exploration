@@ -97,7 +97,7 @@ class Skeleton extends Enemy {
 
 class Phantom extends Enemy {
   constructor(_pos, _level, _collisionMap, _textureSet) {
-    super(_pos, "Phantom", _level, Math.floor(_level + 4), 0, 3, 15, 8, 3, "Necrotic", 1.5, 1000, _collisionMap, _textureSet);
+    super(_pos, "Phantom", _level, Math.floor(_level + 4), 0, 2, 15, 8, 3, "Necrotic", 1.5, 1000, _collisionMap, _textureSet);
 
     // Necrotic spellcaster
     this.retreatMidpoint = 6;
