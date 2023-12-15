@@ -124,17 +124,22 @@ class FrostSlime extends Slime {
     this.speed = 0;
     this.defaultSpeed = 0;
     this.canJump = true;
+    this.activeFrozenPuddle = null;
   }
 
   splash(player, enemies, time) {
     super.splash(player, enemies, time);
-    enemies.push(new FrozenPuddle(this.pos, this.radius, 1, 0.5 / this.level, this.collisionMap, "powderblue"));
+    this.activeFrozenPuddle = new FrozenPuddle(this.pos, this.radius, 1, 0.5 / this.level, this.collisionMap, "powderblue");
+    enemies.push(this.activeFrozenPuddle);
   }
 
   operate(player, enemies, time) {
     super.operate(player, enemies, time);
     if(!this.jumping) {
       this.animationNum[0] = 0;
+    }
+    if(this.activeFrozenPuddle !== null) {
+      this.activeFrozenPuddle.renew();
     }
   }
 }
@@ -145,6 +150,7 @@ class FrozenPuddle extends Entity {
     this.invincible = true;
     this.radius = _radius;
     this.freezeDamage = _freezeDamage;
+    this.initialFreezeDamage = _freezeDamage;
     this.thawRate = _thawRate;
     this.hitTimer = millis();
     this.hitCooldown = 500;
@@ -170,5 +176,9 @@ class FrozenPuddle extends Entity {
       console.log("[Frozen Puddle] Freezing.");
     }
     target.damage(this.freezeDamage, this.damageType);
+  }
+
+  renew() {
+    this.freezeDamage = this.initialFreezeDamage;
   }
 }
