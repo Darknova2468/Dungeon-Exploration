@@ -31,9 +31,9 @@ class Projectile extends Entity {
         this.hit(target, time);
         this.hitTimer = millis();
       }
-      if(dist(this.pos[0], this.pos[1], this.initPos[0], this.initPos[1]) > this.maxDist) {
-        this.isAlive = false;
-      }
+    }
+    if(dist(this.pos[0], this.pos[1], this.initPos[0], this.initPos[1]) > this.maxDist) {
+      this.isAlive = false;
     }
     if(!this.isAlive) {
       this.explode(targets, time);

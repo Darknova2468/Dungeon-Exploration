@@ -127,7 +127,7 @@ class Player extends Entity {
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
-    this.holding = new Sword(this);
+    this.holding = new Bow(this);
     // this.invincible = true;
     
     // Attack/use cooldowns
@@ -156,11 +156,12 @@ class Player extends Entity {
   }
 
   attack(enemies, time, isRolling) {
-    if(mouseIsPressed && millis() > this.attackTimer && !isRolling) {
-      // Temporary direction checking; change later
-      let targetVector = [mouseX - width/2, mouseY - height/2];
-      this.attackTimer = this.holding.attack(enemies, targetVector, time);
-    }
+    // if(mouseIsPressed && millis() > this.attackTimer && !isRolling) {
+    //   // Temporary direction checking; change later
+    //   this.attackTimer = this.holding.attack(enemies, targetVector, time);
+    // }
+    let targetVector = [mouseX - width/2, mouseY - height/2];
+    this.holding.attack(enemies, targetVector, time, isRolling);
   }
 
   display(screenCenter, screenSize) {
