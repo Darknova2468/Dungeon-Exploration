@@ -75,7 +75,7 @@ class Slime extends Enemy {
 }
 
 class LavaSlime extends Slime {
-  constructor(_pos, _level, _collisionMap, _textureSet) {
+  constructor(_pos, _level, _collisionMap, _textureSet, _projectileTexture) {
     super(_pos, _level, _collisionMap, _textureSet);
     this.lavaSlimeBalls = [];
     this.lavaSlimeBallSpeed = 4;
@@ -85,12 +85,13 @@ class LavaSlime extends Slime {
     this.attackDamage = 0;
     this.canJump = true;
     this.animationSet = _textureSet;
+    this.projectileTexture = _projectileTexture;
   }
 
   jump(player, enemies, time, d = this.jumpRange) {
     this.jumpTimer = millis();
     let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
-    this.lavaSlimeBalls.push(new LavaSlimeBall(this.pos, scaleVector(pursuitVector, this.lavaSlimeBallSpeed), this.lavaSlimeBallRange, this.lavaSlimeBallDamage, this.collisionMap, "red"));
+    this.lavaSlimeBalls.push(new LavaSlimeBall(this.pos, scaleVector(pursuitVector, this.lavaSlimeBallSpeed), this.lavaSlimeBallRange, this.lavaSlimeBallDamage, this.collisionMap, this.projectileTexture));
     if(ENEMYDEBUG) {
       console.log("[Lava Slime] Shot a lava slime ball!");
     }

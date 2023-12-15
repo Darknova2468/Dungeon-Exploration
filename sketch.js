@@ -14,6 +14,7 @@ let myBackground;
 let playerTileSet;
 let slimeTileSet;
 let fireSlimeTileSet;
+let fireBallTileSet;
 let iceSlimeTileSet;
 let zombieTileSet;
 let boneTileSet;
@@ -24,10 +25,11 @@ function preload() {
   playerTileSet = new AnimateSet("textures/player.png", [19, 21]);
   slimeTileSet = new AnimateSet("textures/slime.png", [19, 21]);
   fireSlimeTileSet = new AnimateSet("textures/fireSlime.png", [19, 21]);
+  fireBallTileSet = new AnimateSet("textures/fireBall.png", [12, 14]);
   iceSlimeTileSet = new AnimateSet("textures/iceSlime.png", [19, 21]);
   zombieTileSet = new AnimateSet("textures/zombie.png", [19, 21]);
   boneTileSet = new AnimateSet("textures/bone.png", [15, 15]);
-  phantomTileSet = new AnimateSet("textures/phantom.png", [18, 19]);
+  phantomTileSet = new AnimateSet("textures/phantom.png", [18, 18]);
 }
 
 function setup() {
@@ -37,7 +39,7 @@ function setup() {
   frameRate(30);
   noStroke();
   noSmooth();
-  myDungeon = new DungeonMap(5, 0.3, [slimeTileSet, fireSlimeTileSet, iceSlimeTileSet, zombieTileSet, boneTileSet, phantomTileSet]);
+  myDungeon = new DungeonMap(5, 0.3, [slimeTileSet, fireSlimeTileSet, fireBallTileSet, iceSlimeTileSet, zombieTileSet, boneTileSet, phantomTileSet]);
   minimap = new MiniMap(30, myDungeon.minimap);
   player = new Player(myDungeon.playerPos, myDungeon.minimap, playerTileSet);
   myBackground = new Scene(myDungeon.minimap, [16, 8], tileSet);

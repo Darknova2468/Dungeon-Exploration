@@ -132,6 +132,7 @@ class Phantom extends Enemy {
       this.move(maxDir, time);
     }
     this.animationNum[1] = (this.pos[0] > player.pos[0])*1;
+    this.animationNum[0] = (this.pos[1] > player.pos[1])*1;
   }
   cast(player, enemies, time, pursuitVector) {
     if(ENEMYDEBUG) {
