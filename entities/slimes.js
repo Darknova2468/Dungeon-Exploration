@@ -12,7 +12,6 @@ class Slime extends Enemy {
     this.jumpTime = 700 / this.defaultSpeed;
     this.jumpTimer = millis();
     this.jumpRange = 3;
-    this.radius = 1;
     this.jumpSplashRadius = this.radius * 1.5;
     this.jumpSplashDamage = 3;
     this.jumpSplashDamageType = "Bludgeoning";
@@ -115,7 +114,7 @@ class LavaSlime extends Slime {
 
 class LavaSlimeBall extends Projectile {
   constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap, _textureSet) {
-    super(_pos, _dir, _maxDist, _hitDmg, "Fire", 0.5, false, 0, 0, null, _collisionMap, _textureSet);
+    super(_pos, _dir, _maxDist, _hitDmg, "Fire", 0.3, false, 0, 0, null, _collisionMap, _textureSet);
   }
 }
 
@@ -130,7 +129,7 @@ class FrostSlime extends Slime {
 
   splash(player, enemies, time) {
     super.splash(player, enemies, time);
-    this.activeFrozenPuddle = new FrozenPuddle(this.pos, this.radius, 1, 0.5 / this.level, this.collisionMap, "powderblue");
+    this.activeFrozenPuddle = new FrozenPuddle(this.pos, this.radius * 1.5, 1, 0.5 / this.level, this.collisionMap, "powderblue");
     enemies.push(this.activeFrozenPuddle);
   }
 

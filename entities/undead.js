@@ -3,6 +3,7 @@ class Zombie extends Enemy {
   constructor(_pos, _level, _collisionMap, _textureSet) {
     // super(_pos, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, _collisionMap, _textureSet);
     super(_pos, "Zombie", _level, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, 10, 1, 2, "Bludgeoning", 1.5, 700, _collisionMap, _textureSet);
+    this.radius = 0.4;
 
     // Zombies stop when attacking and bite if close
     this.isMoving = 0;
@@ -144,12 +145,12 @@ class Phantom extends Enemy {
 
 class Bone extends EnemyProjectile {
   constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap, _textureSet) {
-    super(_pos, _dir, _maxDist, _hitDmg, "Piercing", 0.5, false, 0, 0, null, _collisionMap, _textureSet);
+    super(_pos, _dir, _maxDist, _hitDmg, "Piercing", 0.2, false, 0, 0, null, _collisionMap, _textureSet);
   }
 }
 
 class DarkSpell extends EnemyProjectile {
   constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap, _textureSet) {
-    super(_pos, _dir, _maxDist, _hitDmg, "Necrotic", 1, false, 3, 4, "Necrotic", _collisionMap, _textureSet);
+    super(_pos, _dir, _maxDist, _hitDmg, "Necrotic", 0.5, false, 3, 4, "Necrotic", _collisionMap, _textureSet);
   }
 }

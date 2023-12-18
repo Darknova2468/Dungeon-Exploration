@@ -18,6 +18,7 @@ class Projectile extends Entity {
     this.explosionDamage = _explosionDamage;
     this.explosionDamageType = _explosionDamageType;
     this.invincible = true;
+    this.radius = _hitRange;
   }
 
   operate(targets, time) {

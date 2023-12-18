@@ -2,6 +2,7 @@
 
 const baseResolution = [24, 24];
 const ENEMYDEBUG = 0;
+const SHOWHITBOXES = true;
 
 class Entity {
   constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet){
@@ -15,6 +16,7 @@ class Entity {
     this.isAlive = true;
     this.animationSpeed = 4;
     this.invincible = false;
+    this.radius = 0.3;
   }
   display(screenCenter, screenSize){
     let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
@@ -27,24 +29,28 @@ class Entity {
       let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.animationSet.size[0]);
       let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.animationSet.size[1]);
       let imgWidth = this.animationNum[1] === 0 ? posScaleX: -posScaleX;
+      if(SHOWHITBOXES) {
+        fill("gray");
+        circle(x*posScaleX, y*posScaleY, posScaleX*2*this.radius);
+      }
       scale(1-2*(this.animationNum[1] === 1), 1);
       image(this.animationSet.animations[this.animationNum[0]][Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.animationNum[0]].length], x*imgWidth, y*posScaleY, imgScaleX, imgScaleY);
       scale(1-2*(this.animationNum[1] === 1), 1);
     }
     catch{
       fill(this.animationSet);
-      circle(x*posScaleX, y*posScaleY, posScaleX*0.6);
+      circle(x*posScaleX, y*posScaleY, posScaleX*2*this.radius);
     }
   }
-  displayDraft(screenCenter, screenSize) {
-    let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
-    x += screenSize[0]*0.5-0.5+(this.direction[0] === 1);
-    y += screenSize[1]*0.5-0.5;
-    let scaleX = width/screenSize[0];
-    let scaleY = height/screenSize[1];
-    fill(this.draftCol);
-    ellipse((x+0.5)*scaleX, (y+0.5)*scaleX, scaleX*0.75, scaleY*0.75);
-  }
+  //   displayDraft(screenCenter, screenSize) {
+  //     let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
+  //     x += screenSize[0]*0.5-0.5+(this.direction[0] === 1);
+  //     y += screenSize[1]*0.5-0.5;
+  //     let scaleX = width/screenSize[0];
+  //     let scaleY = height/screenSize[1];
+  //     fill(this.draftCol);
+  //     ellipse((x+0.5)*scaleX, (y+0.5)*scaleX, scaleX*0.75, scaleY*0.75);
+  //   }
   damage(amountDamage, damageType) {
     // damageType unused for now
     amountDamage *= 5/(this.defence + 5);

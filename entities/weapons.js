@@ -137,7 +137,7 @@ class ChargedRangedWeapon extends Weapon {
     if(millis() - this.chargeTimer < this.minChargeTime) {
       return;
     }
-    this.projectiles.push(new Arrow(this.wielder.pos, scaleVector(direction, this.projectileSpeed), this.range * Math.min(1, (millis() - this.chargeTimer) / this.chargeTime), this.damage * Math.min(1, (millis() - this.chargeTimer) / this.chargeTime), 0.5, this.wielder.collisionMap, "white"));
+    this.projectiles.push(new Arrow(this.wielder.pos, scaleVector(direction, this.projectileSpeed), this.range * Math.min(1, (millis() - this.chargeTimer) / this.chargeTime), this.damage * Math.min(1, (millis() - this.chargeTimer) / this.chargeTime), this.wielder.collisionMap, "white"));
     // console.log(this.range * Math.min(1, (millis() - this.chargeTimer) / this.chargeTime));
   }
 
@@ -190,7 +190,7 @@ class Bow extends ChargedRangedWeapon {
 }
 
 class Arrow extends Projectile {
-  constructor(_pos, _dir, _maxDist, _hitDmg, _hitRange,_collisionMap, _textureSet) {
-    super(_pos, _dir, _maxDist, _hitDmg, "Piercing", _hitRange, false, 0, 0, null, _collisionMap, _textureSet);
+  constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap, _textureSet) {
+    super(_pos, _dir, _maxDist, _hitDmg, "Piercing", 0.2, false, 0, 0, null, _collisionMap, _textureSet);
   }
 }
