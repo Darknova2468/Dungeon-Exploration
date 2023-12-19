@@ -96,7 +96,7 @@ class Skeleton extends Enemy {
 }
 
 class Phantom extends Enemy {
-  constructor(_pos, _level, _collisionMap, _textureSet) {
+  constructor(_pos, _level, _collisionMap, _textureSet, _projectileTexture) {
     super(_pos, "Phantom", _level, Math.floor(_level + 4), 0, 2, 15, 8, 3, "Necrotic", 1.5, 1000, _collisionMap, _textureSet);
 
     // Necrotic spellcaster
@@ -106,6 +106,7 @@ class Phantom extends Enemy {
     this.spellCooldown = 7000;
     this.spellSpeed = 5;
     this.spellDamage = 7;
+    this.projectileTexture = _projectileTexture;
   }
 
   combat(player, enemies, time, distance, pursuitVector) {
@@ -138,7 +139,7 @@ class Phantom extends Enemy {
     if(ENEMYDEBUG) {
       console.log("[Phantom] Casts a dark spell!");
     }
-    enemies.push(new DarkSpell(this.pos, scaleVector(pursuitVector, this.spellSpeed), this.spellRange, this.spellDamage, this.collisionMap, "black"));
+    enemies.push(new DarkSpell(this.pos, scaleVector(pursuitVector, this.spellSpeed), this.spellRange, this.spellDamage, this.collisionMap, this.projectileTexture));
   }
 }
 
@@ -151,5 +152,17 @@ class Bone extends EnemyProjectile {
 class DarkSpell extends EnemyProjectile {
   constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap, _textureSet) {
     super(_pos, _dir, _maxDist, _hitDmg, "Necrotic", 1, false, 3, 4, "Necrotic", _collisionMap, _textureSet);
+    let angle = atan(Math.abs(_dir[1]/_dir[0]));
+    if(angle < PI/6){
+      this.animationNum[0] = 0;
+    }
+    else if(angle < PI/3){
+      this.animationNum[0] = 2;
+    }
+    else{
+      this.animationNum[0] = 1;
+    }
+    this.animationNum[1] = _dir[0] > 0 && this.animationNum[0] !== 1 ? 0:1;
+    this.animationNum[2] = _dir[1] < 0 && this.animationNum[0] !== 0 ? 0:1;
   }
 }
