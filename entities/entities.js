@@ -137,7 +137,7 @@ class Player extends Entity {
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
-    this.holding = new Sword(this);
+    this.holding = new ShortSword(this);
     // this.invincible = true;
     
     // Attack/use cooldowns
@@ -145,10 +145,25 @@ class Player extends Entity {
   }
   move(direction, time, isRolling){
     if(keyIsDown(49)){
-      this.holding = new Sword(this);
+      this.holding = new Dagger(this);
     }
     if(keyIsDown(50)){
-      this.holding = new Bow(this);
+      this.holding = new ShortSword(this);
+    }
+    if(keyIsDown(51)){
+      this.holding = new LongSword(this);
+    }
+    if(keyIsDown(52)){
+      this.holding = new HandAxe(this);
+    }
+    if(keyIsDown(53)){
+      this.holding = new BattleAxe(this);
+    }
+    if(keyIsDown(54)) {
+      this.holding = new ShortBow(this);
+    }
+    if(keyIsDown(55)) {
+      this.holding = new LongBow(this);
     }
     this.movementDirection = [0, 0];
     let [i, j] = direction;

@@ -96,31 +96,61 @@ class SweepWeapon extends Weapon {
     }
     // let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
     let heldDisplacement = scaleVector(directionVector, this.holdRange);
+    let shoulderDisplacement = scaleVector(directionVector, this.minRange);
     let tipDisplacement = scaleVector(directionVector, this.range);
     let heldPos = dungeonToScreenPos([this.wielder.pos[0] + heldDisplacement[0], this.wielder.pos[1] + heldDisplacement[1]], screenCenter, screenSize);
+    let shoulderPos = dungeonToScreenPos([this.wielder.pos[0] + shoulderDisplacement[0], this.wielder.pos[1] + shoulderDisplacement[1]], screenCenter, screenSize);
     let tipPos = dungeonToScreenPos([this.wielder.pos[0] + tipDisplacement[0], this.wielder.pos[1] + tipDisplacement[1]], screenCenter, screenSize);
     stroke(10);
     line(heldPos[0], heldPos[1], tipPos[0], tipPos[1]);
+    stroke(250);
+    line(shoulderPos[0], shoulderPos[1], tipPos[0], tipPos[1]);
+    noStroke();
+
     // console.log(heldPos, tipPos, dungeonWeaponDisplacement);
   }
 }
 
-class Sword extends SweepWeapon {
+class Dagger extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 5, 0.5, 1.5, 700, Math.PI / 3, 200, 0.3);
+    super(wielder, 7, 0.35, 1, 400, Math.PI / 4, 150, 0);
   }
 }
 
-class Hyperion extends SweepWeapon {
+class ShortSword extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 5, 0, 5, 150, Math.PI - 0.01, 100, 1);
-  }
-
-  attack(enemies, direction, time, isRolling) {
-    this.wielder.health = max(this.wielder.health, 150);
-    return super.attack(enemies, direction, time, isRolling);
+    super(wielder, 5, 0.4, 1.3, 600, Math.PI / 3, 200, 0.3);
   }
 }
+
+class LongSword extends SweepWeapon {
+  constructor(wielder) {
+    super(wielder, 6, 0.4, 1.8, 1000, Math.PI / 3, 300, 0.5);
+  }
+}
+
+class HandAxe extends SweepWeapon {
+  constructor(wielder) {
+    super(wielder, 9, 0.7, 1.3, 1200, Math.PI / 3, 300, 0.5);
+  }
+}
+
+class BattleAxe extends SweepWeapon {
+  constructor(wielder) {
+    super(wielder, 11, 1.2, 1.9, 1600, Math.PI / 3, 400, 0.6);
+  }
+}
+
+// class Hyperion extends SweepWeapon {
+//   constructor(wielder) {
+//     super(wielder, 5, 0, 5, 150, Math.PI - 0.01, 100, 1);
+//   }
+
+//   attack(enemies, direction, time, isRolling) {
+//     this.wielder.health = max(this.wielder.health, 150);
+//     return super.attack(enemies, direction, time, isRolling);
+//   }
+// }
 
 class ChargedRangedWeapon extends Weapon {
   constructor(wielder, damage, range, cooldown, minChargeTime, chargeTime, projectileSpeed) {
@@ -184,9 +214,15 @@ class ChargedRangedWeapon extends Weapon {
   }
 }
 
-class Bow extends ChargedRangedWeapon {
+class ShortBow extends ChargedRangedWeapon {
   constructor(wielder) {
     super(wielder, 5, 10, 700, 300, 1000, 15);
+  }
+}
+
+class LongBow extends ChargedRangedWeapon {
+  constructor(wielder) {
+    super(wielder, 7, 18, 700, 500, 1500, 20);
   }
 }
 
