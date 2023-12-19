@@ -2,6 +2,7 @@
 
 const baseResolution = [24, 24];
 const ENEMYDEBUG = 0;
+const SHOWHITBOXES = false;
 
 class Entity {
   constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet){
@@ -15,8 +16,13 @@ class Entity {
     this.isAlive = true;
     this.animationSpeed = 4;
     this.invincible = false;
+    this.invisible = false;
+    this.radius = 0.3;
   }
   display(screenCenter, screenSize){
+    if(this.invisible) {
+      return;
+    }
     let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
     let posScaleX = width/screenSize[0];
     let posScaleY = height/screenSize[1];
@@ -28,24 +34,28 @@ class Entity {
       let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.animationSet.size[1]);
       let imgWidth = this.animationNum[1] === 0 ? posScaleX: -posScaleX;
       let imgHeight = this.animationNum[2] === 0 ? posScaleY: -posScaleY;
+      if(SHOWHITBOXES) {
+        fill("gray");
+        circle(x*posScaleX, y*posScaleY, posScaleX*2*this.radius);
+      }
       scale(1-2*(this.animationNum[1] === 1), 1-2*(this.animationNum[2] === 1));
       image(this.animationSet.animations[this.animationNum[0]][Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.animationNum[0]].length], x*imgWidth, y*imgHeight, imgScaleX, imgScaleY);
       scale(1-2*(this.animationNum[1] === 1), 1-2*(this.animationNum[2] === 1));
     }
     catch{
       fill(this.animationSet);
-      circle(x*posScaleX, y*posScaleY, posScaleX*0.6);
+      circle(x*posScaleX, y*posScaleY, posScaleX*2*this.radius);
     }
   }
-  displayDraft(screenCenter, screenSize) {
-    let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
-    x += screenSize[0]*0.5-0.5+(this.direction[0] === 1);
-    y += screenSize[1]*0.5-0.5;
-    let scaleX = width/screenSize[0];
-    let scaleY = height/screenSize[1];
-    fill(this.draftCol);
-    ellipse((x+0.5)*scaleX, (y+0.5)*scaleX, scaleX*0.75, scaleY*0.75);
-  }
+  //   displayDraft(screenCenter, screenSize) {
+  //     let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
+  //     x += screenSize[0]*0.5-0.5+(this.direction[0] === 1);
+  //     y += screenSize[1]*0.5-0.5;
+  //     let scaleX = width/screenSize[0];
+  //     let scaleY = height/screenSize[1];
+  //     fill(this.draftCol);
+  //     ellipse((x+0.5)*scaleX, (y+0.5)*scaleX, scaleX*0.75, scaleY*0.75);
+  //   }
   damage(amountDamage, damageType) {
     // damageType unused for now
     amountDamage *= 5/(this.defence + 5);
@@ -128,7 +138,7 @@ class Player extends Entity {
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
-    this.holding = new Sword(this);
+    this.holding = new ShortSword(this);
     // this.invincible = true;
     
     // Attack/use cooldowns
@@ -136,10 +146,25 @@ class Player extends Entity {
   }
   move(direction, time, isRolling){
     if(keyIsDown(49)){
-      this.holding = new Sword(this);
+      this.holding = new Dagger(this);
     }
     if(keyIsDown(50)){
-      this.holding = new Bow(this);
+      this.holding = new ShortSword(this);
+    }
+    if(keyIsDown(51)){
+      this.holding = new LongSword(this);
+    }
+    if(keyIsDown(52)){
+      this.holding = new HandAxe(this);
+    }
+    if(keyIsDown(53)){
+      this.holding = new BattleAxe(this);
+    }
+    if(keyIsDown(54)) {
+      this.holding = new ShortBow(this);
+    }
+    if(keyIsDown(55)) {
+      this.holding = new LongBow(this);
     }
     this.movementDirection = [0, 0];
     let [i, j] = direction;

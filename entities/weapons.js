@@ -23,9 +23,10 @@ class Weapon extends HeldItem {
 }
 
 class SweepWeapon extends Weapon {
-  constructor(wielder, damage, range, cooldown, semiSweepAngle, swingTime, cleaveFactor) {
+  constructor(wielder, damage, minRange, range, cooldown, semiSweepAngle, swingTime, cleaveFactor) {
     super(wielder, damage, range, cooldown);
     this.holdRange = 0.3;
+    this.minRange = minRange;
     this.semiSweepAngle = semiSweepAngle;
     this.sweepRange = cos(this.semiSweepAngle);
     this.swingTimer = 0;
@@ -44,7 +45,7 @@ class SweepWeapon extends Weapon {
     for(let enemy of enemies) {
       let distance = dist(enemy.pos[0], enemy.pos[1], this.wielder.pos[0], this.wielder.pos[1]);
       let targetVector = [enemy.pos[0] - this.wielder.pos[0], enemy.pos[1] - this.wielder.pos[1]];
-      if(this.holdRange < distance && distance <= this.range && dotProduct(scaleVector(direction), scaleVector(targetVector)) > this.sweepRange) {
+      if(this.minRange < distance && distance <= this.range && dotProduct(scaleVector(direction), scaleVector(targetVector)) > this.sweepRange) {
         hitEnemies.push(enemy);
       }
     }
@@ -95,31 +96,141 @@ class SweepWeapon extends Weapon {
     }
     // let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
     let heldDisplacement = scaleVector(directionVector, this.holdRange);
+    let shoulderDisplacement = scaleVector(directionVector, this.minRange);
     let tipDisplacement = scaleVector(directionVector, this.range);
+    let heldPos = dungeonToScreenPos([this.wielder.pos[0] + heldDisplacement[0], this.wielder.pos[1] + heldDisplacement[1]], screenCenter, screenSize);
+    let shoulderPos = dungeonToScreenPos([this.wielder.pos[0] + shoulderDisplacement[0], this.wielder.pos[1] + shoulderDisplacement[1]], screenCenter, screenSize);
+    let tipPos = dungeonToScreenPos([this.wielder.pos[0] + tipDisplacement[0], this.wielder.pos[1] + tipDisplacement[1]], screenCenter, screenSize);
+    stroke(10);
+    line(heldPos[0], heldPos[1], tipPos[0], tipPos[1]);
+    stroke(250);
+    line(shoulderPos[0], shoulderPos[1], tipPos[0], tipPos[1]);
+    noStroke();
+
+    // console.log(heldPos, tipPos, dungeonWeaponDisplacement);
+  }
+}
+
+class Dagger extends SweepWeapon {
+  constructor(wielder) {
+    super(wielder, 7, 0.35, 1, 400, Math.PI / 4, 150, 0);
+  }
+}
+
+class ShortSword extends SweepWeapon {
+  constructor(wielder) {
+    super(wielder, 5, 0.4, 1.3, 600, Math.PI / 3, 200, 0.3);
+  }
+}
+
+class LongSword extends SweepWeapon {
+  constructor(wielder) {
+    super(wielder, 6, 0.4, 1.8, 1000, Math.PI / 3, 300, 0.5);
+  }
+}
+
+class HandAxe extends SweepWeapon {
+  constructor(wielder) {
+    super(wielder, 9, 0.7, 1.3, 1200, Math.PI / 3, 300, 0.5);
+  }
+}
+
+class BattleAxe extends SweepWeapon {
+  constructor(wielder) {
+    super(wielder, 11, 1.2, 1.9, 1600, Math.PI / 3, 400, 0.6);
+  }
+}
+
+class ThrustWeapon extends Weapon {
+  constructor(wielder, damage, minRange, maxRange, range, cooldown, thrustTime, pierceFactor) {
+    super(wielder, damage, range, cooldown);
+    this.holdRange = 0.3;
+    this.minRange = minRange;
+    this.maxRange = maxRange;
+    this.thrustTimer = 0;
+    this.thrustTime = thrustTime;
+    this.pointingAngle = 0;
+    this.pierceFactor = pierceFactor;
+  }
+
+  thrust(enemies, direction, time) {
+    if(WEAPONDEBUG) {
+      console.log("[Weapons] Thrusted.");
+    }
+    let hitEnemies = [];
+    for(let enemy of enemies) {
+      // let distance = dist(enemy.pos[0], enemy.pos[1], this.wielder.pos[0], this.wielder.pos[1]);
+      // let targetVector = [enemy.pos[0] - this.wielder.pos[0], enemy.pos[1] - this.wielder.pos[1]];
+      // if(this.minRange < distance && distance <= this.range && dotProduct(scaleVector(direction), scaleVector(targetVector)) > this.sweepRange) {
+      //   hitEnemies.push(enemy);
+      // }
+    }
+    if(hitEnemies.length === 0) {
+      this.pointingAngle = getAngle(mouseY - height/2, mouseX - width/2);
+      this.thrustTimer = millis();
+      return this.cooldown / 2 + millis();
+    }
+    let hitFirstEnemy = false;
+    for(let enemy of hitEnemies) {
+      if(hitFirstEnemy && this.pierceFactor > 0) {
+        enemy.damage(this.damage / Math.pow(hitEnemies.length, 1 - this.pierceFactor), "Piercing");
+      }
+      else if(!hitFirstEnemy) {
+        enemy.damage(this.damage, "Piercing");
+        hitFirstEnemy = true;
+      }
+      if(WEAPONDEBUG) {
+        console.log("[Weapons] An enemy was hit!");
+      }
+    }
+    this.pointingAngle = getAngle(mouseY - height/2, mouseX - width/2);
+    this.thrustTimer = millis();
+    return this.cooldown + millis();
+  }
+
+  attack(enemies, direction, time, isRolling) {
+    if(mouseIsPressed && millis() > this.attackTimer && !isRolling) {
+      this.attackTimer = this.thrust(enemies, direction, time);
+    }
+  }
+
+  display(screenCenter, screenSize) {
+    let directionVector;
+    if(millis() - this.thrustTimer >= this.thrustTime) {
+      // directionVector = [mouseX - width/2, mouseY - height/2];
+      if([1,4,6].includes(player.animationNum[0])) {
+        directionVector = [1, 1];
+      }
+      else {
+        directionVector = [-1, 1];
+      }
+    }
+    else {
+      // directionVector = [mouseX - width/2, mouseY - height/2];
+      directionVector = [cos(this.pointingAngle), sin(this.pointingAngle)];
+    }
+    // let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
+    let heldDisplacement = scaleVector(directionVector, this.holdRange);
+    let tipDisplacement = scaleVector(directionVector, this.holdRange * 3);
     let heldPos = dungeonToScreenPos([this.wielder.pos[0] + heldDisplacement[0], this.wielder.pos[1] + heldDisplacement[1]], screenCenter, screenSize);
     let tipPos = dungeonToScreenPos([this.wielder.pos[0] + tipDisplacement[0], this.wielder.pos[1] + tipDisplacement[1]], screenCenter, screenSize);
     stroke(10);
     line(heldPos[0], heldPos[1], tipPos[0], tipPos[1]);
     // console.log(heldPos, tipPos, dungeonWeaponDisplacement);
+    this.projectiles.forEach((x) => x.display(screenCenter, screenSize));
   }
 }
 
-class Sword extends SweepWeapon {
-  constructor(wielder) {
-    super(wielder, 5, 1.5, 700, Math.PI / 3, 200, 0.3);
-  }
-}
+// class Hyperion extends SweepWeapon {
+//   constructor(wielder) {
+//     super(wielder, 5, 0, 5, 150, Math.PI - 0.01, 100, 1);
+//   }
 
-class Hyperion extends SweepWeapon {
-  constructor(wielder) {
-    super(wielder, 5, 5, 150, Math.PI - 0.01, 100, 1);
-  }
-
-  attack(enemies, direction, time, isRolling) {
-    this.wielder.health = max(this.wielder.health, 150);
-    return super.attack(enemies, direction, time, isRolling);
-  }
-}
+//   attack(enemies, direction, time, isRolling) {
+//     this.wielder.health = max(this.wielder.health, 150);
+//     return super.attack(enemies, direction, time, isRolling);
+//   }
+// }
 
 class ChargedRangedWeapon extends Weapon {
   constructor(wielder, damage, range, cooldown, minChargeTime, chargeTime, projectileSpeed) {
@@ -137,7 +248,7 @@ class ChargedRangedWeapon extends Weapon {
     if(millis() - this.chargeTimer < this.minChargeTime) {
       return;
     }
-    this.projectiles.push(new Arrow(this.wielder.pos, scaleVector(direction, this.projectileSpeed), this.range * Math.min(1, (millis() - this.chargeTimer) / this.chargeTime), this.damage * Math.min(1, (millis() - this.chargeTimer) / this.chargeTime), 0.5, this.wielder.collisionMap, "white"));
+    this.projectiles.push(new Arrow(this.wielder.pos, scaleVector(direction, this.projectileSpeed), this.range * Math.min(1, (millis() - this.chargeTimer) / this.chargeTime), this.damage * Math.min(1, (millis() - this.chargeTimer) / this.chargeTime), this.wielder.collisionMap, "white"));
     // console.log(this.range * Math.min(1, (millis() - this.chargeTimer) / this.chargeTime));
   }
 
@@ -183,14 +294,20 @@ class ChargedRangedWeapon extends Weapon {
   }
 }
 
-class Bow extends ChargedRangedWeapon {
+class ShortBow extends ChargedRangedWeapon {
   constructor(wielder) {
     super(wielder, 5, 10, 700, 300, 1000, 15);
   }
 }
 
+class LongBow extends ChargedRangedWeapon {
+  constructor(wielder) {
+    super(wielder, 7, 18, 700, 500, 1500, 20);
+  }
+}
+
 class Arrow extends Projectile {
-  constructor(_pos, _dir, _maxDist, _hitDmg, _hitRange,_collisionMap, _textureSet) {
-    super(_pos, _dir, _maxDist, _hitDmg, "Piercing", _hitRange, false, 0, 0, null, _collisionMap, _textureSet);
+  constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap, _textureSet) {
+    super(_pos, _dir, _maxDist, _hitDmg, "Piercing", 0.2, false, 0, 0, null, _collisionMap, _textureSet);
   }
 }
