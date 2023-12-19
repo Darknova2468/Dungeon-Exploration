@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 class DungeonMap {
-  constructor(_numberOfRooms, _twoPathChance, _enemyTileSet){
+  constructor(_numberOfRooms, _twoPathChance){
     this.enemies = [];
 
     //builds room nodes;
@@ -86,25 +86,25 @@ class DungeonMap {
 
     // Temporary enemy testing
     for(let i = 0; i < 3; i++) {
-      this.enemies.push(new Slime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, _enemyTileSet[0]));
+      this.enemies.push(new Slime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
     }
     for(let i = 0; i < 1; i++) {
-      this.enemies.push(new LavaSlime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, _enemyTileSet[1], _enemyTileSet[2]));
+      this.enemies.push(new LavaSlime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
     }
     for(let i = 0; i < 1; i++) {
-      this.enemies.push(new FrostSlime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, _enemyTileSet[3]));
+      this.enemies.push(new FrostSlime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
     }
     for(let i = 0; i < 1; i++) {
-      this.enemies.push(new Zombie([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, _enemyTileSet[4]));
+      this.enemies.push(new Zombie([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
     }
     for(let i = 0; i < 1; i++) {
-      this.enemies.push(new Goblin([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, "chocolate"));
+      this.enemies.push(new Goblin([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
     }
     for(let i = 0; i < 1; i++) {
-      this.enemies.push(new Skeleton([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, "blanchedalmond", _enemyTileSet[5]));
+      this.enemies.push(new Skeleton([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
     }
     for(let i = 0; i < 1; i++) {
-      this.enemies.push(new Phantom([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, _enemyTileSet[6], _enemyTileSet[7]));
+      this.enemies.push(new Phantom([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
     }
   }
   move(player, time){

@@ -1,4 +1,7 @@
 /* eslint-disable no-undef */
+
+let textures;
+
 class TileSet{
   constructor(_path, _size){
     this.size = _size;

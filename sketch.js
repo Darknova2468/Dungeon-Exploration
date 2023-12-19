@@ -12,27 +12,43 @@ let minimap;
 let player;
 let tileSet;
 let myBackground;
-let playerTileSet;
-let slimeTileSet;
-let fireSlimeTileSet;
-let fireBallTileSet;
-let iceSlimeTileSet;
-let zombieTileSet;
-let boneTileSet;
-let phantomTileSet;
-let phantomBallTileSet;
+// let playerTileSet;
+// let slimeTileSet;
+// let fireSlimeTileSet;
+// let fireBallTileSet;
+// let iceSlimeTileSet;
+// let zombieTileSet;
+// let boneTileSet;
+// let phantomTileSet;
+// let phantomBallTileSet;
 
 function preload() {
-  tileSet = new TileSet("textures/CaveTiles.png", [16, 16]);
-  playerTileSet = new AnimateSet("textures/player.png", [19, 21]);
-  slimeTileSet = new AnimateSet("textures/slime.png", [19, 21]);
-  fireSlimeTileSet = new AnimateSet("textures/fireSlime.png", [19, 21]);
-  fireBallTileSet = new AnimateSet("textures/fireBall.png", [12, 14]);
-  iceSlimeTileSet = new AnimateSet("textures/iceSlime.png", [19, 21]);
-  zombieTileSet = new AnimateSet("textures/zombie.png", [19, 21]);
-  boneTileSet = new AnimateSet("textures/bone.png", [15, 15]);
-  phantomTileSet = new AnimateSet("textures/phantom.png", [18, 18]);
-  phantomBallTileSet = new AnimateSet("textures/phantomBall.png", [16, 16]);
+  // tileSet = new TileSet("textures/CaveTiles.png", [16, 16]);
+  // playerTileSet = new AnimateSet("textures/player.png", [19, 21]);
+  // slimeTileSet = new AnimateSet("textures/slime.png", [19, 21]);
+  // fireSlimeTileSet = new AnimateSet("textures/fireSlime.png", [19, 21]);
+  // fireBallTileSet = new AnimateSet("textures/fireBall.png", [12, 14]);
+  // iceSlimeTileSet = new AnimateSet("textures/iceSlime.png", [19, 21]);
+  // zombieTileSet = new AnimateSet("textures/zombie.png", [19, 21]);
+  // boneTileSet = new AnimateSet("textures/bone.png", [15, 15]);
+  // phantomTileSet = new AnimateSet("textures/phantom.png", [18, 18]);
+  // phantomBallTileSet = new AnimateSet("textures/phantomBall.png", [16, 16]);
+  textures = {
+    tileSet: new TileSet("textures/CaveTiles.png", [16, 16]),
+    playerTileSet: new AnimateSet("textures/player.png", [19, 21]),
+    slimeTileSet: new AnimateSet("textures/slime.png", [19, 21]),
+    lavaSlimeTileSet: new AnimateSet("textures/lavaSlime.png", [19, 21]),
+    lavaSlimeBallTileSet: new AnimateSet("textures/lavaSlimeBall.png", [12, 14]),
+    frostSlimeTileSet: new AnimateSet("textures/frostSlime.png", [19, 21]),
+    zombieTileSet: new AnimateSet("textures/zombie.png", [19, 21]),
+    boneTileSet: new AnimateSet("textures/bone.png", [15, 15]),
+    phantomTileSet: new AnimateSet("textures/phantom.png", [18, 18]),
+    darkSpellTileSet: new AnimateSet("textures/darkSpell.png", [16, 16]),
+    goblinTileSet: "chocolate",
+    skeletonTileSet: "blanchedalmond",
+    frozenPuddleTileSet: "powderblue",
+    arrowTileSet: "white",
+  }
 }
 
 function setup() {
@@ -42,15 +58,15 @@ function setup() {
   frameRate(30);
   noStroke();
   noSmooth();
-  myDungeon = new DungeonMap(5, 0.3, [slimeTileSet, fireSlimeTileSet, fireBallTileSet, iceSlimeTileSet, zombieTileSet, boneTileSet, phantomTileSet, phantomBallTileSet]);
+  myDungeon = new DungeonMap(5, 0.3);
   while(myDungeon.corrupted) {
     console.log("Regenerating...");
-    myDungeon = new DungeonMap(5, 0.3, [slimeTileSet, fireSlimeTileSet, fireBallTileSet, iceSlimeTileSet, zombieTileSet, boneTileSet, phantomTileSet, phantomBallTileSet]);
+    myDungeon = new DungeonMap(5, 0.3);
     console.log("Finished regeneration.");
   }
   minimap = new MiniMap(30, myDungeon.minimap);
-  player = new Player(myDungeon.playerPos, myDungeon.minimap, playerTileSet);
-  myBackground = new Scene(myDungeon.minimap, [16, 8], tileSet);
+  player = new Player(myDungeon.playerPos, myDungeon.minimap);
+  myBackground = new Scene(myDungeon.minimap, [16, 8], textures.tileSet);
 }
 
 let gameActive = true;

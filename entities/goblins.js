@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 class Goblin extends Enemy {
-  constructor(_pos, _level, _collisionMap, _textureSet) {
+  constructor(_pos, _level, _collisionMap) {
     // super(_pos, _level + 4, 0, 4.5, _collisionMap, _textureSet);
-    super(_pos, "Goblin", _level, _level + 4, 0, 4.5, 12, 2, 3, "Slashing", 1, 700, _collisionMap, _textureSet);
+    super(_pos, "Goblin", _level, _level + 4, 0, 4.5, 12, 2, 3, "Slashing", 1, 700, _collisionMap, textures.goblinTileSet);
 
     // Goblin bully tactics
     this.thrustRadius = 3;
