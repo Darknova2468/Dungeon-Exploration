@@ -23,9 +23,10 @@ class Weapon extends HeldItem {
 }
 
 class SweepWeapon extends Weapon {
-  constructor(wielder, damage, range, cooldown, semiSweepAngle, swingTime, cleaveFactor) {
+  constructor(wielder, damage, minRange, range, cooldown, semiSweepAngle, swingTime, cleaveFactor) {
     super(wielder, damage, range, cooldown);
     this.holdRange = 0.3;
+    this.minRange = minRange;
     this.semiSweepAngle = semiSweepAngle;
     this.sweepRange = cos(this.semiSweepAngle);
     this.swingTimer = 0;
@@ -44,7 +45,7 @@ class SweepWeapon extends Weapon {
     for(let enemy of enemies) {
       let distance = dist(enemy.pos[0], enemy.pos[1], this.wielder.pos[0], this.wielder.pos[1]);
       let targetVector = [enemy.pos[0] - this.wielder.pos[0], enemy.pos[1] - this.wielder.pos[1]];
-      if(this.holdRange < distance && distance <= this.range && dotProduct(scaleVector(direction), scaleVector(targetVector)) > this.sweepRange) {
+      if(this.minRange < distance && distance <= this.range && dotProduct(scaleVector(direction), scaleVector(targetVector)) > this.sweepRange) {
         hitEnemies.push(enemy);
       }
     }
@@ -106,13 +107,13 @@ class SweepWeapon extends Weapon {
 
 class Sword extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 5, 1.5, 700, Math.PI / 3, 200, 0.3);
+    super(wielder, 5, 0.5, 1.5, 700, Math.PI / 3, 200, 0.3);
   }
 }
 
 class Hyperion extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 5, 5, 150, Math.PI - 0.01, 100, 1);
+    super(wielder, 5, 0, 5, 150, Math.PI - 0.01, 100, 1);
   }
 
   attack(enemies, direction, time, isRolling) {

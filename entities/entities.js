@@ -2,7 +2,7 @@
 
 const baseResolution = [24, 24];
 const ENEMYDEBUG = 0;
-const SHOWHITBOXES = true;
+const SHOWHITBOXES = false;
 
 class Entity {
   constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet){
@@ -16,9 +16,13 @@ class Entity {
     this.isAlive = true;
     this.animationSpeed = 4;
     this.invincible = false;
+    this.invisible = false;
     this.radius = 0.3;
   }
   display(screenCenter, screenSize){
+    if(this.invisible) {
+      return;
+    }
     let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
     let posScaleX = width/screenSize[0];
     let posScaleY = height/screenSize[1];
