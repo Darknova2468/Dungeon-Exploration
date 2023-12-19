@@ -2,15 +2,26 @@
 class MiniMap {
   constructor(_radius, _map){
     this.raster = generateCircle(_radius);
-    this.map = _map;
-    this.discovered = generateEmptyGrid(_map[0].length, _map.length);
+    this.map = structuredClone(_map);
+    for(let i = 0; i < this.map.length; i++) {
+      for(let j = 0; j < this.map[0].length; j++) {
+        this.map[i][j] -= 100;
+      }
+    }
   }
 
-  updateDiscovered() {
-    
+  updateDiscovered(pos) {
+    for(let i = 0; i < this.map.length; i++) {
+      for(let j = 0; j < this.map[0].length; j++) {
+        if(dist(j, i, pos[0], pos[1]) < 8 && this.map[i][j] < 0) {
+          this.map[i][j] += 100;
+        }
+      }
+    }
   }
 
   generateImage(pos){
+    this.updateDiscovered(pos);
     let posX = Math.floor(pos[0]);
     let posY = Math.floor(pos[1]);
     let img = createImage(this.raster.length, this.raster[0].length);

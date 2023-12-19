@@ -85,8 +85,7 @@ function draw() {
   image(myBackground.generateScene(player.pos), width/2, height/2, width, height);
   player.display(player.pos, myBackground.scale, [16, 16]);
   myDungeon.display(player.pos, myBackground.scale, [16, 16]);
-  // image(minimap.generateImage(player.pos), width-height*3/20, height*3/20, height/5, height/5);
-  image(minimap.generateImage(player.pos), width/2, height/2, height, height);
+  image(minimap.generateImage(player.pos), width-height*3/20, height*3/20, height/5, height/5);
   fill("white");
   textSize(12);
   text("fps: " + Math.floor(frameRate()), width-height*3/20, height*6/20);
