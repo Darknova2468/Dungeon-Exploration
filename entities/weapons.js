@@ -177,7 +177,6 @@ class ThrustWeapon extends Weapon {
     let hitFirstEnemy = false;
     for(let t of hitEnemies) {
       let enemy = t[1];
-      console.log(t);
       if(hitFirstEnemy && this.pierceFactor > 0) {
         enemy.damage(this.damage / Math.pow(hitEnemies.length, 1 - this.pierceFactor), "Piercing");
       }
