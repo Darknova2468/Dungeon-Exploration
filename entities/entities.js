@@ -12,7 +12,7 @@ class Entity {
     this.speed = _speed;
     this.collisionMap = _collisionMap;
     this.animationSet = _animationSet;
-    this.animationNum = [0, 0];
+    this.animationNum = [0, 0, 0];
     this.isAlive = true;
     this.animationSpeed = 4;
     this.invincible = false;
@@ -33,13 +33,14 @@ class Entity {
       let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.animationSet.size[0]);
       let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.animationSet.size[1]);
       let imgWidth = this.animationNum[1] === 0 ? posScaleX: -posScaleX;
+      let imgHeight = this.animationNum[2] === 0 ? posScaleY: -posScaleY;
       if(SHOWHITBOXES) {
         fill("gray");
         circle(x*posScaleX, y*posScaleY, posScaleX*2*this.radius);
       }
-      scale(1-2*(this.animationNum[1] === 1), 1);
-      image(this.animationSet.animations[this.animationNum[0]][Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.animationNum[0]].length], x*imgWidth, y*posScaleY, imgScaleX, imgScaleY);
-      scale(1-2*(this.animationNum[1] === 1), 1);
+      scale(1-2*(this.animationNum[1] === 1), 1-2*(this.animationNum[2] === 1));
+      image(this.animationSet.animations[this.animationNum[0]][Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.animationNum[0]].length], x*imgWidth, y*imgHeight, imgScaleX, imgScaleY);
+      scale(1-2*(this.animationNum[1] === 1), 1-2*(this.animationNum[2] === 1));
     }
     catch{
       fill(this.animationSet);

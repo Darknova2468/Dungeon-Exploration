@@ -20,6 +20,7 @@ let iceSlimeTileSet;
 let zombieTileSet;
 let boneTileSet;
 let phantomTileSet;
+let phantomBallTileSet;
 
 function preload() {
   tileSet = new TileSet("textures/CaveTiles.png", [16, 16]);
@@ -31,6 +32,7 @@ function preload() {
   zombieTileSet = new AnimateSet("textures/zombie.png", [19, 21]);
   boneTileSet = new AnimateSet("textures/bone.png", [15, 15]);
   phantomTileSet = new AnimateSet("textures/phantom.png", [18, 18]);
+  phantomBallTileSet = new AnimateSet("textures/phantomBall.png", [16, 16]);
 }
 
 function setup() {
@@ -40,10 +42,10 @@ function setup() {
   frameRate(30);
   noStroke();
   noSmooth();
-  myDungeon = new DungeonMap(5, 0.3, [slimeTileSet, fireSlimeTileSet, fireBallTileSet, iceSlimeTileSet, zombieTileSet, boneTileSet, phantomTileSet]);
+  myDungeon = new DungeonMap(5, 0.3, [slimeTileSet, fireSlimeTileSet, fireBallTileSet, iceSlimeTileSet, zombieTileSet, boneTileSet, phantomTileSet, phantomBallTileSet]);
   while(myDungeon.corrupted) {
     console.log("Regenerating...");
-    myDungeon = new DungeonMap(5, 0.3, [slimeTileSet, fireSlimeTileSet, fireBallTileSet, iceSlimeTileSet, zombieTileSet, boneTileSet, phantomTileSet]);
+    myDungeon = new DungeonMap(5, 0.3, [slimeTileSet, fireSlimeTileSet, fireBallTileSet, iceSlimeTileSet, zombieTileSet, boneTileSet, phantomTileSet, phantomBallTileSet]);
     console.log("Finished regeneration.");
   }
   minimap = new MiniMap(30, myDungeon.minimap);
