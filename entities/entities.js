@@ -159,10 +159,13 @@ class Player extends Entity {
     if(keyIsDown(53)){
       this.holding = new BattleAxe(this);
     }
-    if(keyIsDown(54)) {
-      this.holding = new ShortBow(this);
+    if(keyIsDown(54)){
+      this.holding = new Spear(this);
     }
     if(keyIsDown(55)) {
+      this.holding = new ShortBow(this);
+    }
+    if(keyIsDown(56)) {
       this.holding = new LongBow(this);
     }
     this.movementDirection = [0, 0];
