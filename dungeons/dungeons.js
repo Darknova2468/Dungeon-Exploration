@@ -85,7 +85,6 @@ class DungeonMap {
     this.corrupted = !generateLabyrinthEdges(this);
 
     // Temporary enemy testing
-    /*
     for(let i = 0; i < 3; i++) {
       this.enemies.push(new Slime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, _enemyTileSet[0]));
     }
@@ -104,7 +103,6 @@ class DungeonMap {
     for(let i = 0; i < 1; i++) {
       this.enemies.push(new Skeleton([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, "blanchedalmond", _enemyTileSet[5]));
     }
-    */
     for(let i = 0; i < 1; i++) {
       this.enemies.push(new Phantom([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap, _enemyTileSet[6], _enemyTileSet[7]));
     }

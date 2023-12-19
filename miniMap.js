@@ -3,7 +3,13 @@ class MiniMap {
   constructor(_radius, _map){
     this.raster = generateCircle(_radius);
     this.map = _map;
+    this.discovered = generateEmptyGrid(_map[0].length, _map.length);
   }
+
+  updateDiscovered() {
+    
+  }
+
   generateImage(pos){
     let posX = Math.floor(pos[0]);
     let posY = Math.floor(pos[1]);
@@ -24,11 +30,18 @@ class MiniMap {
               img.pixels[i+2] = 255;
               img.pixels[i+3] = 255;
             }
+            else if(this.map[v][u] === 0) {
+              img.pixels[i] = 30;
+              img.pixels[i+1] = 30;
+              img.pixels[i+2] = 30;
+              img.pixels[i+3] = 255;
+            }
           }
         }
         i+=4;
       }
     }
+    i = 0;
     i = Math.floor(0.5*this.raster.length*this.raster.length)*4;
     img.pixels[i+1] = 0;
     img.pixels[i+2] = 0;
