@@ -48,7 +48,7 @@ function preload() {
     skeletonTileSet: "blanchedalmond",
     frozenPuddleTileSet: "powderblue",
     arrowTileSet: "white",
-  }
+  };
 }
 
 function setup() {

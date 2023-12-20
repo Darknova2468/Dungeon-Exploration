@@ -143,7 +143,19 @@ class Player extends Entity {
     
     // Attack/use cooldowns
     this.attackTimer = millis();
+    this.locked = false;
+    this.lockedZone = 3;
   }
+
+  canMoveTo(newZone) {
+    if(!this.locked) {
+      return newZone !== 0;
+    }
+    else {
+      return newZone === this.lockedZone;
+    }
+  }
+
   move(direction, time, isRolling){
     if(keyIsDown(49)){
       this.holding = new Dagger(this);
@@ -180,10 +192,10 @@ class Player extends Entity {
 
     //player movement
     let distance = sqrt(i*i + j*j)!== 0 ? time*this.speed/sqrt(i*i + j*j) : 0;
-    if(this.collisionMap[Math.floor(this.pos[1]+j*distance)][Math.floor(this.pos[0])] !== 0){
+    if(this.canMoveTo(this.collisionMap[Math.floor(this.pos[1]+j*distance)][Math.floor(this.pos[0])])){
       this.movementDirection[1] = j*distance;
     }
-    if(this.collisionMap[Math.floor(this.pos[1])][Math.floor(this.pos[0]+i*distance)] !== 0){
+    if(this.canMoveTo(this.collisionMap[Math.floor(this.pos[1])][Math.floor(this.pos[0]+i*distance)])){
       this.movementDirection[0] = i*distance;
     }
     this.pos[0] += this.movementDirection[0];
