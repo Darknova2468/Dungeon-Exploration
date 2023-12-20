@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 class Zombie extends Enemy {
-  constructor(_pos, _level, _collisionMap) {
+  constructor(_pos, _roomId, _level, _collisionMap) {
     // super(_pos, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, _collisionMap, _textureSet);
-    super(_pos, "Zombie", _level, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, 10, 1, 2, "Bludgeoning", 1.5, 700, _collisionMap, textures.zombieTileSet);
+    super(_pos, "Zombie", _roomId, _level, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, 10, 1, 2, "Bludgeoning", 1.5, 700, _collisionMap, textures.zombieTileSet);
     this.radius = 0.4;
 
     // Zombies stop when attacking and bite if close
@@ -42,9 +42,9 @@ class Zombie extends Enemy {
 }
 
 class Skeleton extends Enemy {
-  constructor(_pos, _level, _collisionMap) {
+  constructor(_pos, _roomId, _level, _collisionMap) {
     // super(_pos, Math.floor(_level + 4), 2, 2.5, _collisionMap, _textureSet);
-    super(_pos, "Skeleton", _level, Math.floor(_level + 4), 2, 2.5, 10, 6, 1, "Slashing", 1.5, 1000, _collisionMap, textures.skeletonTileSet);
+    super(_pos, "Skeleton", _roomId, _level, Math.floor(_level + 4), 2, 2.5, 10, 6, 1, "Slashing", 1.5, 1000, _collisionMap, textures.skeletonTileSet);
 
     // I am Skeletor.
     this.retreatMidpoint = 4;
@@ -96,8 +96,8 @@ class Skeleton extends Enemy {
 }
 
 class Phantom extends Enemy {
-  constructor(_pos, _level, _collisionMap) {
-    super(_pos, "Phantom", _level, Math.floor(_level + 4), 0, 2, 15, 8, 3, "Necrotic", 1.5, 1000, _collisionMap, textures.phantomTileSet);
+  constructor(_pos, _roomId, _level, _collisionMap) {
+    super(_pos, "Phantom", _roomId, _level, Math.floor(_level + 4), 0, 2, 15, 8, 3, "Necrotic", 1.5, 1000, _collisionMap, textures.phantomTileSet);
 
     // Necrotic spellcaster
     this.retreatMidpoint = 6;

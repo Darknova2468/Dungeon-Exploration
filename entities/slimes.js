@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 class Slime extends Enemy {
-  constructor(_pos, _level, _collisionMap, _textureSet = textures.slimeTileSet) {
-    super(_pos, "Slime", _level, Math.floor(4*Math.log10(_level+1)), 0, 1.5, 8, 0.5, 1, "Bludgeoning", 0.5, 600, _collisionMap, _textureSet);
+  constructor(_pos, _roomId, _level, _collisionMap, _textureSet = textures.slimeTileSet) {
+    super(_pos, "Slime", _roomId, _level, Math.floor(4*Math.log10(_level+1)), 0, 1.5, 8, 0.5, 1, "Bludgeoning", 0.5, 600, _collisionMap, _textureSet);
 
     // Jumping variables
     this.canJump = false;
@@ -74,8 +74,8 @@ class Slime extends Enemy {
 }
 
 class LavaSlime extends Slime {
-  constructor(_pos, _level, _collisionMap) {
-    super(_pos, _level, _collisionMap, textures.lavaSlimeTileSet);
+  constructor(_pos, _roomId, _level, _collisionMap) {
+    super(_pos, _roomId, _level, _collisionMap, textures.lavaSlimeTileSet);
     this.lavaSlimeBalls = [];
     this.lavaSlimeBallSpeed = 4;
     this.lavaSlimeBallRange = 4;
@@ -117,8 +117,8 @@ class LavaSlimeBall extends Projectile {
 }
 
 class FrostSlime extends Slime {
-  constructor(_pos, _level, _collisionMap) {
-    super(_pos, _level, _collisionMap, textures.frostSlimeTileSet);
+  constructor(_pos, _roomId, _level, _collisionMap) {
+    super(_pos, _roomId, _level, _collisionMap, textures.frostSlimeTileSet);
     this.speed = 0;
     this.defaultSpeed = 0;
     this.canJump = true;
