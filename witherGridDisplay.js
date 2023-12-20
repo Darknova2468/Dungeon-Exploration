@@ -11,7 +11,8 @@ const xSize = 150; // Number of squares across
 const ySize = 75; // Number of squares down
 
 const cellTypes = {
-  exit: 2,
+  edge: 1,
+  laby: 2,
 };
 
 let grid; // = new Array(ySize); // The grid that is displayed
@@ -62,14 +63,17 @@ function displayGrid(grid) {
     let row = grid[i];
     for(let j = 0; j < row.length; j++) {
       let cell_type = grid[i][j];
-      if(0 <= cell_type && cell_type <= 1) {
-        fill(255*grid[i][j]);
+      if(cell_type === 0) {
+        fill(0);
       }
-      else if(cell_type === cellTypes.exit) {
+      else if(cell_type === cellTypes.edge) {
+        fill("green");
+      }
+      else if(cell_type === cellTypes.laby) {
         fill("blue");
       }
-      else if(cell_type === 3) {
-        fill("pink");
+      else {
+        fill(255, 255 - 10 * (cell_type - 3), 255 - 10 * (cell_type - 3));
       }
       let xCoord = startX + j * squareSize;
       let yCoord = startY + i * squareSize;

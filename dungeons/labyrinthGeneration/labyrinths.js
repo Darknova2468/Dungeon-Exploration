@@ -74,7 +74,7 @@ function checkOrthogonalAdjacents(grid, i, j, iNode = 0, jNode = 0) {
       }
       let newI = i + iDisp;
       let newJ = j + jDisp;
-      if(verifyIndices(grid, newI, newJ) && grid[newI][newJ] === 1) {
+      if(verifyIndices(grid, newI, newJ) && grid[newI][newJ] > 0) {
         return true;
       }
     }
@@ -89,7 +89,7 @@ function runPrim(grid, nodes, i, j, p1, p2, r1, r2) {
   if(checkOrthogonalAdjacents(grid, 2*i, 2*j)) {
     return false;
   }
-  grid[2*i][2*j] = 1;
+  grid[2*i][2*j] = 2;
   while(pq.heap.length > 1) {
     let edge = pq.pop();
     let i0 = edge[1][0]; let j0 = edge[1][1];
@@ -119,8 +119,8 @@ function runPrim(grid, nodes, i, j, p1, p2, r1, r2) {
     }
     // Finalize the edge
     nodes[i1][j1] = 2;
-    grid[2*i1][2*j1] = 1;// + debugSpecial;
-    grid[i0+i1][j0+j1] = 1;// + debugSpecial;
+    grid[2*i1][2*j1] = 2;// + debugSpecial;
+    grid[i0+i1][j0+j1] = 2;// + debugSpecial;
     if(!alreadyClear) {
       for(let t of getEdges(nodes, i1, j1)) {
         pq.push(t);

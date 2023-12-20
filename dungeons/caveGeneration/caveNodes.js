@@ -49,7 +49,7 @@ function setGrid(grid, i, j, val) {
  * @param {number} i The i-index.
  * @param {number} j The j-index.
  * @param {number} r The radius of checking.
- * @returns The number of 1's within the radius.
+ * @returns The number of 0's within the radius.
  */
 function getWallsWithin(grid, i, j, r) {
   let acc = 0;
@@ -62,7 +62,7 @@ function getWallsWithin(grid, i, j, r) {
       let b = j + jDisp;
       //let newIndices = wrapIndices(a,b);
       if(verifyIndices(grid, a, b)) {
-        acc += 1-grid[a][b];
+        acc += (grid[a][b] === 0);
       }
       else {
         acc += 1; // Borders count as a wall
@@ -94,6 +94,7 @@ function evaluateCave(newGrid, grid) {
       }
     }
   }
+  // console.log(newGrid[3][3]);
 }
 
 /**
@@ -101,11 +102,11 @@ function evaluateCave(newGrid, grid) {
  * @param {Array.<Array.<number>>} grid The grid to evaluate.
  * @returns The new grid.
  */
-function evaluateNext(grid) {
+function evaluateNext(grid, toFill = 1) {
   let y = grid.length;
   let x = grid[0].length;
   let newGrid = new Array(y);
-  newGrid = generateEmptyGrid(x, y, 1);
+  newGrid = generateEmptyGrid(x, y, toFill);
   evaluateCave(newGrid, grid);
   return newGrid;
 }
@@ -135,7 +136,7 @@ function generateCaveEdge(grid, i1, j1, i2, j2) {
   }
 }
 
-function floodFillExclude(grid, i, j) {
+function floodFillExclude(grid, i, j, toFill = 1) {
   let newGrid = generateEmptyGrid(grid[0].length, grid.length);
   let stack = [[i, j]];
   while(stack.length > 0) {
@@ -147,10 +148,10 @@ function floodFillExclude(grid, i, j) {
         }
         let newI = i + iDisp;
         let newJ = j + jDisp;
-        if(verifyIndices(grid, newI, newJ) && grid[newI][newJ] === 1
+        if(verifyIndices(grid, newI, newJ) && grid[newI][newJ] === toFill
           && newGrid[newI][newJ] === 0) {
           stack.push([newI, newJ]);
-          newGrid[newI][newJ] = 1;
+          newGrid[newI][newJ] = toFill;
         }
       }
     }
@@ -160,7 +161,7 @@ function floodFillExclude(grid, i, j) {
   return newGrid;
 }
 
-function generateCaveNode(grid, i, j, hr = caveNodeHardBound, sr = caveNodeSoftBound) {
+function generateCaveNode(grid, i, j, hr = caveNodeHardBound, sr = caveNodeSoftBound, toFill) {
   let y = grid.length;
   let x = grid[0].length;
 
@@ -169,17 +170,17 @@ function generateCaveNode(grid, i, j, hr = caveNodeHardBound, sr = caveNodeSoftB
   for(let a = 0; a < y; a++) {
     for(let b = 0; b < x; b++) {
       if(dist(i, j, a, b) <= hr) {
-        setGrid(grid, a, b, 1);
+        setGrid(grid, a, b, toFill);
       }
       else if(dist(i, j, a, b) <= sr) {
         if(random() < fillPortion) {
-          setGrid(grid, a, b, 1);
+          setGrid(grid, a, b, toFill);
         }
       }
     }
   }
   for(let i = 0; i < 3; i++) {
-    grid = evaluateNext(grid);
+    grid = evaluateNext(grid, toFill);
   }
   // let newGrid = floodFillExclude(grid, i, j);
   // for(let a = 0; a < y; a++) {
@@ -189,7 +190,7 @@ function generateCaveNode(grid, i, j, hr = caveNodeHardBound, sr = caveNodeSoftB
   //     }
   //   }
   // }
-  grid = floodFillExclude(grid, i, j);
+  grid = floodFillExclude(grid, i, j, toFill);
   // setGrid(grid, i, j, 3);
   return grid;
 }

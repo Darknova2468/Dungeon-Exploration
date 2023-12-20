@@ -4,11 +4,11 @@ class DungeonMap {
     this.enemies = [];
 
     //builds room nodes;
-    this.dungeon = [new Room(6, this)];
+    this.dungeon = [new Room(0, 6, this)];
     for(let i=1; i<_numberOfRooms-1; i++){
-      this.dungeon.push(new Room(floor(random(7, 9)), this));
+      this.dungeon.push(new Room(i, floor(random(7, 9)), this));
     }
-    this.dungeon.push(new Room(10, this));
+    this.dungeon.push(new Room(_numberOfRooms - 1, 10, this));
 
     //adds procedural distances
     for(let i=1; i<_numberOfRooms; i++){
@@ -77,7 +77,7 @@ class DungeonMap {
     
     // Generate cave nodes
     this.dungeon.forEach(room => {
-      let raster = generatePrecursorDungeonRoom(room.radius);
+      let raster = generatePrecursorDungeonRoom(room.radius, room.id + 3);
       this.minimap = integrateRaster(this.minimap, raster, room.pos, this.offset);
     });
 
@@ -124,8 +124,9 @@ class DungeonMap {
 }
 
 class Room {
-  constructor(_radius, _dungeonMap){
+  constructor(_id, _radius, _dungeonMap){
     this.dungeonMap = _dungeonMap;
+    this.id = _id;
     this.radius = _radius;
     this.connections = [];
     this.pos = [0, 0];
@@ -225,7 +226,9 @@ function integrateRaster(minimap, raster, pos){
     Math.floor(pos[1]-(raster[0].length+1)/2)];
   for(let y=0; y<raster.length; y++){
     for(let x=0; x<raster[y].length; x++){
-      minimap[y+pos1[1]][x+pos1[0]] ||= raster[y][x];
+      if(raster[y][x]) {
+        minimap[y+pos1[1]][x+pos1[0]] = raster[y][x];
+      }
     }
   }
   // minimap[pos[1]][pos[0]] = cellTypes.exit;
@@ -259,9 +262,9 @@ function between(point, bound1, bound2){
 }
 
 //generates a single organic shaped room
-function generatePrecursorDungeonRoom(radius) {
+function generatePrecursorDungeonRoom(radius, toFill) {
   let room = generateEmptyGrid(2*radius - 1, 2*radius - 1);
-  room = generateCaveNode(room, radius, radius, radius - 4, radius);
+  room = generateCaveNode(room, radius, radius, radius - 4, radius, toFill);
   return room;
 }
 
