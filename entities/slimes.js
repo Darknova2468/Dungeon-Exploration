@@ -88,7 +88,7 @@ class LavaSlime extends Slime {
   jump(player, enemies, time, d = this.jumpRange) {
     this.jumpTimer = millis();
     let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
-    this.lavaSlimeBalls.push(new LavaSlimeBall(this.pos, scaleVector(pursuitVector, this.lavaSlimeBallSpeed), this.lavaSlimeBallRange, this.lavaSlimeBallDamage, this.collisionMap));
+    this.lavaSlimeBalls.push(new LavaSlimeBall(this.pos, this.lockedZone, scaleVector(pursuitVector, this.lavaSlimeBallSpeed), this.lavaSlimeBallRange, this.lavaSlimeBallDamage, this.collisionMap));
     if(ENEMYDEBUG) {
       console.log("[Lava Slime] Shot a lava slime ball!");
     }
@@ -111,8 +111,8 @@ class LavaSlime extends Slime {
 }
 
 class LavaSlimeBall extends Projectile {
-  constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap) {
-    super(_pos, _dir, _maxDist, _hitDmg, "Fire", 0.3, false, 0, 0, null, _collisionMap, textures.lavaSlimeBallTileSet);
+  constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _collisionMap) {
+    super(_pos, _zone, _dir, _maxDist, _hitDmg, "Fire", 0.3, false, 0, 0, null, _collisionMap, textures.lavaSlimeBallTileSet);
   }
 }
 

@@ -91,7 +91,7 @@ class Skeleton extends Enemy {
     if(ENEMYDEBUG) {
       console.log("[Skeleton] Throws a bone.");
     }
-    enemies.push(new Bone(this.pos, scaleVector(pursuitVector, this.throwSpeed), this.throwRange, this.throwDamage, this.collisionMap));
+    enemies.push(new Bone(this.pos, this.lockedZone, scaleVector(pursuitVector, this.throwSpeed), this.throwRange, this.throwDamage, this.collisionMap));
   }
 }
 
@@ -138,19 +138,19 @@ class Phantom extends Enemy {
     if(ENEMYDEBUG) {
       console.log("[Phantom] Casts a dark spell!");
     }
-    enemies.push(new DarkSpell(this.pos, scaleVector(pursuitVector, this.spellSpeed), this.spellRange, this.spellDamage, this.collisionMap));
+    enemies.push(new DarkSpell(this.pos, this.lockedZone, scaleVector(pursuitVector, this.spellSpeed), this.spellRange, this.spellDamage, this.collisionMap));
   }
 }
 
 class Bone extends EnemyProjectile {
-  constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap) {
-    super(_pos, _dir, _maxDist, _hitDmg, "Piercing", 0.2, false, 0, 0, null, _collisionMap, textures.boneTileSet);
+  constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _collisionMap) {
+    super(_pos, _zone, _dir, _maxDist, _hitDmg, "Piercing", 0.2, false, 0, 0, null, _collisionMap, textures.boneTileSet);
   }
 }
 
 class DarkSpell extends EnemyProjectile {
-  constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap) {
-    super(_pos, _dir, _maxDist, _hitDmg, "Necrotic", 0.5, false, 3, 4, "Necrotic", _collisionMap, textures.darkSpellTileSet);
+  constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _collisionMap) {
+    super(_pos, _zone, _dir, _maxDist, _hitDmg, "Necrotic", 0.5, false, 3, 4, "Necrotic", _collisionMap, textures.darkSpellTileSet);
     let angle = atan(Math.abs(_dir[1]/_dir[0]));
     if(angle < PI/6){
       this.animationNum[0] = 0;

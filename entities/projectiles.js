@@ -13,7 +13,7 @@ function checkBounds(x, y, x1, y1, x2, y2) {
 // (i1 * di + j1 * dj < a * di + b * dj && a * di + b * dj < i2 * di + j2 * dj)
 
 class Projectile extends Entity {
-  constructor(_pos, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet) {
+  constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet) {
     super(structuredClone(_pos), 0, 0, 0, _collisionMap, _textureSet);
     this.initPos = structuredClone(this.pos);
     this.dir = _dir;
@@ -32,6 +32,8 @@ class Projectile extends Entity {
     this.explosionDamageType = _explosionDamageType;
     this.invincible = true;
     this.radius = _hitRange;
+    this.locked = true;
+    this.lockedZone = _zone;
   }
 
   operate(targets, time) {
@@ -87,8 +89,8 @@ class Projectile extends Entity {
 
   move(pos, time){
     let [dx, dy] = scaleVector(pos, this.speed * time);
-    if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0
-      && this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])] !== 0){
+    if(this.canMoveTo(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)])
+      && this.canMoveTo(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])])){
       this.pos[0] += dx;
       this.pos[1] += dy;
     }
@@ -103,8 +105,8 @@ class Projectile extends Entity {
  * (the player)
  */
 class EnemyProjectile extends Projectile {
-  constructor(_pos, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet) {
-    super(_pos, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet);
+  constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet) {
+    super(_pos, _zone, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet);
   }
 
   operate(target, enemies, time) {
