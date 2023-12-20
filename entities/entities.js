@@ -145,6 +145,7 @@ class Player extends Entity {
     this.attackTimer = millis();
     this.locked = false;
     this.lockedZone = 3;
+    this.activeZone = -1;
   }
 
   canMoveTo(newZone) {
@@ -200,6 +201,7 @@ class Player extends Entity {
     }
     this.pos[0] += this.movementDirection[0];
     this.pos[1] += this.movementDirection[1];
+    this.activeZone = this.collisionMap[Math.floor(this.pos[1])][Math.floor(this.pos[0])];
   }
 
   attack(enemies, time, isRolling) {

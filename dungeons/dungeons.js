@@ -114,12 +114,12 @@ class DungeonMap {
     // });
     this.dungeon.forEach(room => {
       room.operate(player, time);
-    })
+    });
   }
   display(screenCenter, screenSize, scale){
     this.dungeon.forEach(room => {
       room.display(screenCenter, screenSize, scale);
-    })
+    });
   }
 }
 
@@ -160,15 +160,30 @@ class Room {
   }
 
   operate(player, time) {
+    if(player.activeZone !== this.id + 3) {
+      return;
+    }
     if(!this.visited) {
       this.visited = true;
-      this.spawnEnemies();
+      if(this.id >= 1) {
+        this.spawnEnemies();
+        this.locked = true;
+        player.locked = true;
+        player.lockedZone = this.id + 3;
+      }
+    }
+    if(!this.locked) {
+      return;
     }
     this.enemies = this.enemies.filter(enemy => enemy.isAlive);
     this.enemies.forEach(enemy => {
       // console.log(player, this.enemies, time);
       enemy.operate(player, this.enemies, time);
     });
+    if(this.enemies.length === 0) {
+      this.locked = false;
+      player.locked = false;
+    }
   }
 
   display(screenCenter, screenSize, scale){
@@ -206,7 +221,7 @@ class Room {
     }
     this.enemies.forEach((enemy) => {
       this.dungeonMap.enemies.push(enemy);
-    })
+    });
   }
 }
 
