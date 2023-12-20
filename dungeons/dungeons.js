@@ -83,29 +83,6 @@ class DungeonMap {
 
     // Generate labyrinths
     this.corrupted = !generateLabyrinthEdges(this);
-
-    // // Temporary enemy testing
-    // for(let i = 0; i < 3; i++) {
-    //   this.enemies.push(new Slime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new LavaSlime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new FrostSlime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new Zombie([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new Goblin([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new Skeleton([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new Phantom([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
-    // }
   }
   update(player, time){
     this.enemies = this.enemies.filter(enemy => enemy.isAlive);

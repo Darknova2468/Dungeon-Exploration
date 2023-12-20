@@ -66,11 +66,29 @@ class Skeleton extends Enemy {
   combat(player, enemies, time, distance, pursuitVector) {
     if(distance <= this.throwRange && millis() - this.throwTimer > this.throwCooldown) {
       // Throw
+      let [x, y] = [player.pos[0]-this.pos[0],this.pos[1]-player.pos[1]];
+      let angle = atan(Math.abs(y/x));
+      if(angle < PI/6){
+        this.animationNum[0] = 0;
+      }
+      else {
+        this.animationNum[0] = y < 0 ? 2:1;
+      }
+      this.animationNum[1] = x > 0 && this.animationNum[0] !== 1 ? 0:1;
       this.throw(player, enemies, time, pursuitVector);
       this.throwTimer = millis();
     }
     else if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
       // Attack
+      let [x, y] = [player.pos[0]-this.pos[0],this.pos[1]-player.pos[1]];
+      let angle = atan(Math.abs(y/x));
+      if(angle < PI/6){
+        this.animationNum[0] = 0;
+      }
+      else {
+        this.animationNum[0] = y < 0 ? 2:1;
+      }
+      this.animationNum[1] = x > 0 && this.animationNum[0] !== 1 ? 0:1;
       this.attack(player, time);
       this.attackTimer = millis();
     }
@@ -85,6 +103,14 @@ class Skeleton extends Enemy {
       let maxDir = weights.getMaxDir();
       this.prevDirection = maxDir;
       this.move(maxDir, time);
+      let angle = atan(Math.abs(maxDir[1]/maxDir[0]));
+      if(angle < PI/3){
+        this.animationNum[0] = 0;
+      }
+      else {
+        this.animationNum[0] = maxDir[1] > 0 ? 2:1;
+      }
+      this.animationNum[1] = maxDir[0] > 0 && this.animationNum[0] !== 1 ? 0:1;
     }
   }
   throw(player, enemies, time, pursuitVector) {
