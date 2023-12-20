@@ -4,11 +4,11 @@ class DungeonMap {
     this.enemies = [];
 
     //builds room nodes;
-    this.dungeon = [new Room(6, this)];
+    this.dungeon = [new Room(0, 6, this)];
     for(let i=1; i<_numberOfRooms-1; i++){
-      this.dungeon.push(new Room(floor(random(7, 9)), this));
+      this.dungeon.push(new Room(i, floor(random(7, 9)), this));
     }
-    this.dungeon.push(new Room(10, this));
+    this.dungeon.push(new Room(_numberOfRooms - 1, 10, this));
 
     //adds procedural distances
     for(let i=1; i<_numberOfRooms; i++){
@@ -77,7 +77,7 @@ class DungeonMap {
     
     // Generate cave nodes
     this.dungeon.forEach(room => {
-      let raster = generatePrecursorDungeonRoom(room.radius);
+      let raster = generatePrecursorDungeonRoom(room.radius, room.id + 3);
       this.minimap = integrateRaster(this.minimap, raster, room.pos, this.offset);
     });
 
@@ -101,8 +101,9 @@ class DungeonMap {
 }
 
 class Room {
-  constructor(_radius, _dungeonMap){
+  constructor(_id, _radius, _dungeonMap){
     this.dungeonMap = _dungeonMap;
+    this.id = _id;
     this.radius = _radius;
     this.connections = [];
     this.pos = [0, 0];
@@ -136,15 +137,30 @@ class Room {
   }
 
   operate(player, time) {
+    if(player.activeZone !== this.id + 3) {
+      return;
+    }
     if(!this.visited) {
       this.visited = true;
-      this.spawnEnemies();
+      if(this.id >= 1) {
+        this.spawnEnemies();
+        this.locked = true;
+        player.locked = true;
+        player.lockedZone = this.id + 3;
+      }
+    }
+    if(!this.locked) {
+      return;
     }
     this.enemies = this.enemies.filter(enemy => enemy.isAlive);
     this.enemies.forEach(enemy => {
       // console.log(player, this.enemies, time);
       enemy.operate(player, this.enemies, time);
     });
+    if(this.enemies.length === 0) {
+      this.locked = false;
+      player.locked = false;
+    }
   }
 
   display(screenCenter, screenSize, scale){
@@ -153,33 +169,44 @@ class Room {
     });
   }
 
+  attemptEnemyPlacement(EnemyType) {
+    let enemy = new EnemyType([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], this.id, 1, this.dungeonMap.minimap);
+    if(enemy.canMoveTo(this.dungeonMap.minimap[Math.floor(enemy.pos[1])][Math.floor(enemy.pos[0])])) {
+      return enemy;
+    }
+    if(ENEMYDEBUG) {
+      console.log("Failed placement, retrying...");
+    }
+    return this.attemptEnemyPlacement(EnemyType);
+  }
+
   spawnEnemies() {
     // Temporary enemy spawning
     if(this.dungeonMap === undefined) {
       this.visited = false;
       return 1;
     }
-    // for(let i = 0; i < 3; i++) {
-    //   this.enemies.push(new Slime([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new LavaSlime([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new FrostSlime([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new Zombie([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new Goblin([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
-    // }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(new Skeleton([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
+    for(let i = 0; i < 3; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(Slime));
     }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new Phantom([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
-    // }
+    for(let i = 0; i < 1; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(LavaSlime));
+    }
+    for(let i = 0; i < 1; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(FrostSlime));
+    }
+    for(let i = 0; i < 1; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(Zombie));
+    }
+    for(let i = 0; i < 1; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(Goblin));
+    }
+    for(let i = 0; i < 1; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(Skeleton));
+    }
+    for(let i = 0; i < 1; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(Phantom));
+    }
     this.enemies.forEach((enemy) => {
       this.dungeonMap.enemies.push(enemy);
     });
@@ -202,7 +229,9 @@ function integrateRaster(minimap, raster, pos){
     Math.floor(pos[1]-(raster[0].length+1)/2)];
   for(let y=0; y<raster.length; y++){
     for(let x=0; x<raster[y].length; x++){
-      minimap[y+pos1[1]][x+pos1[0]] ||= raster[y][x];
+      if(raster[y][x]) {
+        minimap[y+pos1[1]][x+pos1[0]] = raster[y][x];
+      }
     }
   }
   // minimap[pos[1]][pos[0]] = cellTypes.exit;
@@ -236,9 +265,9 @@ function between(point, bound1, bound2){
 }
 
 //generates a single organic shaped room
-function generatePrecursorDungeonRoom(radius) {
+function generatePrecursorDungeonRoom(radius, toFill) {
   let room = generateEmptyGrid(2*radius - 1, 2*radius - 1);
-  room = generateCaveNode(room, radius, radius, radius - 4, radius);
+  room = generateCaveNode(room, radius, radius, radius - 4, radius, toFill);
   return room;
 }
 

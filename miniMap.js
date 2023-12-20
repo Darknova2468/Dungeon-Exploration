@@ -35,7 +35,7 @@ class MiniMap {
           v = v+posY;
           img.pixels[i+3] = 127;
           if(u > -1 && u < this.map[0].length && v > -1 && v < this.map.length){
-            if(this.map[v][u] === 1){
+            if(this.map[v][u] >= 1){
               img.pixels[i] = 255;
               img.pixels[i+1] = 255;
               img.pixels[i+2] = 255;

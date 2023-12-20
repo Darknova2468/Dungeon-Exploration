@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 class Slime extends Enemy {
-  constructor(_pos, _level, _collisionMap, _textureSet = textures.slimeTileSet) {
-    super(_pos, "Slime", _level, Math.floor(4*Math.log10(_level+1)), 0, 1.5, 8, 0.5, 1, "Bludgeoning", 0.5, 600, _collisionMap, _textureSet);
+  constructor(_pos, _roomId, _level, _collisionMap, _textureSet = textures.slimeTileSet) {
+    super(_pos, "Slime", _roomId, _level, Math.floor(4*Math.log10(_level+1)), 0, 1.5, 8, 0.5, 1, "Bludgeoning", 0.5, 600, _collisionMap, _textureSet);
 
     // Jumping variables
     this.canJump = false;
@@ -74,8 +74,8 @@ class Slime extends Enemy {
 }
 
 class LavaSlime extends Slime {
-  constructor(_pos, _level, _collisionMap) {
-    super(_pos, _level, _collisionMap, textures.lavaSlimeTileSet);
+  constructor(_pos, _roomId, _level, _collisionMap) {
+    super(_pos, _roomId, _level, _collisionMap, textures.lavaSlimeTileSet);
     this.lavaSlimeBalls = [];
     this.lavaSlimeBallSpeed = 4;
     this.lavaSlimeBallRange = 4;
@@ -88,7 +88,7 @@ class LavaSlime extends Slime {
   jump(player, enemies, time, d = this.jumpRange) {
     this.jumpTimer = millis();
     let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
-    this.lavaSlimeBalls.push(new LavaSlimeBall(this.pos, scaleVector(pursuitVector, this.lavaSlimeBallSpeed), this.lavaSlimeBallRange, this.lavaSlimeBallDamage, this.collisionMap));
+    this.lavaSlimeBalls.push(new LavaSlimeBall(this.pos, this.lockedZone, scaleVector(pursuitVector, this.lavaSlimeBallSpeed), this.lavaSlimeBallRange, this.lavaSlimeBallDamage, this.collisionMap));
     if(ENEMYDEBUG) {
       console.log("[Lava Slime] Shot a lava slime ball!");
     }
@@ -111,14 +111,14 @@ class LavaSlime extends Slime {
 }
 
 class LavaSlimeBall extends Projectile {
-  constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap) {
-    super(_pos, _dir, _maxDist, _hitDmg, "Fire", 0.3, false, 0, 0, null, _collisionMap, textures.lavaSlimeBallTileSet);
+  constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _collisionMap) {
+    super(_pos, _zone, _dir, _maxDist, _hitDmg, "Fire", 0.3, false, 0, 0, null, _collisionMap, textures.lavaSlimeBallTileSet);
   }
 }
 
 class FrostSlime extends Slime {
-  constructor(_pos, _level, _collisionMap) {
-    super(_pos, _level, _collisionMap, textures.frostSlimeTileSet);
+  constructor(_pos, _roomId, _level, _collisionMap) {
+    super(_pos, _roomId, _level, _collisionMap, textures.frostSlimeTileSet);
     this.speed = 0;
     this.defaultSpeed = 0;
     this.canJump = true;

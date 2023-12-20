@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 class Zombie extends Enemy {
-  constructor(_pos, _level, _collisionMap) {
+  constructor(_pos, _roomId, _level, _collisionMap) {
     // super(_pos, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, _collisionMap, _textureSet);
-    super(_pos, "Zombie", _level, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, 10, 1, 2, "Bludgeoning", 1.5, 700, _collisionMap, textures.zombieTileSet);
+    super(_pos, "Zombie", _roomId, _level, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, 10, 1, 2, "Bludgeoning", 1.5, 700, _collisionMap, textures.zombieTileSet);
     this.radius = 0.4;
 
     // Zombies stop when attacking and bite if close
@@ -42,9 +42,9 @@ class Zombie extends Enemy {
 }
 
 class Skeleton extends Enemy {
-  constructor(_pos, _level, _collisionMap) {
+  constructor(_pos, _roomId, _level, _collisionMap) {
     // super(_pos, Math.floor(_level + 4), 2, 2.5, _collisionMap, _textureSet);
-    super(_pos, "Skeleton", _level, Math.floor(_level + 4), 2, 2.5, 10, 6, 1, "Slashing", 1.5, 1000, _collisionMap, textures.skeletonTileSet);
+    super(_pos, "Skeleton", _roomId, _level, Math.floor(_level + 4), 2, 2.5, 10, 6, 1, "Slashing", 1.5, 1000, _collisionMap, textures.skeletonTileSet);
 
     // I am Skeletor.
     this.retreatMidpoint = 4;
@@ -117,13 +117,13 @@ class Skeleton extends Enemy {
     if(ENEMYDEBUG) {
       console.log("[Skeleton] Throws a bone.");
     }
-    enemies.push(new Bone(this.pos, scaleVector(pursuitVector, this.throwSpeed), this.throwRange, this.throwDamage, this.collisionMap));
+    enemies.push(new Bone(this.pos, this.lockedZone, scaleVector(pursuitVector, this.throwSpeed), this.throwRange, this.throwDamage, this.collisionMap));
   }
 }
 
 class Phantom extends Enemy {
-  constructor(_pos, _level, _collisionMap) {
-    super(_pos, "Phantom", _level, Math.floor(_level + 4), 0, 2, 15, 8, 3, "Necrotic", 1.5, 1000, _collisionMap, textures.phantomTileSet);
+  constructor(_pos, _roomId, _level, _collisionMap) {
+    super(_pos, "Phantom", _roomId, _level, Math.floor(_level + 4), 0, 2, 15, 8, 3, "Necrotic", 1.5, 1000, _collisionMap, textures.phantomTileSet);
 
     // Necrotic spellcaster
     this.retreatMidpoint = 6;
@@ -164,19 +164,19 @@ class Phantom extends Enemy {
     if(ENEMYDEBUG) {
       console.log("[Phantom] Casts a dark spell!");
     }
-    enemies.push(new DarkSpell(this.pos, scaleVector(pursuitVector, this.spellSpeed), this.spellRange, this.spellDamage, this.collisionMap));
+    enemies.push(new DarkSpell(this.pos, this.lockedZone, scaleVector(pursuitVector, this.spellSpeed), this.spellRange, this.spellDamage, this.collisionMap));
   }
 }
 
 class Bone extends EnemyProjectile {
-  constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap) {
-    super(_pos, _dir, _maxDist, _hitDmg, "Piercing", 0.2, false, 0, 0, null, _collisionMap, textures.boneTileSet);
+  constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _collisionMap) {
+    super(_pos, _zone, _dir, _maxDist, _hitDmg, "Piercing", 0.2, false, 0, 0, null, _collisionMap, textures.boneTileSet);
   }
 }
 
 class DarkSpell extends EnemyProjectile {
-  constructor(_pos, _dir, _maxDist, _hitDmg, _collisionMap) {
-    super(_pos, _dir, _maxDist, _hitDmg, "Necrotic", 0.5, false, 3, 4, "Necrotic", _collisionMap, textures.darkSpellTileSet);
+  constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _collisionMap) {
+    super(_pos, _zone, _dir, _maxDist, _hitDmg, "Necrotic", 0.5, false, 3, 4, "Necrotic", _collisionMap, textures.darkSpellTileSet);
     let angle = atan(Math.abs(_dir[1]/_dir[0]));
     if(angle < PI/6){
       this.animationNum[0] = 0;

@@ -18,7 +18,21 @@ class Entity {
     this.invincible = false;
     this.invisible = false;
     this.radius = 0.3;
+
+    // Zone locking
+    this.locked = false;
+    this.lockedZone = 0;
   }
+
+  canMoveTo(newZone) {
+    if(!this.locked) {
+      return newZone !== 0;
+    }
+    else {
+      return newZone === this.lockedZone;
+    }
+  }
+
   display(screenCenter, screenSize){
     if(this.invisible) {
       return;
@@ -68,7 +82,7 @@ class Entity {
 }
 
 class Enemy extends Entity {
-  constructor(_pos, _name, _level, _health, _defence, _speed, _detectionRange, _combatBalanceRadius, _attackDamage, _attackDamageType, _attackRange, _attackCooldown, _collisionMap, _textureSet) {
+  constructor(_pos, _name, _roomId, _level, _health, _defence, _speed, _detectionRange, _combatBalanceRadius, _attackDamage, _attackDamageType, _attackRange, _attackCooldown, _collisionMap, _textureSet) {
     super(_pos, _health, _defence, _speed, _collisionMap, _textureSet);
     this.name = _name;
     // Default parameters
@@ -81,6 +95,8 @@ class Enemy extends Entity {
     this.attackTimer = millis();
     this.attackCooldown = _attackCooldown;
     this.prevDirection = [0, 0];
+    this.locked = true;
+    this.lockedZone = _roomId + 3;
   }
 
   operate(player, enemies, time) {
@@ -123,10 +139,10 @@ class Enemy extends Entity {
   } 
   move(pos, time){
     let [dx, dy] = scaleVector(pos, this.speed * time);
-    if(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)] !== 0){
+    if(this.canMoveTo(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)])){
       this.pos[0] += dx;
     }
-    if(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])] !== 0){
+    if(this.canMoveTo(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])])){
       this.pos[1] += dy;
     }
   }
@@ -143,7 +159,11 @@ class Player extends Entity {
     
     // Attack/use cooldowns
     this.attackTimer = millis();
+
+    // Zone stuff
+    this.activeZone = -1;
   }
+
   move(direction, time, isRolling){
     if(keyIsDown(49)){
       this.holding = new Dagger(this);
@@ -180,14 +200,15 @@ class Player extends Entity {
 
     //player movement
     let distance = sqrt(i*i + j*j)!== 0 ? time*this.speed/sqrt(i*i + j*j) : 0;
-    if(this.collisionMap[Math.floor(this.pos[1]+j*distance)][Math.floor(this.pos[0])] !== 0){
+    if(this.canMoveTo(this.collisionMap[Math.floor(this.pos[1]+j*distance)][Math.floor(this.pos[0])])){
       this.movementDirection[1] = j*distance;
     }
-    if(this.collisionMap[Math.floor(this.pos[1])][Math.floor(this.pos[0]+i*distance)] !== 0){
+    if(this.canMoveTo(this.collisionMap[Math.floor(this.pos[1])][Math.floor(this.pos[0]+i*distance)])){
       this.movementDirection[0] = i*distance;
     }
     this.pos[0] += this.movementDirection[0];
     this.pos[1] += this.movementDirection[1];
+    this.activeZone = this.collisionMap[Math.floor(this.pos[1])][Math.floor(this.pos[0])];
   }
 
   attack(enemies, time, isRolling) {
