@@ -58,10 +58,10 @@ function setup() {
   frameRate(30);
   noStroke();
   noSmooth();
-  myDungeon = new DungeonMap(5, 0.3);
+  myDungeon = new DungeonMap(10, 0.3);
   while(myDungeon.corrupted) {
     console.log("Regenerating...");
-    myDungeon = new DungeonMap(5, 0.3);
+    myDungeon = new DungeonMap(10, 0.3);
     console.log("Finished regeneration.");
   }
   minimap = new MiniMap(30, myDungeon.minimap);
@@ -97,7 +97,7 @@ function draw() {
   }
   player.move([keyIsDown(68)-keyIsDown(65) ,keyIsDown(83)-keyIsDown(87)], dt, keyIsDown(16));
   player.attack(myDungeon.enemies, dt, keyIsDown(16));
-  myDungeon.move(player, dt); 
+  myDungeon.update(player, dt);
   image(myBackground.generateScene(player.pos), width/2, height/2, width, height);
   player.display(player.pos, myBackground.scale, [16, 16]);
   myDungeon.display(player.pos, myBackground.scale, [16, 16]);
