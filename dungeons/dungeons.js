@@ -83,29 +83,6 @@ class DungeonMap {
 
     // Generate labyrinths
     this.corrupted = !generateLabyrinthEdges(this);
-
-    // // Temporary enemy testing
-    // for(let i = 0; i < 3; i++) {
-    //   this.enemies.push(new Slime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new LavaSlime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new FrostSlime([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new Zombie([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new Goblin([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new Skeleton([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(new Phantom([this.playerPos[0]+ random(-2, 2), this.playerPos[1] + random(-2, 2)], 1, this.minimap));
-    // }
   }
   update(player, time){
     this.enemies = this.enemies.filter(enemy => enemy.isAlive);
@@ -114,12 +91,12 @@ class DungeonMap {
     // });
     this.dungeon.forEach(room => {
       room.operate(player, time);
-    })
+    });
   }
   display(screenCenter, screenSize, scale){
     this.dungeon.forEach(room => {
       room.display(screenCenter, screenSize, scale);
-    })
+    });
   }
 }
 
@@ -182,30 +159,30 @@ class Room {
       this.visited = false;
       return 1;
     }
-    for(let i = 0; i < 3; i++) {
-      this.enemies.push(new Slime([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
-    }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(new LavaSlime([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
-    }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(new FrostSlime([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
-    }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(new Zombie([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
-    }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(new Goblin([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
-    }
+    // for(let i = 0; i < 3; i++) {
+    //   this.enemies.push(new Slime([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
+    // }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(new LavaSlime([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
+    // }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(new FrostSlime([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
+    // }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(new Zombie([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
+    // }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(new Goblin([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
+    // }
     for(let i = 0; i < 1; i++) {
       this.enemies.push(new Skeleton([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
     }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(new Phantom([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
-    }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(new Phantom([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
+    // }
     this.enemies.forEach((enemy) => {
       this.dungeonMap.enemies.push(enemy);
-    })
+    });
   }
 }
 

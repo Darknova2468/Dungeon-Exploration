@@ -45,10 +45,10 @@ function preload() {
     phantomTileSet: new AnimateSet("textures/phantom.png", [18, 18]),
     darkSpellTileSet: new AnimateSet("textures/darkSpell.png", [16, 16]),
     goblinTileSet: "chocolate",
-    skeletonTileSet: "blanchedalmond",
+    skeletonTileSet: new AnimateSet("textures/skeleton.png", [18, 18]),
     frozenPuddleTileSet: "powderblue",
     arrowTileSet: "white",
-  }
+  };
 }
 
 function setup() {
