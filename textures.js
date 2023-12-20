@@ -50,8 +50,17 @@ class Scene {
     this.myMap = this.textureMap(_map);
     this.scale = _scale;
     this.tileSet = _tileSet;
+
+    // Transitioning variables
+    this.transitioning = false;
+    this.transitionTimer = 0;
+    this.transitionTime = 0;
+    this.objectiveScale = _scale;
   }
-  generateScene(center){
+  updateDimensions(time) {
+  }
+  generateScene(center, time){
+    this.updateDimensions(time);
     let img = createImage(this.tileSet.size[0]*this.scale[0], this.tileSet.size[1]*this.scale[1]);
     const rangeX = Math.floor((this.scale[0]+2)*0.5);
     const rangeY = Math.floor((this.scale[1]+2)*0.5);

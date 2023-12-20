@@ -147,6 +147,7 @@ class Room {
         this.locked = true;
         player.locked = true;
         player.lockedZone = this.id + 3;
+        myBackground.scale = [24, 12];
       }
     }
     if(!this.locked) {
@@ -160,6 +161,7 @@ class Room {
     if(this.enemies.length === 0) {
       this.locked = false;
       player.locked = false;
+      myBackground.scale = [12, 6];
     }
   }
 
