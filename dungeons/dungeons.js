@@ -183,7 +183,6 @@ class Room {
       return 1;
     }
     for(let i = 0; i < 3; i++) {
-      console.log(this.dungeonMap.minimap[0][0]);
       this.enemies.push(new Slime([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], 1, this.dungeonMap.minimap));
     }
     for(let i = 0; i < 1; i++) {
