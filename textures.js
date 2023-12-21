@@ -84,8 +84,8 @@ class Scene {
     let img = createImage(this.tileSet.size[0]*this.scale[0], this.tileSet.size[1]*this.scale[1]);
     const rangeX = Math.ceil((this.scale[0]+2)*0.5);
     const rangeY = Math.ceil((this.scale[1]+2)*0.5);
-    const offsetX = -(center[0]-(this.scale[0])*0.5)+0.5;
-    const offsetY = -(center[1]-(this.scale[1])*0.5)+0.5;
+    const offsetX = -(center[0]-(this.scale[0])*0.5);
+    const offsetY = -(center[1]-(this.scale[1])*0.5);
     for(let y=Math.floor(center[1])-rangeY; y<center[1]+rangeY; y++){
       for(let x=Math.floor(center[0])-rangeX; x<center[0]+rangeX; x++){
         if(y>-1 && y<this.myMap.length && x>-1 && x<this.myMap[0].length){
@@ -93,7 +93,7 @@ class Scene {
             this.myMap[y][x].forEach(id => {
               img.copy(
                 this.tileSet.assets[id], 0, 0, this.tileSet.size[0], this.tileSet.size[1],
-                (x+offsetX)*(this.tileSet.size[0]-1), (y+offsetY)*(this.tileSet.size[1]-1), this.tileSet.size[0], this.tileSet.size[1]
+                (x+offsetX)*(this.tileSet.size[0]), (y+offsetY)*(this.tileSet.size[1]), this.tileSet.size[0], this.tileSet.size[1]
               );
             });
           }
