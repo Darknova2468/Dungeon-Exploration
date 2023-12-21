@@ -62,8 +62,8 @@ function setup() {
   while(myDungeon.corrupted) {
     console.log("Regenerating...");
     myDungeon = new DungeonMap(10, 0.3);
-    console.log("Finished regeneration.");
   }
+  console.log("Finished regeneration.");
   minimap = new MiniMap(30, myDungeon.minimap);
   player = new Player(myDungeon.playerPos, myDungeon.minimap);
   myBackground = new Scene(myDungeon.minimap, [16, 8], textures.tileSet);

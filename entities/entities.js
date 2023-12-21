@@ -165,9 +165,13 @@ class Player extends Entity {
 
     // Zone stuff
     this.activeZone = -1;
+    this.timeLocked = false;
   }
 
   move(direction, time, isRolling){
+    if(this.timeLocked) {
+      return;
+    }
     if(keyIsDown(49)){
       this.holding = new Dagger(this);
     }
@@ -215,6 +219,9 @@ class Player extends Entity {
   }
 
   attack(enemies, time, isRolling) {
+    if(this.timeLocked) {
+      return;
+    }
     // if(mouseIsPressed && millis() > this.attackTimer && !isRolling) {
     //   // Temporary direction checking; change later
     //   this.attackTimer = this.holding.attack(enemies, targetVector, time);

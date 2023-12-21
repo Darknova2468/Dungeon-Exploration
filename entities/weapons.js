@@ -238,16 +238,16 @@ class Spear extends ThrustWeapon {
   }
 }
 
-// class Hyperion extends SweepWeapon {
-//   constructor(wielder) {
-//     super(wielder, 5, 0, 5, 150, Math.PI - 0.01, 100, 1);
-//   }
+class Hyperion extends SweepWeapon {
+  constructor(wielder) {
+    super(wielder, 5, 0, 5, 150, Math.PI - 0.01, 100, 1);
+  }
 
-//   attack(enemies, direction, time, isRolling) {
-//     this.wielder.health = max(this.wielder.health, 150);
-//     return super.attack(enemies, direction, time, isRolling);
-//   }
-// }
+  attack(enemies, direction, time, isRolling) {
+    this.wielder.health = max(this.wielder.health, 150);
+    return super.attack(enemies, direction, time, isRolling);
+  }
+}
 
 class ChargedRangedWeapon extends Weapon {
   constructor(wielder, damage, range, cooldown, minChargeTime, chargeTime, projectileSpeed) {

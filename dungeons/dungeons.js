@@ -146,9 +146,10 @@ class Room {
       if(this.id >= 1) {
         this.locked = true;
         player.locked = true;
+        player.timeLocked = true;
         player.lockedZone = this.id + 3;
         // myBackground.scale = [24, 12];
-        myBackground.changeDimensions([24.1,12.05], 700);
+        myBackground.changeDimensions([this.radius * 4, this.radius * 2], 700);
         this.entranceStage = 1;
       }
     }
@@ -157,7 +158,7 @@ class Room {
     }
     else if(this.entranceStage === 1) {
       this.entranceStage = 2;
-      myBackground.changeDimensions([24, 12], 700);
+      myBackground.changeDimensions([this.radius * 4, this.radius * 2], 700);
     }
     else if(this.entranceStage === 2) {
       this.entranceStage = 3;
@@ -165,7 +166,7 @@ class Room {
       this.enemies.forEach(enemy => {
         enemy.invincible = true;
       });
-      myBackground.changeDimensions([24, 12], 1500);
+      myBackground.changeDimensions([this.radius * 4, this.radius * 2], 1500);
     }
     else if(this.entranceStage === 3) {
       this.entranceStage = 4;
@@ -176,6 +177,7 @@ class Room {
       this.enemies.forEach(enemy => {
         enemy.invincible = false;
       });
+      player.timeLocked = false;
     }
     else {
       this.enemies = this.enemies.filter(enemy => enemy.isAlive);
