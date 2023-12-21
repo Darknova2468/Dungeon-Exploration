@@ -4,11 +4,11 @@ class DungeonMap {
     this.enemies = [];
 
     //builds room nodes;
-    this.dungeon = [new Room(0, 6, this)];
+    this.dungeon = [new Room(0, 6, this, [0, 0, 0, 0])];
     for(let i=1; i<_numberOfRooms-1; i++){
-      this.dungeon.push(new Room(i, floor(random(7, 9)), this));
+      this.dungeon.push(new Room(i, floor(random(7, 9)), this, [i + Math.floor(random(0, i)), 0, 0, 0]));
     }
-    this.dungeon.push(new Room(_numberOfRooms - 1, 10, this));
+    this.dungeon.push(new Room(_numberOfRooms - 1, 10, this, [10, 0, 0, 0]));
 
     //adds procedural distances
     for(let i=1; i<_numberOfRooms; i++){
@@ -101,7 +101,7 @@ class DungeonMap {
 }
 
 class Room {
-  constructor(_id, _radius, _dungeonMap){
+  constructor(_id, _radius, _dungeonMap, _difficulties){
     this.dungeonMap = _dungeonMap;
     this.id = _id;
     this.radius = _radius;
@@ -112,6 +112,7 @@ class Room {
     this.entranceStage = 0;
     this.entranceTimer = 0;
     this.entranceTime = 700;
+    this.difficulties = _difficulties; // [S, G, U, D]
   }
   addConnection(numberOfConnections, index, numberOfRooms, dungeon, check){
     //pushes connections to node
@@ -148,7 +149,6 @@ class Room {
         player.locked = true;
         player.timeLocked = true;
         player.lockedZone = this.id + 3;
-        // myBackground.scale = [24, 12];
         myBackground.changeDimensions([this.radius * 4, this.radius * 2], 700);
         this.entranceStage = 1;
       }
@@ -199,8 +199,8 @@ class Room {
     });
   }
 
-  attemptEnemyPlacement(EnemyType) {
-    let enemy = new EnemyType([this.pos[0]+ random(-this.radius / 2, this.radius / 2), this.pos[1] + random(-this.radius / 2, this.radius / 2)], this.id, 1, this.dungeonMap.minimap);
+  attemptEnemyPlacement(EnemyType, level = 1, radiusPortion = 1) {
+    let enemy = new EnemyType([this.pos[0]+ random(-this.radius * radiusPortion / 2, this.radius * radiusPortion / 2), this.pos[1] + random(-this.radius * radiusPortion / 2, this.radius * radiusPortion / 2)], this.id, level, this.dungeonMap.minimap);
     if(enemy.canMoveTo(this.dungeonMap.minimap[Math.floor(enemy.pos[1])][Math.floor(enemy.pos[0])])) {
       return enemy;
     }
@@ -211,32 +211,36 @@ class Room {
   }
 
   spawnEnemies() {
+    let slimes = createSlimes(this.difficulties[0]);
+    for(let [slimeClass, level, radiusPortion] of slimes) {
+      this.enemies.push(this.attemptEnemyPlacement(slimeClass, level, radiusPortion));
+    }
     // Temporary enemy spawning
-    if(this.dungeonMap === undefined) {
-      this.visited = false;
-      return 1;
-    }
-    for(let i = 0; i < 3; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(Slime));
-    }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(LavaSlime));
-    }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(FrostSlime));
-    }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(Zombie));
-    }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(Goblin));
-    }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(Skeleton));
-    }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(Phantom));
-    }
+    // if(this.dungeonMap === undefined) {
+    //   this.visited = false;
+    //   return 1;
+    // }
+    // for(let i = 0; i < 3; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(Slime));
+    // }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(LavaSlime));
+    // }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(FrostSlime));
+    // }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(Zombie));
+    // }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(Goblin));
+    // }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(Skeleton));
+    // }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(Phantom));
+    // }
     this.enemies.forEach((enemy) => {
       this.dungeonMap.enemies.push(enemy);
     });

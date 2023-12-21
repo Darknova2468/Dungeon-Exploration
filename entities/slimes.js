@@ -1,10 +1,17 @@
 /* eslint-disable no-undef */
 class Slime extends Enemy {
   constructor(_pos, _roomId, _level, _collisionMap, _textureSet = textures.slimeTileSet) {
-    super(_pos, "Slime", _roomId, _level, Math.floor(4*Math.log10(_level+1)), 0, 1.5, 8, 0.5, 1, "Bludgeoning", 0.5, 600, _collisionMap, _textureSet);
+    super(_pos, "Slime", _roomId, _level, Math.floor(4*Math.log10(_level+1)), 0, 1.5, 8, 0.5, Math.floor(4*Math.log10(_level+1)), "Bludgeoning", 0.5, 600, _collisionMap, _textureSet);
+    if(this.level >= 10) {
+      this.radius = 0.6;
+    }
+
+    if(this.level >= 25) {
+      this.radius = 1;
+    }
 
     // Jumping variables
-    this.canJump = false;
+    this.canJump = this.level < 10 ? false : true;
     this.jumping = false;
     this.defaultSpeed = this.speed;
     this.jumpSpeed = 4 * this.speed;
@@ -179,4 +186,42 @@ class FrozenPuddle extends Entity {
   renew() {
     this.freezeDamage = this.initialFreezeDamage;
   }
+}
+
+const slimeVariants = [Slime, LavaSlime, FrostSlime];
+
+function createSlimes(slimeDifficulty) {
+  let lavaSlimeVariantChance = 0;
+  let frostSlimeVariantChance = 0;
+  let slimes = [];
+  slimeDifficulty *= 5;
+  if(slimeDifficulty > 50) {
+    lavaSlimeVariantChance = 0.9;
+  }
+  if(slimeDifficulty > 100) {
+    frostSlimeVariantChance = 0.8;
+    lavaSlimeVariantChance = 0.3;
+  }
+  while(slimeDifficulty > 0) {
+    let slimeType = 0;
+    let maxLevel = slimeDifficulty;
+    if(random() < frostSlimeVariantChance) {
+      slimeType = 2;
+    }
+    else if(random() < lavaSlimeVariantChance) {
+      slimeType = 1;
+    }
+    if(slimeType) {
+      maxLevel = slimeDifficulty / 2;
+    }
+    let chosenLevel = Math.ceil(Math.pow(random(0.1, Math.sqrt(maxLevel)), 2));
+    slimes.push([slimeVariants[slimeType], chosenLevel, 1]);
+    if(slimeType) {
+      slimeDifficulty -= 2 * chosenLevel;
+    }
+    else {
+      slimeDifficulty -= chosenLevel;
+    }
+  }
+  return slimes;
 }
