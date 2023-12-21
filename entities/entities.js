@@ -72,6 +72,9 @@ class Entity {
   //   }
   damage(amountDamage, damageType) {
     // damageType unused for now
+    if(this.invincible) {
+      return;
+    }
     amountDamage *= 5/(this.defence + 5);
     this.health -= amountDamage;
     if(this.health <= 0 && !this.invincible) {

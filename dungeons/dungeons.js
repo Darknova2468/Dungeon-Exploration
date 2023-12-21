@@ -109,7 +109,9 @@ class Room {
     this.pos = [0, 0];
     this.enemies = [];
     this.locked = true;
-    this.visited = false;
+    this.entranceStage = 0;
+    this.entranceTimer = 0;
+    this.entranceTime = 700;
   }
   addConnection(numberOfConnections, index, numberOfRooms, dungeon, check){
     //pushes connections to node
@@ -140,28 +142,52 @@ class Room {
     if(player.activeZone !== this.id + 3) {
       return;
     }
-    if(!this.visited) {
-      this.visited = true;
+    if(!this.entranceStage) {
       if(this.id >= 1) {
-        this.spawnEnemies();
         this.locked = true;
         player.locked = true;
         player.lockedZone = this.id + 3;
-        myBackground.scale = [24, 12];
+        // myBackground.scale = [24, 12];
+        myBackground.changeDimensions([24.1,12.05], 700);
+        this.entranceStage = 1;
       }
     }
-    if(!this.locked) {
+    if(myBackground.transitioning || !this.locked) {
       return;
     }
-    this.enemies = this.enemies.filter(enemy => enemy.isAlive);
-    this.enemies.forEach(enemy => {
-      // console.log(player, this.enemies, time);
-      enemy.operate(player, this.enemies, time);
-    });
-    if(this.enemies.length === 0) {
-      this.locked = false;
-      player.locked = false;
-      myBackground.scale = [12, 6];
+    else if(this.entranceStage === 1) {
+      this.entranceStage = 2;
+      myBackground.changeDimensions([24, 12], 700);
+    }
+    else if(this.entranceStage === 2) {
+      this.entranceStage = 3;
+      this.spawnEnemies();
+      this.enemies.forEach(enemy => {
+        enemy.invincible = true;
+      });
+      myBackground.changeDimensions([24, 12], 1500);
+    }
+    else if(this.entranceStage === 3) {
+      this.entranceStage = 4;
+      myBackground.changeDimensions([16, 8], 500);
+    }
+    else if(this.entranceStage === 4) {
+      this.entranceStage = 5;
+      this.enemies.forEach(enemy => {
+        enemy.invincible = false;
+      });
+    }
+    else {
+      this.enemies = this.enemies.filter(enemy => enemy.isAlive);
+      this.enemies.forEach(enemy => {
+        // console.log(player, this.enemies, time);
+        enemy.operate(player, this.enemies, time);
+      });
+      if(this.enemies.length === 0) {
+        this.locked = false;
+        player.locked = false;
+        myBackground.changeDimensions([12, 6], 1000);
+      }
     }
   }
 
