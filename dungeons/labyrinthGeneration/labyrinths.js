@@ -181,8 +181,8 @@ function generateLabyrinthEdges(dungeonMap) {
     let p2 = nodes[edge[1]];
     let midpoint = [(p1[0] + p2[0])/2, (p1[1] + p2[1])/2];
     let circularDist = dist(p1[0], p1[1], midpoint[0], midpoint[1]);
-    for(let y = 0; y < labyGrid.length; y++) {
-      for(let x = 0; x < labyGrid[0].length; x++) {
+    for(let y = 1; y < labyGrid.length-1; y++) {
+      for(let x = 1; x < labyGrid[0].length-1; x++) {
         let gridX = 2 * x;
         let gridY = 2 * y;
 
