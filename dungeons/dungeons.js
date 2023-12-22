@@ -1,14 +1,14 @@
 /* eslint-disable no-undef */
 class DungeonMap {
-  constructor(_numberOfRooms, _twoPathChance){
+  constructor(_numberOfRooms, _twoPathChance,  _caveEdgeChance, _denseCaveEdgeChance){
     this.enemies = [];
 
     //builds room nodes;
-    this.dungeon = [new Room(0, 6, this, [0, 0, 0, 0])];
+    this.dungeon = [new Room(0, 6, this, [0, 0, 0, 0],  _caveEdgeChance, _denseCaveEdgeChance)];
     for(let i=1; i<_numberOfRooms-1; i++){
-      this.dungeon.push(new Room(i, floor(random(7, 9)), this, [i + Math.floor(random(0, i)), 0, 0, 0]));
+      this.dungeon.push(new Room(i, floor(random(7, 9)), this, [i + Math.floor(random(0, i)), 0, 0, 0], _caveEdgeChance, _denseCaveEdgeChance));
     }
-    this.dungeon.push(new Room(_numberOfRooms - 1, 10, this, [10, 0, 0, 0]));
+    this.dungeon.push(new Room(_numberOfRooms - 1, 10, this, [10, 0, 0, 0], _caveEdgeChance, _denseCaveEdgeChance));
 
     //adds procedural distances
     for(let i=1; i<_numberOfRooms; i++){
@@ -101,7 +101,7 @@ class DungeonMap {
 }
 
 class Room {
-  constructor(_id, _radius, _dungeonMap, _difficulties){
+  constructor(_id, _radius, _dungeonMap, _difficulties, _caveEdgeChance, _denseCaveEdgeChance){
     this.dungeonMap = _dungeonMap;
     this.id = _id;
     this.radius = _radius;
@@ -113,10 +113,12 @@ class Room {
     this.entranceTimer = 0;
     this.entranceTime = 700;
     this.difficulties = _difficulties; // [S, G, U, D]
+    this.caveEdgeChance = _caveEdgeChance;
+    this.denseCaveEdgeChance = _denseCaveEdgeChance;
   }
   addConnection(numberOfConnections, index, numberOfRooms, dungeon, check){
     //pushes connections to node
-    let distance = random() < 0.5 ? 3:Math.floor(random(8, 12));
+    let distance = random() < this.caveEdgeChance ? 3:Math.floor(random(8, 12));
     if(check){
       this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>3)]);
     }
@@ -133,7 +135,7 @@ class Room {
       }
       else {
         this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>3)]);
-        distance = random() < 0.7 ? 3:Math.floor(random(8, 12));
+        distance = random() < this.denseCaveEdgeChance ? 3:Math.floor(random(8, 12));
         this.connections.push([index+1, dungeon[index+1].radius+this.radius+distance, 1+(distance>3)]);
       }
     }
