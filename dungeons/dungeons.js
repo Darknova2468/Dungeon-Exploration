@@ -227,35 +227,38 @@ class Room {
   }
 
   testSpawnEnemies() {
-    for(let i = 0; i < 3; i++) {
+    for(let i = 0; i < 0; i++) {
       this.enemies.push(this.attemptEnemyPlacement(Slime));
     }
-    for(let i = 0; i < 1; i++) {
+    for(let i = 0; i < 0; i++) {
       this.enemies.push(this.attemptEnemyPlacement(LavaSlime));
     }
-    for(let i = 0; i < 1; i++) {
+    for(let i = 0; i < 0; i++) {
       this.enemies.push(this.attemptEnemyPlacement(FrostSlime));
     }
-    for(let i = 0; i < 1; i++) {
+    for(let i = 0; i < 0; i++) {
       this.enemies.push(this.attemptEnemyPlacement(Zombie));
     }
     for(let i = 0; i < 1; i++) {
       this.enemies.push(this.attemptEnemyPlacement(Goblin));
     }
     for(let i = 0; i < 1; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(Hobgoblin));
+    }
+    for(let i = 0; i < 0; i++) {
       this.enemies.push(this.attemptEnemyPlacement(Skeleton));
     }
-    for(let i = 0; i < 1; i++) {
+    for(let i = 0; i < 0; i++) {
       this.enemies.push(this.attemptEnemyPlacement(Phantom));
     }
   }
 
   spawnEnemies() {
-    let slimes = createSlimes(this.difficulties[0]);
-    for(let [slimeClass, level, radiusPortion] of slimes) {
-      this.enemies.push(this.attemptEnemyPlacement(slimeClass, level, radiusPortion));
-    }
-    // this.testSpawnEnemies();
+    // let slimes = createSlimes(this.difficulties[0]);
+    // for(let [slimeClass, level, radiusPortion] of slimes) {
+    //   this.enemies.push(this.attemptEnemyPlacement(slimeClass, level, radiusPortion));
+    // }
+    this.testSpawnEnemies();
     // Temporary enemy spawning
     // if(this.dungeonMap === undefined) {
     //   this.visited = false;
