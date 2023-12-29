@@ -6,6 +6,7 @@ function createDungeonMap(floor) {
     console.log("Regenerating...");
     dungeonMap = new DungeonMap(floor);
   }
+  console.log("Finished generation.");
   return dungeonMap;
 }
 
@@ -284,8 +285,12 @@ class Room {
 
   spawnEnemies() {
     let slimes = createSlimes(this.difficulties[0]);
+    let undeads = createUndead(this.difficulties[2]);
     for(let [slimeClass, level, radiusPortion] of slimes) {
       this.enemies.push(this.attemptEnemyPlacement(slimeClass, level, radiusPortion));
+    }
+    for(let [undeadClass, level, radiusPortion] of undeads) {
+      this.enemies.push(this.attemptEnemyPlacement(undeadClass, level, radiusPortion));
     }
     // this.testSpawnEnemies();
     // Temporary enemy spawning

@@ -191,3 +191,38 @@ class DarkSpell extends EnemyProjectile {
     this.animationNum[2] = _dir[1] < 0 && this.animationNum[0] !== 0 ? 0:1;
   }
 }
+
+const undeadVariants = [Zombie, Skeleton, Phantom]
+
+function createUndead(undeadDifficulty) {
+  let skeletonChance = 0;
+  let phantomChance = 0;
+  let undead = [];
+  undeadDifficulty *= 2;
+  if(undeadDifficulty > 50) {
+    skeletonChance = 0.4;
+  }
+  if(undeadDifficulty > 100) {
+    phantomChance = 0.1;
+  }
+  if(undeadDifficulty === 150) {
+    phantomChance = 0.3;
+  }
+  while(undeadDifficulty > 0) {
+    let undeadType = 0;
+    let maxLevel = undeadDifficulty;
+    if(random() < phantomChance) {
+      undeadType = 2;
+    }
+    else if(random() < skeletonChance) {
+      undeadType = 1;
+    }
+    if(undeadType) {
+      maxLevel = undeadDifficulty / 2;
+    }
+    let chosenLevel = Math.ceil(Math.pow(random(1, Math.sqrt(maxLevel)), 1.5));
+    undead.push([undeadVariants[undeadType], chosenLevel, 1]);
+    undeadDifficulty -= (1 + undeadType) * chosenLevel;
+  }
+  return undead;
+}

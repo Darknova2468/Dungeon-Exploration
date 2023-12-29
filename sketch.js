@@ -59,8 +59,7 @@ function setup() {
   frameRate(30);
   noStroke();
   noSmooth();
-  myDungeon = createDungeonMap(5);
-  console.log("Finished regeneration.");
+  myDungeon = createDungeonMap(15);
   minimap = new MiniMap(30, myDungeon.minimap);
   player = new Player(myDungeon.playerPos, myDungeon.minimap);
   myBackground = new Scene(myDungeon.minimap, [16, 8], textures.tileSet);
