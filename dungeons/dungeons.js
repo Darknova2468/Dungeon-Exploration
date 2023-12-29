@@ -9,12 +9,25 @@ class DungeonMap {
     this.caveEdgeChance = this.floor[3];
     this.denseCaveEdgeChance = this.floor[4];
 
-    // Builds room nodes;
-    this.dungeon = [new Room(0, 6, this, [0, 0, 0, 0], this.caveEdgeChance, this.denseCaveEdgeChance)];
-    for(let i=1; i<this.numberOfRooms-1; i++){
-      this.dungeon.push(new Room(i, floor(random(7, 9)), this, [i + Math.floor(random(0, i)), 0, 0, 0], this.caveEdgeChance, this.denseCaveEdgeChance));
+    // Determines difficulties of initial and boss rooms
+    this.difficulties = [[], [0,0,0,0]];
+    this.enemyDifficulties.forEach((bounds) => {this.difficulties[0].push(bounds[1])});
+
+    // Adds difficulties of other rooms
+    for(let i = 1; i < this.numberOfRooms - 1; i++) {
+      this.difficulties.unshift([]);
+      this.enemyDifficulties.forEach((bounds) => {this.difficulties[0].push(Math.floor(random(bounds[0], bounds[1])))});
     }
-    this.dungeon.push(new Room(this.numberOfRooms - 1, 10, this, [10, 0, 0, 0], this.caveEdgeChance, this.denseCaveEdgeChance));
+
+    // Sorts difficulties to fix everything
+    this.difficulties.sort((a, b) => getArraySum(a)-getArraySum(b));
+
+    // Builds room nodes;
+    this.dungeon = [new Room(0, 6, this, this.difficulties[0], this.caveEdgeChance, this.denseCaveEdgeChance)];
+    for(let i=1; i<this.numberOfRooms-1; i++){
+      this.dungeon.push(new Room(i, floor(random(7, 9)), this, this.difficulties[i], this.caveEdgeChance, this.denseCaveEdgeChance));
+    }
+    this.dungeon.push(new Room(this.numberOfRooms - 1, 10, this, this.difficulties[this.numberOfRooms - 1], this.caveEdgeChance, this.denseCaveEdgeChance));
 
     // Adds procedural distances
     for(let i=1; i<this.numberOfRooms; i++){
@@ -260,11 +273,11 @@ class Room {
   }
 
   spawnEnemies() {
-    // let slimes = createSlimes(this.difficulties[0]);
-    // for(let [slimeClass, level, radiusPortion] of slimes) {
-    //   this.enemies.push(this.attemptEnemyPlacement(slimeClass, level, radiusPortion));
-    // }
-    this.testSpawnEnemies();
+    let slimes = createSlimes(this.difficulties[0]);
+    for(let [slimeClass, level, radiusPortion] of slimes) {
+      this.enemies.push(this.attemptEnemyPlacement(slimeClass, level, radiusPortion));
+    }
+    // this.testSpawnEnemies();
     // Temporary enemy spawning
     // if(this.dungeonMap === undefined) {
     //   this.visited = false;
@@ -367,4 +380,10 @@ function generateEmptyGrid(x = xSize, y = ySize, toFill = 0) {
     emptyGrid[i] = new Array(x).fill(toFill);
   }
   return emptyGrid;
+}
+
+function getArraySum(arr) {
+  acc = 0;
+  arr.forEach((x) => {acc += x});
+  return acc;
 }
