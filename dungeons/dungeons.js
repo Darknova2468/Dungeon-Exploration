@@ -1,21 +1,27 @@
 /* eslint-disable no-undef */
 class DungeonMap {
-  constructor(_numberOfRooms, _twoPathChance,  _caveEdgeChance, _denseCaveEdgeChance){
+  constructor(_floor){
     this.enemies = [];
+    this.floor = floors[_floor];
+    this.numberOfRooms = this.floor[0];
+    this.enemyDifficulties = this.floor[1];
+    this.twoPathChance = this.floor[2];
+    this.caveEdgeChance = this.floor[3];
+    this.denseCaveEdgeChance = this.floor[4];
 
-    //builds room nodes;
-    this.dungeon = [new Room(0, 6, this, [0, 0, 0, 0],  _caveEdgeChance, _denseCaveEdgeChance)];
-    for(let i=1; i<_numberOfRooms-1; i++){
-      this.dungeon.push(new Room(i, floor(random(7, 9)), this, [i + Math.floor(random(0, i)), 0, 0, 0], _caveEdgeChance, _denseCaveEdgeChance));
+    // Builds room nodes;
+    this.dungeon = [new Room(0, 6, this, [0, 0, 0, 0], this.caveEdgeChance, this.denseCaveEdgeChance)];
+    for(let i=1; i<this.numberOfRooms-1; i++){
+      this.dungeon.push(new Room(i, floor(random(7, 9)), this, [i + Math.floor(random(0, i)), 0, 0, 0], this.caveEdgeChance, this.denseCaveEdgeChance));
     }
-    this.dungeon.push(new Room(_numberOfRooms - 1, 10, this, [10, 0, 0, 0], _caveEdgeChance, _denseCaveEdgeChance));
+    this.dungeon.push(new Room(this.numberOfRooms - 1, 10, this, [10, 0, 0, 0], this.caveEdgeChance, this.denseCaveEdgeChance));
 
-    //adds procedural distances
-    for(let i=1; i<_numberOfRooms; i++){
-      this.dungeon[i-1].addConnection(1+(random() < _twoPathChance || i+2 > _numberOfRooms), i, _numberOfRooms, this.dungeon, i === _numberOfRooms-1);
+    // Adds procedural distances
+    for(let i=1; i<this.numberOfRooms; i++){
+      this.dungeon[i-1].addConnection(1+(random() < this.twoPathChance || i+2 > this.numberOfRooms), i, this.numberOfRooms, this.dungeon, i === this.numberOfRooms-1);
     }
 
-    //defines starting triangle
+    // Defines starting triangle
     let dist1 = this.dungeon[0].connections[0][1];
     let dist2 = this.dungeon[0].connections[1][1];
     let dist3 = this.dungeon[1].connections[0][1];
@@ -24,7 +30,7 @@ class DungeonMap {
     this.dungeon[1].pos = [Math.abs(cos(theta)*dist1), sin(theta)*dist1];
     this.dungeon[2].pos = [Math.abs(cos(theta)*dist2), -sin(theta)*dist2];
 
-    //generates the rest of the tree
+    // Generates the rest of the tree
     for(let i=3; i<this.dungeon.length; i++){
       dist1 = this.dungeon[i-2].connections[1][1];
       dist2 = this.dungeon[i-1].connections[0][1];
@@ -42,7 +48,7 @@ class DungeonMap {
       this.dungeon[i].pos = point;
     }
 
-    //finds bounding box of the map
+    // Finds bounding box of the map
     let [minX, maxX, minY, maxY] = [Infinity, -Infinity, Infinity, -Infinity];
     this.dungeon.forEach(room => {
       minX = min(minX, room.pos[0]-room.radius);
@@ -57,7 +63,7 @@ class DungeonMap {
       room.pos = [Math.floor(room.pos[0] + this.offset[0]), Math.floor(room.pos[1] + this.offset[1])];
     });
 
-    //creates Map
+    // Creates Map
     this.minimap = generateEmptyGrid(Math.floor(maxX-minX)+2, Math.floor(maxY-minY)+2);
 
     this.playerPos = this.offset;
@@ -117,7 +123,7 @@ class Room {
     this.denseCaveEdgeChance = _denseCaveEdgeChance;
   }
   addConnection(numberOfConnections, index, numberOfRooms, dungeon, check){
-    //pushes connections to node
+    // Pushes connections to node
     let distance = random() < this.caveEdgeChance ? 3:Math.floor(random(8, 12));
     if(check){
       this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>3)]);
