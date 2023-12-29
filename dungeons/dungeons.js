@@ -1,4 +1,14 @@
 /* eslint-disable no-undef */
+
+function createDungeonMap(floor) {
+  let dungeonMap = new DungeonMap(floor);
+  while(dungeonMap.corrupted) {
+    console.log("Regenerating...");
+    dungeonMap = new DungeonMap(floor);
+  }
+  return dungeonMap;
+}
+
 class DungeonMap {
   constructor(_floor){
     this.enemies = [];

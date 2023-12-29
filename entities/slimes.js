@@ -202,6 +202,10 @@ function createSlimes(slimeDifficulty) {
     frostSlimeVariantChance = 0.8;
     lavaSlimeVariantChance = 0.3;
   }
+  if(slimeDifficulty > 150) {
+    frostSlimeVariantChance = 0.2;
+    lavaSlimeVariantChance = 0.3;
+  }
   while(slimeDifficulty > 0) {
     let slimeType = 0;
     let maxLevel = slimeDifficulty;

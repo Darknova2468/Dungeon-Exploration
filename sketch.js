@@ -59,11 +59,7 @@ function setup() {
   frameRate(30);
   noStroke();
   noSmooth();
-  myDungeon = new DungeonMap(1);
-  while(myDungeon.corrupted) {
-    console.log("Regenerating...");
-    myDungeon = new DungeonMap(1);
-  }
+  myDungeon = createDungeonMap(5);
   console.log("Finished regeneration.");
   minimap = new MiniMap(30, myDungeon.minimap);
   player = new Player(myDungeon.playerPos, myDungeon.minimap);
