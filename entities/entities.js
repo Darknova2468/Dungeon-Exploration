@@ -84,6 +84,30 @@ class Entity {
   }
 }
 
+class Portal extends Entity {
+  constructor(_pos, _radius, _target, _collisionMap, _textureSet, _activeTextureSet) {
+    super(_pos, 1, 0, 0, _collisionMap, _textureSet);
+    this.inactiveAnimationSet = this.animationSet
+    this.activeAnimationSet = _activeTextureSet;
+    this.invincible = true;
+    this.target = _target; // Floor available to go to once activated
+    this.radius = _radius;
+    this.active = false;
+  }
+
+  activate() {
+    this.active = true;
+    this.animationSet = this.activeAnimationSet;
+  }
+
+  operate(player, time) {
+    if(this.active && dist(this.pos[0], this.pos[1], player.pos[0], player.pos[1]) < this.radius) {
+      myDungeon = createDungeonMap(this.target);
+      enterDungeonMap(myDungeon);
+    }
+  }
+}
+
 class Enemy extends Entity {
   constructor(_pos, _name, _roomId, _level, _health, _defence, _speed, _detectionRange, _combatBalanceRadius, _attackDamage, _attackDamageType, _attackRange, _attackCooldown, _collisionMap, _textureSet) {
     super(_pos, _health, _defence, _speed, _collisionMap, _textureSet);

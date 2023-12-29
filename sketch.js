@@ -49,6 +49,8 @@ function preload() {
     skeletonTileSet: new AnimateSet("textures/skeleton.png", [18, 18]),
     frozenPuddleTileSet: "powderblue",
     arrowTileSet: "white",
+    inactivePortalTileSet: "dimgrey",
+    activePortalTileSet: "purple"
   };
 }
 
@@ -59,10 +61,9 @@ function setup() {
   frameRate(30);
   noStroke();
   noSmooth();
-  myDungeon = createDungeonMap(15);
-  minimap = new MiniMap(30, myDungeon.minimap);
+  myDungeon = createDungeonMap(1);
   player = new Player(myDungeon.playerPos, myDungeon.minimap);
-  myBackground = new Scene(myDungeon.minimap, [16, 8], textures.tileSet);
+  enterDungeonMap(myDungeon);
 }
 
 let gameActive = true;
@@ -102,5 +103,6 @@ function draw() {
   textSize(12);
   text("fps: " + Math.floor(frameRate()), width-height*3/20, height*6/20);
   textSize(20);
-  text("Health: " + Math.ceil(player.health), height*3/20, height*3/20);  
+  text("Health: " + Math.ceil(player.health), height*3/20, height*3/20);
+  text("On Floor " + myDungeon.floorNumber, height*3/20, height*2/20);
 }

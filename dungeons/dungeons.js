@@ -10,10 +10,19 @@ function createDungeonMap(floor) {
   return dungeonMap;
 }
 
+function enterDungeonMap(dungeonMap) {
+  minimap = new MiniMap(30, dungeonMap.minimap);
+  player.pos = dungeonMap.playerPos;
+  player.collisionMap = dungeonMap.minimap;
+  myBackground = new Scene(dungeonMap.minimap, [16, 8], textures.tileSet);
+}
+
 class DungeonMap {
   constructor(_floor){
     this.enemies = [];
-    this.floor = floors[_floor];
+    this.otherEntities = [];
+    this.floorNumber = _floor;
+    this.floor = floors[this.floorNumber];
     this.numberOfRooms = this.floor[0];
     this.enemyDifficulties = this.floor[1];
     this.twoPathChance = this.floor[2];
@@ -38,7 +47,7 @@ class DungeonMap {
     for(let i=1; i<this.numberOfRooms-1; i++){
       this.dungeon.push(new Room(i, floor(random(7, 9)), this, this.difficulties[i], this.caveEdgeChance, this.denseCaveEdgeChance));
     }
-    this.dungeon.push(new Room(this.numberOfRooms - 1, 10, this, this.difficulties[this.numberOfRooms - 1], this.caveEdgeChance, this.denseCaveEdgeChance));
+    this.dungeon.push(new Room(this.numberOfRooms - 1, 10, this, this.difficulties[this.numberOfRooms - 1], this.caveEdgeChance, this.denseCaveEdgeChance, true));
 
     // Adds procedural distances
     for(let i=1; i<this.numberOfRooms; i++){
@@ -116,14 +125,17 @@ class DungeonMap {
   }
   update(player, time){
     this.enemies = this.enemies.filter(enemy => enemy.isAlive);
-    // this.enemies.forEach(enemy => {
-    //   enemy.operate(player, this.enemies, time);
-    // });
+    this.otherEntities.forEach(entity => {
+      entity.operate(player, time);
+    });
     this.dungeon.forEach(room => {
       room.operate(player, time);
     });
   }
   display(screenCenter, screenSize, scale){
+    this.otherEntities.forEach(entity => {
+      entity.display(screenCenter, screenSize, scale);
+    });
     this.dungeon.forEach(room => {
       room.display(screenCenter, screenSize, scale);
     });
@@ -131,7 +143,7 @@ class DungeonMap {
 }
 
 class Room {
-  constructor(_id, _radius, _dungeonMap, _difficulties, _caveEdgeChance, _denseCaveEdgeChance){
+  constructor(_id, _radius, _dungeonMap, _difficulties, _caveEdgeChance, _denseCaveEdgeChance, _isBoss = false){
     this.dungeonMap = _dungeonMap;
     this.id = _id;
     this.radius = _radius;
@@ -145,6 +157,8 @@ class Room {
     this.difficulties = _difficulties; // [S, G, U, D]
     this.caveEdgeChance = _caveEdgeChance;
     this.denseCaveEdgeChance = _denseCaveEdgeChance;
+    this.isBoss = _isBoss;
+    this.portal = null;
   }
   addConnection(numberOfConnections, index, numberOfRooms, dungeon, check){
     // Pushes connections to node
@@ -209,6 +223,7 @@ class Room {
     else if(this.entranceStage === 2) {
       this.entranceStage = 3;
       this.spawnEnemies();
+      this.spawnPortal();
       this.enemies.forEach(enemy => {
         enemy.invincible = true;
       });
@@ -234,6 +249,7 @@ class Room {
       if(this.enemies.length === 0) {
         this.locked = false;
         player.locked = false;
+        this.activatePortal();
         myBackground.changeDimensions([12, 6], 1000);
       }
     }
@@ -293,35 +309,25 @@ class Room {
       this.enemies.push(this.attemptEnemyPlacement(undeadClass, level, radiusPortion));
     }
     // this.testSpawnEnemies();
-    // Temporary enemy spawning
-    // if(this.dungeonMap === undefined) {
-    //   this.visited = false;
-    //   return 1;
-    // }
-    // for(let i = 0; i < 3; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(Slime));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(LavaSlime));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(FrostSlime));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(Zombie));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(Goblin));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(Skeleton));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(Phantom));
-    // }
     this.enemies.forEach((enemy) => {
       this.dungeonMap.enemies.push(enemy);
     });
+  }
+
+  spawnPortal() {
+    if(!this.isBoss) {
+      return;
+    }
+    console.log("[Portal] Portal spawned.");
+    this.portal = new Portal(this.pos, 1.5, this.dungeonMap.floorNumber + 1, this.dungeonMap.minimap, textures.inactivePortalTileSet, textures.activePortalTileSet);
+    this.dungeonMap.otherEntities.push(this.portal);
+  }
+
+  activatePortal() {
+    if(!this.isBoss) {
+      return;
+    }
+    this.portal.activate();
   }
 }
 
