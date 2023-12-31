@@ -243,9 +243,12 @@ class SlimeTentacle extends Slime {
     this.vulnerable = false;
     this.targetSlamPos = [0, 0];
     this.slamCharge = 1500;
+    this.slamDuration = 500;
     this.slamWidth = 2;
     this.initSlamColour = color(0, 100, 100, 100);
     this.finalSlamColour = color(150, 50, 50, 225);
+    this.slamColour = color(0, 150, 255, 255);
+    this.fadeSlamColour = color(0, 100, 100, 0);
     this.slamCooldown = 5000 + random(1, 3000);
     this.attackTimer = millis();
   }
@@ -255,7 +258,7 @@ class SlimeTentacle extends Slime {
     this.attackTimer = millis();
     let targetSlamDisp = scaleVector(pos, this.attackRange, this.pos);
     this.targetSlamPos = [this.pos[0] + targetSlamDisp[0], this.pos[1] + targetSlamDisp[1]];
-    this.suckers.push(new LineWarnZone(this.pos, this.targetSlamPos, this.slamWidth, this.attackTimer, this.attackTimer + this.slamCharge, this.initSlamColour, this.finalSlamColour, this.collisionMap));
+    this.suckers.push(new LineWarnZone(this.pos, this.targetSlamPos, this.slamWidth, this.attackTimer, this.attackTimer + this.slamCharge, this.attackTimer + this.slamCharge + this.slamDuration, this.initSlamColour, this.finalSlamColour, this.slamColour, this.fadeSlamColour, this.collisionMap));
   }
 
   slam(player) {

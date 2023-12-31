@@ -109,13 +109,17 @@ class Portal extends Entity {
 }
 
 class WarnZone extends Entity {
-  constructor(_pos, _timerInit, _timerFinal, _colInit, _colFinal, _collisionMap) {
+  constructor(_pos, _timerInit, _timerFinal, _timerFade, _colInit, _colFinal, _colExecution, _colFade, _collisionMap) {
     super(_pos, 1, 0, 0, _collisionMap, null);
     this.timerInit = _timerInit;
     this.timerFinal = _timerFinal;
+    this.timerFade = _timerFade;
     this.colInit = _colInit;
     this.colFinal = _colFinal;
+    this.colExecution = _colExecution;
+    this.colFade = _colFade;
     this.timeInterval = _timerFinal - _timerInit;
+    this.timeFadeInterval = _timerFade - _timerFinal;
     this.colour = this.colInit;
     this.invincible = true;
   }
@@ -123,22 +127,33 @@ class WarnZone extends Entity {
   operate(player, time) {
     // Note that both parameters are unused
     // Check alive
-    if(millis() > this.timerFinal) {
+    if(millis() > this.timerFade) {
       this.isAlive = false;
     }
-    // Get weights
-    let finalPortion = (millis() - this.timerInit) / this.timeInterval;
-    let initPortion = 1 - finalPortion;
-    this.colour = color(Math.floor(initPortion * red(this.colInit) + finalPortion * red(this.colFinal)),
-      Math.floor(initPortion * green(this.colInit) + finalPortion * green(this.colFinal)),
-      Math.floor(initPortion * blue(this.colInit) + finalPortion * blue(this.colFinal)),
-      Math.floor(initPortion * alpha(this.colInit) + finalPortion * alpha(this.colFinal)));
+    else if(millis() > this.timerFinal) {
+      // Get weights
+      let finalPortion = (millis() - this.timerFinal) / this.timeFadeInterval;
+      let initPortion = 1 - finalPortion;
+      this.colour = color(Math.floor(initPortion * red(this.colExecution) + finalPortion * red(this.colFade)),
+        Math.floor(initPortion * green(this.colExecution) + finalPortion * green(this.colFade)),
+        Math.floor(initPortion * blue(this.colExecution) + finalPortion * blue(this.colFade)),
+        Math.floor(initPortion * alpha(this.colExecution) + finalPortion * alpha(this.colFade)));
+    }
+    else {
+      // Get weights
+      let finalPortion = (millis() - this.timerInit) / this.timeInterval;
+      let initPortion = 1 - finalPortion;
+      this.colour = color(Math.floor(initPortion * red(this.colInit) + finalPortion * red(this.colFinal)),
+        Math.floor(initPortion * green(this.colInit) + finalPortion * green(this.colFinal)),
+        Math.floor(initPortion * blue(this.colInit) + finalPortion * blue(this.colFinal)),
+        Math.floor(initPortion * alpha(this.colInit) + finalPortion * alpha(this.colFinal)));
+    }
   }
 }
 
 class LineWarnZone extends WarnZone {
-  constructor(_pos, _targetPos, _width, _timerInit, _timerFinal, _colInit, _colFinal, _collisionMap) {
-    super(_pos, _timerInit, _timerFinal, _colInit, _colFinal, _collisionMap);
+  constructor(_pos, _targetPos, _width, _timerInit, _timerFinal, _timerFade, _colInit, _colFinal, _colExecution, _colFade, _collisionMap) {
+    super(_pos, _timerInit, _timerFinal, _timerFade, _colInit, _colFinal, _colExecution, _colFade, _collisionMap);
     this.targetPos = _targetPos;
     this.width = _width;
   }
