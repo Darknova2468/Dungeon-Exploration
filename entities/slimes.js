@@ -229,3 +229,67 @@ function createSlimes(slimeDifficulty) {
   }
   return slimes;
 }
+
+class SlimeTentacle extends Slime {
+  constructor(_pos, _roomId, _collisionMap) {
+    super(_pos, _roomId, 100, _collisionMap, textures.slimeTentacleTileSet);
+    this.radius = 1;
+    this.suckers = [];
+    this.attackRange = 10;
+    this.attackDamage = 10;
+    this.canJump = false;
+    this.detectionRange = 25;
+    this.isSlamming = false;
+    this.vulnerable = false;
+    this.targetSlamPos = [0, 0];
+    this.slamCharge = 1500;
+    this.slamWidth = 2;
+    this.initSlamColour = color(0, 100, 100, 100);
+    this.finalSlamColour = color(150, 50, 50, 225);
+    this.slamCooldown = 5000 + random(1, 3000);
+    this.attackTimer = millis();
+  }
+
+  initiateSlamAttack(pos) {
+    this.isSlamming = true;
+    this.attackTimer = millis();
+    let targetSlamDisp = scaleVector(pos, this.attackRange, this.pos);
+    this.targetSlamPos = [this.pos[0] + targetSlamDisp[0], this.pos[1] + targetSlamDisp[1]];
+    this.suckers.push(new LineWarnZone(this.pos, this.targetSlamPos, this.slamWidth, this.attackTimer, this.attackTimer + this.slamCharge, this.initSlamColour, this.finalSlamColour, this.collisionMap));
+  }
+
+  slam() {
+    this.isSlamming = false;
+  }
+
+  operate(player, enemies, time) {
+    if(!this.vulnerable) {
+      this.invincible = true;
+    }
+    super.operate(player, enemies, time);
+    for(let sucker of this.suckers) {
+      sucker.operate(player, time);
+    }
+    this.suckers = this.suckers.filter((b) => b.isAlive);
+  }
+
+  combat(player, enemies, time, distance, pursuitVector) {
+    if(this.isSlamming) {
+      if(millis() - this.attackTimer > this.slamCharge) {
+        this.slam();
+      }
+    }
+    else {
+      if(distance <= this.attackRange && millis() - this.attackTimer > this.slamCharge + this.slamCooldown) {
+        this.initiateSlamAttack(player.pos);
+      }
+    }
+  }
+
+  display(screenCenter, screenSize) {
+    this.suckers.forEach((s) => {
+      s.display(screenCenter, screenSize);
+    });
+    super.display(screenCenter, screenSize);
+  }
+}

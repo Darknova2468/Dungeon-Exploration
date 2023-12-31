@@ -273,33 +273,35 @@ class Room {
   }
 
   testSpawnEnemies() {
-    for(let i = 0; i < 0; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(Slime));
-    }
-    for(let i = 0; i < 0; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(LavaSlime));
-    }
-    for(let i = 0; i < 0; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(FrostSlime));
-    }
-    for(let i = 0; i < 0; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(Zombie));
-    }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(Goblin));
-    }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(Hobgoblin));
-    }
-    for(let i = 0; i < 0; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(Skeleton));
-    }
-    for(let i = 0; i < 0; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(Phantom));
-    }
+    // for(let i = 0; i < 0; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(Slime));
+    // }
+    // for(let i = 0; i < 0; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(LavaSlime));
+    // }
+    // for(let i = 0; i < 0; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(FrostSlime));
+    // }
+    // for(let i = 0; i < 0; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(Zombie));
+    // }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(Goblin));
+    // }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(Hobgoblin));
+    // }
+    // for(let i = 0; i < 0; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(Skeleton));
+    // }
+    // for(let i = 0; i < 0; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(Phantom));
+    // }
+    this.enemies.push(new SlimeTentacle(this.pos, this.id, this.dungeonMap.minimap));
   }
 
   spawnEnemies() {
+    this.testSpawnEnemies();
     let slimes = createSlimes(this.difficulties[0]);
     let undeads = createUndead(this.difficulties[2]);
     for(let [slimeClass, level, radiusPortion] of slimes) {

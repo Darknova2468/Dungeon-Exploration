@@ -146,11 +146,11 @@ class LineWarnZone extends WarnZone {
   display(screenCenter, screenSize) {
     let [posX, posY] = dungeonToScreenPos(this.pos, screenCenter, screenSize);
     let [targetX, targetY] = dungeonToScreenPos(this.targetPos, screenCenter, screenSize);
-    fill(this.colour);
-    strokeWeight(this.width);
+    stroke(this.colour);
+    strokeWeight(this.width*width/screenSize[0]);
     line(posX, posY, targetX, targetY);
     strokeWeight(1);
-    fill(0);
+    noStroke(0);
   }
 }
 
