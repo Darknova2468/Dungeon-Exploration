@@ -108,6 +108,52 @@ class Portal extends Entity {
   }
 }
 
+class WarnZone extends Entity {
+  constructor(_pos, _timerInit, _timerFinal, _colInit, _colFinal, _collisionMap) {
+    super(_pos, 1, 0, 0, _collisionMap, null);
+    this.timerInit = _timerInit;
+    this.timerFinal = _timerFinal;
+    this.colInit = _colInit;
+    this.colFinal = _colFinal;
+    this.timeInterval = _timerFinal - _timerInit;
+    this.colour = this.colInit;
+    this.invincible = true;
+  }
+
+  operate(player, time) {
+    // Note that both parameters are unused
+    // Check alive
+    if(millis() > this.timerFinal) {
+      this.isAlive = false;
+    }
+    // Get weights
+    let finalPortion = (millis() - this.timerInit) / this.timeInterval;
+    let initPortion = 1 - finalPortion;
+    this.colour = color(Math.floor(initPortion * red(this.colInit) + finalPortion * red(this.colFinal)),
+      Math.floor(initPortion * green(this.colInit) + finalPortion * green(this.colFinal)),
+      Math.floor(initPortion * blue(this.colInit) + finalPortion * blue(this.colFinal)),
+      Math.floor(initPortion * alpha(this.colInit) + finalPortion * alpha(this.colFinal)));
+  }
+}
+
+class LineWarnZone extends WarnZone {
+  constructor(_pos, _targetPos, _width, _timerInit, _timerFinal, _colInit, _colFinal, _collisionMap) {
+    super(_pos, _timerInit, _timerFinal, _colInit, _colFinal, _collisionMap);
+    this.targetPos = _targetPos;
+    this.width = _width;
+  }
+
+  display(screenCenter, screenSize) {
+    let [posX, posY] = dungeonToScreenPos(this.pos, screenCenter, screenSize);
+    let [targetX, targetY] = dungeonToScreenPos(this.targetPos, screenCenter, screenSize);
+    fill(this.colour);
+    strokeWeight(this.width);
+    line(posX, posY, targetX, targetY);
+    strokeWeight(1);
+    fill(0);
+  }
+}
+
 class Enemy extends Entity {
   constructor(_pos, _name, _roomId, _level, _health, _defence, _speed, _detectionRange, _combatBalanceRadius, _attackDamage, _attackDamageType, _attackRange, _attackCooldown, _collisionMap, _textureSet) {
     super(_pos, _health, _defence, _speed, _collisionMap, _textureSet);
