@@ -41,6 +41,8 @@ function preload() {
     lavaSlimeBallTileSet: new AnimateSet("textures/lavaSlimeBall.png", [12, 14]),
     frostSlimeTileSet: new AnimateSet("textures/frostSlime.png", [19, 21]),
     slimeTentacleTileSet: "dodgerblue",
+    slimeBossTileSet: "dodgerblue",
+    slimeTentacleStunnedTileSet: "lightskyblue",
     zombieTileSet: new AnimateSet("textures/zombie.png", [19, 21]),
     boneTileSet: new AnimateSet("textures/bone.png", [15, 15]),
     phantomTileSet: new AnimateSet("textures/phantom.png", [18, 18]),
@@ -62,7 +64,7 @@ function setup() {
   frameRate(30);
   noStroke();
   noSmooth();
-  myDungeon = createDungeonMap(1);
+  myDungeon = createDungeonMap(5);
   player = new Player(myDungeon.playerPos, myDungeon.minimap);
   enterDungeonMap(myDungeon);
 }

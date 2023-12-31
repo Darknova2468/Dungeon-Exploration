@@ -297,18 +297,21 @@ class Room {
     // for(let i = 0; i < 0; i++) {
     //   this.enemies.push(this.attemptEnemyPlacement(Phantom));
     // }
-    this.enemies.push(new SlimeTentacle(this.pos, this.id, this.dungeonMap.minimap));
+    // this.summonSlimeBoss();
+    // this.enemies.push(new SlimeTentacle(this.pos, this.id, this.dungeonMap.minimap));
   }
 
   spawnEnemies() {
-    this.testSpawnEnemies();
-    let slimes = createSlimes(this.difficulties[0]);
-    let undeads = createUndead(this.difficulties[2]);
-    for(let [slimeClass, level, radiusPortion] of slimes) {
-      this.enemies.push(this.attemptEnemyPlacement(slimeClass, level, radiusPortion));
-    }
-    for(let [undeadClass, level, radiusPortion] of undeads) {
-      this.enemies.push(this.attemptEnemyPlacement(undeadClass, level, radiusPortion));
+    // this.testSpawnEnemies();
+    if(!this.summonSlimeBoss()) {
+      let slimes = createSlimes(this.difficulties[0]);
+      let undeads = createUndead(this.difficulties[2]);
+      for(let [slimeClass, level, radiusPortion] of slimes) {
+        this.enemies.push(this.attemptEnemyPlacement(slimeClass, level, radiusPortion));
+      }
+      for(let [undeadClass, level, radiusPortion] of undeads) {
+        this.enemies.push(this.attemptEnemyPlacement(undeadClass, level, radiusPortion));
+      }
     }
     // this.testSpawnEnemies();
     this.enemies.forEach((enemy) => {
@@ -330,6 +333,14 @@ class Room {
       return;
     }
     this.portal.activate();
+  }
+
+  summonSlimeBoss() {
+    if(!this.isBoss || this.dungeonMap.floorNumber !== 5) {
+      return false;
+    }
+    this.enemies.push(new SlimeBoss(this.pos, this.id, this.dungeonMap.minimap, this.enemies));
+    return true;
   }
 }
 

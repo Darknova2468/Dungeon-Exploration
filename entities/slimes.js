@@ -230,6 +230,53 @@ function createSlimes(slimeDifficulty) {
   return slimes;
 }
 
+class SlimeBoss extends Slime {
+  constructor(_pos, _roomId, _collisionMap, _enemies) {
+    super(_pos, _roomId, 100, _collisionMap, textures.slimeBossTileSet);
+    this.radius = 2;
+    this.health = 20;
+    this.tentacles = [];
+    this.canJump = false;
+    this.detectionRange = 100;
+    for(let dx of [-5, 5]) {
+      for(let dy of [-5, 5]) {
+        let t = new SlimeTentacle([_pos[0] + dx, _pos[1] + dy], _roomId, _collisionMap);
+        this.tentacles.push(t);
+        _enemies.push(t);
+      }
+    }
+  }
+
+  move() {
+    // Don't move
+  }
+
+  operate(player, enemies, time) {
+    super.operate(player, enemies, time);
+    this.tentacles = this.tentacles.filter((t) => t.isAlive);
+  }
+
+  damage(amountDamage, damageType) {
+    // damageType unused for now
+    if(this.invincible) {
+      return;
+    }
+    amountDamage *= 5/(this.defence + 5);
+    this.health -= amountDamage;
+    if(this.health <= 0 && !this.invincible) {
+      if(this.tentacles.length === 0) {
+        this.isAlive = false;
+      }
+      else {
+        this.health = 20;
+        let stunnedTentacle = random(this.tentacles);
+        stunnedTentacle.stun(5000);
+        console.log("Stunned!");
+      }
+    }
+  }
+}
+
 class SlimeTentacle extends Slime {
   constructor(_pos, _roomId, _collisionMap) {
     super(_pos, _roomId, 100, _collisionMap, textures.slimeTentacleTileSet);
@@ -241,6 +288,9 @@ class SlimeTentacle extends Slime {
     this.detectionRange = 25;
     this.isSlamming = false;
     this.vulnerable = false;
+    this.stunnedTexture = textures.slimeTentacleStunnedTileSet;
+    this.normalTexture = this.animationSet;
+    this.vulnerableTimer = 0;
     this.targetSlamPos = [0, 0];
     this.slamCharge = 1500;
     this.slamDuration = 500;
@@ -250,10 +300,13 @@ class SlimeTentacle extends Slime {
     this.slamColour = color(0, 150, 255, 255);
     this.fadeSlamColour = color(0, 100, 100, 0);
     this.slamCooldown = 5000 + random(1, 3000);
-    this.attackTimer = millis();
+    this.attackTimer = 0;
   }
 
   initiateSlamAttack(pos) {
+    if(this.vulnerable) {
+      return;
+    }
     this.isSlamming = true;
     this.attackTimer = millis();
     let targetSlamDisp = scaleVector(pos, this.attackRange, this.pos);
@@ -271,7 +324,20 @@ class SlimeTentacle extends Slime {
     }
   }
 
+  stun(duration) {
+    this.animationSet = this.stunnedTexture;
+    this.vulnerable = true;
+    this.isSlamming = false;
+    this.suckers = [];
+    this.vulnerableTimer = millis() + duration;
+    this.invincible = false;
+  }
+
   operate(player, enemies, time) {
+    if(this.vulnerable && millis() > this.vulnerableTimer) {
+      this.vulnerable = false;
+      this.animationSet = this.normalTexture;
+    }
     if(!this.vulnerable) {
       this.invincible = true;
     }
