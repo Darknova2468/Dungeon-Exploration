@@ -258,8 +258,14 @@ class SlimeTentacle extends Slime {
     this.suckers.push(new LineWarnZone(this.pos, this.targetSlamPos, this.slamWidth, this.attackTimer, this.attackTimer + this.slamCharge, this.initSlamColour, this.finalSlamColour, this.collisionMap));
   }
 
-  slam() {
+  slam(player) {
     this.isSlamming = false;
+    let d = checkBounds(player.pos[0], player.pos[1],
+      this.pos[0], this.pos[1],
+      this.targetSlamPos[0], this.targetSlamPos[1]);
+    if(d !== -1 && d < this.slamWidth / 2) {
+      player.damage(this.attackDamage, this.attackDamageType);
+    }
   }
 
   operate(player, enemies, time) {
@@ -276,7 +282,7 @@ class SlimeTentacle extends Slime {
   combat(player, enemies, time, distance, pursuitVector) {
     if(this.isSlamming) {
       if(millis() - this.attackTimer > this.slamCharge) {
-        this.slam();
+        this.slam(player);
       }
     }
     else {
