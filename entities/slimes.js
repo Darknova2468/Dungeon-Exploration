@@ -238,8 +238,8 @@ class SlimeBoss extends Slime {
     this.tentacles = [];
     this.canJump = false;
     this.detectionRange = 100;
-    for(let dx of [-5, 5]) {
-      for(let dy of [-5, 5]) {
+    for(let dx of [-3, 3]) {
+      for(let dy of [-3, 3]) {
         let t = new SlimeTentacle([_pos[0] + dx, _pos[1] + dy], _roomId, _collisionMap);
         this.tentacles.push(t);
         _enemies.push(t);
