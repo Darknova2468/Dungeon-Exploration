@@ -252,6 +252,16 @@ class Room {
         this.activatePortal();
         myBackground.changeDimensions([12, 6], 1000);
       }
+
+      // If all enemies are passive (e.g. frozen puddles), despawn them
+      for(let enemy of this.enemies) {
+        if(!enemy.passive) {
+          return;
+        }
+      }
+      for(let enemy of this.enemies) {
+        enemy.isAlive = false;
+      }
     }
   }
 

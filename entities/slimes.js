@@ -160,6 +160,7 @@ class FrozenPuddle extends Entity {
     this.hitTimer = millis();
     this.hitCooldown = 500;
     this.damageType = "Cold";
+    this.passive = true;
   }
 
   operate(target, enemies, time) {
