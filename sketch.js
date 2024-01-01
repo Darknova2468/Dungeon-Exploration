@@ -40,14 +40,20 @@ function preload() {
     lavaSlimeTileSet: new AnimateSet("textures/lavaSlime.png", [19, 21]),
     lavaSlimeBallTileSet: new AnimateSet("textures/lavaSlimeBall.png", [12, 14]),
     frostSlimeTileSet: new AnimateSet("textures/frostSlime.png", [19, 21]),
+    slimeTentacleTileSet: "dodgerblue",
+    slimeBossTileSet: "dodgerblue",
+    slimeTentacleStunnedTileSet: "lightskyblue",
     zombieTileSet: new AnimateSet("textures/zombie.png", [19, 21]),
     boneTileSet: new AnimateSet("textures/bone.png", [15, 15]),
     phantomTileSet: new AnimateSet("textures/phantom.png", [18, 18]),
     darkSpellTileSet: new AnimateSet("textures/darkSpell.png", [16, 16]),
     goblinTileSet: new AnimateSet("textures/goblin.png", [18, 18]),
+    hobgoblinTileSet: "chocolate",
     skeletonTileSet: new AnimateSet("textures/skeleton.png", [18, 18]),
     frozenPuddleTileSet: "powderblue",
     arrowTileSet: "white",
+    inactivePortalTileSet: "dimgrey",
+    activePortalTileSet: "purple",
   };
 }
 
@@ -58,15 +64,9 @@ function setup() {
   frameRate(30);
   noStroke();
   noSmooth();
-  myDungeon = new DungeonMap(10, 0.3);
-  while(myDungeon.corrupted) {
-    console.log("Regenerating...");
-    myDungeon = new DungeonMap(10, 0.3);
-    console.log("Finished regeneration.");
-  }
-  minimap = new MiniMap(30, myDungeon.minimap);
+  myDungeon = createDungeonMap(5);
   player = new Player(myDungeon.playerPos, myDungeon.minimap);
-  myBackground = new Scene(myDungeon.minimap, [16, 8], textures.tileSet);
+  enterDungeonMap(myDungeon);
 }
 
 let gameActive = true;
@@ -106,5 +106,6 @@ function draw() {
   textSize(12);
   text("fps: " + Math.floor(frameRate()), width-height*3/20, height*6/20);
   textSize(20);
-  text("Health: " + Math.ceil(player.health), height*3/20, height*3/20);  
+  text("Health: " + Math.ceil(player.health), height*3/20, height*3/20);
+  text("On Floor " + myDungeon.floorNumber, height*3/20, height*2/20);
 }

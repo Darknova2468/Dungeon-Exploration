@@ -13,7 +13,7 @@ class MiniMap {
   updateDiscovered(pos) {
     for(let i = 0; i < this.map.length; i++) {
       for(let j = 0; j < this.map[0].length; j++) {
-        if(dist(j, i, pos[0], pos[1]) < 8 && this.map[i][j] < 0) {
+        if(dist(j, i, pos[0], pos[1]) < 6 && this.map[i][j] < 0) {
           this.map[i][j] += 100;
         }
       }

@@ -2,7 +2,7 @@
 
 const baseResolution = [24, 24];
 const ENEMYDEBUG = 0;
-const SHOWHITBOXES = false;
+const SHOWHITBOXES = true;
 
 class Entity {
   constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet){
@@ -72,12 +72,100 @@ class Entity {
   //   }
   damage(amountDamage, damageType) {
     // damageType unused for now
+    if(this.invincible) {
+      return;
+    }
     amountDamage *= 5/(this.defence + 5);
     this.health -= amountDamage;
     if(this.health <= 0 && !this.invincible) {
       this.isAlive = false;
       this.health = 0;
     }
+  }
+}
+
+class Portal extends Entity {
+  constructor(_pos, _radius, _target, _collisionMap, _textureSet, _activeTextureSet) {
+    super(_pos, 1, 0, 0, _collisionMap, _textureSet);
+    this.inactiveAnimationSet = this.animationSet
+    this.activeAnimationSet = _activeTextureSet;
+    this.invincible = true;
+    this.target = _target; // Floor available to go to once activated
+    this.radius = _radius;
+    this.active = false;
+  }
+
+  activate() {
+    this.active = true;
+    this.animationSet = this.activeAnimationSet;
+  }
+
+  operate(player, time) {
+    if(this.active && dist(this.pos[0], this.pos[1], player.pos[0], player.pos[1]) < this.radius) {
+      myDungeon = createDungeonMap(this.target);
+      enterDungeonMap(myDungeon);
+    }
+  }
+}
+
+class WarnZone extends Entity {
+  constructor(_pos, _timerInit, _timerFinal, _timerFade, _colInit, _colFinal, _colExecution, _colFade, _collisionMap) {
+    super(_pos, 1, 0, 0, _collisionMap, null);
+    this.timerInit = _timerInit;
+    this.timerFinal = _timerFinal;
+    this.timerFade = _timerFade;
+    this.colInit = _colInit;
+    this.colFinal = _colFinal;
+    this.colExecution = _colExecution;
+    this.colFade = _colFade;
+    this.timeInterval = _timerFinal - _timerInit;
+    this.timeFadeInterval = _timerFade - _timerFinal;
+    this.colour = this.colInit;
+    this.invincible = true;
+  }
+
+  operate(player, time) {
+    // Note that both parameters are unused
+    // Check alive
+    if(millis() > this.timerFade) {
+      this.isAlive = false;
+    }
+    else if(millis() > this.timerFinal) {
+      // Get weights
+      let finalPortion = (millis() - this.timerFinal) / this.timeFadeInterval;
+      let initPortion = 1 - finalPortion;
+      this.colour = color(Math.floor(initPortion * red(this.colExecution) + finalPortion * red(this.colFade)),
+        Math.floor(initPortion * green(this.colExecution) + finalPortion * green(this.colFade)),
+        Math.floor(initPortion * blue(this.colExecution) + finalPortion * blue(this.colFade)),
+        Math.floor(initPortion * alpha(this.colExecution) + finalPortion * alpha(this.colFade)));
+    }
+    else {
+      // Get weights
+      let finalPortion = (millis() - this.timerInit) / this.timeInterval;
+      let initPortion = 1 - finalPortion;
+      this.colour = color(Math.floor(initPortion * red(this.colInit) + finalPortion * red(this.colFinal)),
+        Math.floor(initPortion * green(this.colInit) + finalPortion * green(this.colFinal)),
+        Math.floor(initPortion * blue(this.colInit) + finalPortion * blue(this.colFinal)),
+        Math.floor(initPortion * alpha(this.colInit) + finalPortion * alpha(this.colFinal)));
+    }
+  }
+}
+
+class LineWarnZone extends WarnZone {
+  constructor(_pos, _targetPos, _width, _timerInit, _timerFinal, _timerFade, _colInit, _colFinal, _colExecution, _colFade, _collisionMap) {
+    super(_pos, _timerInit, _timerFinal, _timerFade, _colInit, _colFinal, _colExecution, _colFade, _collisionMap);
+    this.targetPos = _targetPos;
+    this.width = _width;
+  }
+
+  display(screenCenter, screenSize) {
+    let [posX, posY] = dungeonToScreenPos(this.pos, screenCenter, screenSize);
+    let [targetX, targetY] = dungeonToScreenPos(this.targetPos, screenCenter, screenSize);
+    stroke(this.colour);
+    strokeWeight(this.width*width/screenSize[0]);
+    line(posX, posY, targetX, targetY);
+    strokeWeight(1);
+    noStroke(0);
   }
 }
 
@@ -150,7 +238,7 @@ class Enemy extends Entity {
 
 class Player extends Entity {
   constructor(_pos, _collisionMap){
-    super(_pos, 20, 5, 3.5, _collisionMap, textures.playerTileSet);
+    super(_pos, 10, 0, 3.5, _collisionMap, textures.playerTileSet);
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
@@ -162,9 +250,13 @@ class Player extends Entity {
 
     // Zone stuff
     this.activeZone = -1;
+    this.timeLocked = false;
   }
 
   move(direction, time, isRolling){
+    if(this.timeLocked) {
+      return;
+    }
     if(keyIsDown(49)){
       this.holding = new Dagger(this);
     }
@@ -212,6 +304,9 @@ class Player extends Entity {
   }
 
   attack(enemies, time, isRolling) {
+    if(this.timeLocked) {
+      return;
+    }
     // if(mouseIsPressed && millis() > this.attackTimer && !isRolling) {
     //   // Temporary direction checking; change later
     //   this.attackTimer = this.holding.attack(enemies, targetVector, time);
