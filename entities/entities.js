@@ -410,7 +410,7 @@ class Weights {
       if(distance === 0) {
         continue;
       }
-      this.weighVector(scaleVector(directionVector, 1), (x) => distFactor * (1 - 2 * Math.abs(x+0.7))/Math.pow(distance, 2));
+      this.weighVector(scaleVector(directionVector, 1), (x) => distFactor * (1 - 2 * Math.abs(x+0.7))/Math.pow(distance, 3));
     }
   }
 
