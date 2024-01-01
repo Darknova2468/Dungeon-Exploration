@@ -304,7 +304,7 @@ class Player extends Entity {
     this.activeZone = this.collisionMap[Math.floor(this.pos[1])][Math.floor(this.pos[0])];
   }
 
-  attack(enemies, time, isRolling) {
+  attack(dungeon, time, isRolling) {
     if(this.timeLocked) {
       return;
     }
@@ -312,6 +312,10 @@ class Player extends Entity {
     //   // Temporary direction checking; change later
     //   this.attackTimer = this.holding.attack(enemies, targetVector, time);
     // }
+    let enemies = [];
+    if(this.locked) {
+      enemies = dungeon.dungeon[this.lockedZone - 3].enemies;
+    }
     let targetVector = [mouseX - width/2, mouseY - height/2];
     this.holding.attack(enemies, targetVector, time, isRolling);
   }

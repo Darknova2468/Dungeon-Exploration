@@ -96,7 +96,7 @@ function draw() {
     dt = 0.2;
   }
   player.move([keyIsDown(68)-keyIsDown(65) ,keyIsDown(83)-keyIsDown(87)], dt, keyIsDown(16));
-  player.attack(myDungeon.enemies, dt, keyIsDown(16));
+  player.attack(myDungeon, dt, keyIsDown(16));
   myDungeon.update(player, dt);
   image(myBackground.generateScene(player.pos, dt), width/2, height/2, width, height);
   player.display(player.pos, myBackground.scale, [16, 16]);
