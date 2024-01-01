@@ -45,7 +45,7 @@ class SweepWeapon extends Weapon {
     for(let enemy of enemies) {
       let distance = dist(enemy.pos[0], enemy.pos[1], this.wielder.pos[0], this.wielder.pos[1]);
       let targetVector = [enemy.pos[0] - this.wielder.pos[0], enemy.pos[1] - this.wielder.pos[1]];
-      if(this.minRange < distance && distance <= this.range && dotProduct(scaleVector(direction), scaleVector(targetVector)) > this.sweepRange) {
+      if(this.minRange < distance && distance <= this.range + enemy.radius && dotProduct(scaleVector(direction), scaleVector(targetVector)) > this.sweepRange) {
         hitEnemies.push(enemy);
       }
     }
