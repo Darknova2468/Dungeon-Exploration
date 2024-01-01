@@ -302,6 +302,7 @@ class SlimeTentacle extends Slime {
     this.fadeSlamColour = color(0, 100, 100, 0);
     this.slamCooldown = 5000 + random(1, 3000);
     this.attackTimer = 0;
+    this.maxSlimeSpawn = 5;
   }
 
   initiateSlamAttack(pos) {
@@ -315,13 +316,22 @@ class SlimeTentacle extends Slime {
     this.suckers.push(new LineWarnZone(this.pos, this.targetSlamPos, this.slamWidth, this.attackTimer, this.attackTimer + this.slamCharge, this.attackTimer + this.slamCharge + this.slamDuration, this.initSlamColour, this.finalSlamColour, this.slamColour, this.fadeSlamColour, this.collisionMap));
   }
 
-  slam(player) {
+  slam(player, enemies) {
     this.isSlamming = false;
     let d = checkBounds(player.pos[0], player.pos[1],
       this.pos[0], this.pos[1],
       this.targetSlamPos[0], this.targetSlamPos[1]);
     if(d !== -1 && d < this.slamWidth / 2) {
       player.damage(this.attackDamage, this.attackDamageType);
+    }
+
+    for(let i = 0; i < Math.floor(random(this.maxSlimeSpawn)); i++) {
+      let r = random();
+      let slime = new Slime([this.pos[0] * r + this.targetSlamPos[0] * (1-r), this.pos[1] * r + this.targetSlamPos[1] * (1-r)], this.lockedZone - 3, 5, this.collisionMap);
+      if(slime.canMoveTo(this.collisionMap[Math.floor(slime.pos[1])][Math.floor(slime.pos[0])])) {
+        enemies.push(slime);
+      }
+      console.log(slime);
     }
   }
 
@@ -352,7 +362,7 @@ class SlimeTentacle extends Slime {
   combat(player, enemies, time, distance, pursuitVector) {
     if(this.isSlamming) {
       if(millis() - this.attackTimer > this.slamCharge) {
-        this.slam(player);
+        this.slam(player, enemies);
       }
     }
     else {
