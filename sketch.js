@@ -44,7 +44,7 @@ function preload() {
     boneTileSet: new AnimateSet("textures/bone.png", [15, 15]),
     phantomTileSet: new AnimateSet("textures/phantom.png", [18, 18]),
     darkSpellTileSet: new AnimateSet("textures/darkSpell.png", [16, 16]),
-    goblinTileSet: "chocolate",
+    goblinTileSet: new AnimateSet("textures/goblin.png", [18, 18]),
     skeletonTileSet: new AnimateSet("textures/skeleton.png", [18, 18]),
     frozenPuddleTileSet: "powderblue",
     arrowTileSet: "white",

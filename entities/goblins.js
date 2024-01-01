@@ -48,6 +48,14 @@ class Goblin extends Enemy {
       let maxDir = weights.getMaxDir();
       this.prevDirection = maxDir;
       this.move(maxDir, time);
+      let angle = atan(Math.abs(maxDir[1]/maxDir[0]));
+      if(angle < PI/3){
+        this.animationNum[0] = 0;
+      }
+      else {
+        this.animationNum[0] = maxDir[1] > 0 ? 2:1;
+      }
+      this.animationNum[1] = maxDir[0] > 0 && this.animationNum[0] !== 1 ? 0:1; 
     }
   }
   idle(time) {
