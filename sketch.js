@@ -41,7 +41,7 @@ function preload() {
     lavaSlimeBallTileSet: new AnimateSet("textures/lavaSlimeBall.png", [12, 14]),
     frostSlimeTileSet: new AnimateSet("textures/frostSlime.png", [19, 21]),
     slimeTentacleTileSet: "dodgerblue",
-    slimeBossTileSet: "dodgerblue",
+    slimeBossTileSet: new AnimateSet("textures/slimeBoss.png", [31, 21]),
     slimeTentacleStunnedTileSet: "lightskyblue",
     zombieTileSet: new AnimateSet("textures/zombie.png", [19, 21]),
     boneTileSet: new AnimateSet("textures/bone.png", [15, 15]),

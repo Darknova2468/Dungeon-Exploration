@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 class Slime extends Enemy {
-  constructor(_pos, _roomId, _level, _collisionMap, _textureSet = textures.slimeTileSet) {
-    super(_pos, "Slime", _roomId, _level, Math.floor(4*Math.log10(_level+1)), 0, 1.5, 8, 0.5, Math.floor(4*Math.log10(_level+1)), "Bludgeoning", 0.5, 600, _collisionMap, _textureSet);
+  constructor(_pos, _roomId, _level, _collisionMap, _textureSet = textures.slimeTileSet, _animationSpeed, _scaleFactor) {
+    super(_pos, "Slime", _roomId, _level, Math.floor(4*Math.log10(_level+1)), 0, 1.5, 8, 0.5, Math.floor(4*Math.log10(_level+1)), "Bludgeoning", 0.5, 600, _collisionMap, _textureSet, _animationSpeed, _scaleFactor);
     if(this.level >= 10) {
       this.radius = 0.6;
     }
@@ -233,7 +233,7 @@ function createSlimes(slimeDifficulty) {
 
 class SlimeBoss extends Slime {
   constructor(_pos, _roomId, _collisionMap, _enemies) {
-    super(_pos, _roomId, 100, _collisionMap, textures.slimeBossTileSet);
+    super(_pos, _roomId, 100, _collisionMap, textures.slimeBossTileSet, 6, 2);
     this.radius = 2;
     this.health = 20;
     this.tentacles = [];
@@ -255,6 +255,18 @@ class SlimeBoss extends Slime {
   operate(player, enemies, time) {
     super.operate(player, enemies, time);
     this.tentacles = this.tentacles.filter((t) => t.isAlive);
+    this.animationNum[0] = 0;
+    this.animationSpeed = 6;
+    this.animationNum[0] = 0;
+    if(player.pos[0]<this.pos[0]){
+      this.animationNum[1] = 1;
+    }
+    this.tentacles.forEach(tentacle => {
+      if(tentacle.vulnerable){
+        this.animationNum[0] = 1;
+        this.animationSpeed = 12;
+      }
+    })
   }
 
   damage(amountDamage, damageType) {

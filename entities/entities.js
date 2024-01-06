@@ -5,7 +5,7 @@ const ENEMYDEBUG = 0;
 const SHOWHITBOXES = true;
 
 class Entity {
-  constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet){
+  constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet, _animationSpeed, _scaleFactor){
     this.pos = _pos;
     this.health = _health;
     this.defence = _defence;
@@ -14,12 +14,12 @@ class Entity {
     this.animationSet = _animationSet;
     this.animationNum = [0, 0, 0];
     this.isAlive = true;
-    this.animationSpeed = 4;
+    this.animationSpeed = _animationSpeed ?? 4;
     this.invincible = false;
     this.invisible = false;
     this.radius = 0.3;
     this.passive = false; // E.g. frozen puddles are passive
-
+    this.scaleFactor = _scaleFactor ?? 1;
     // Zone locking
     this.locked = false;
     this.lockedZone = 0;
@@ -45,8 +45,8 @@ class Entity {
     y += screenSize[1]*0.5;
     try{
       imageMode(CENTER);
-      let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.animationSet.size[0]);
-      let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.animationSet.size[1]);
+      let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.animationSet.size[0])*this.scaleFactor;
+      let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.animationSet.size[1])*this.scaleFactor;
       let imgWidth = this.animationNum[1] === 0 ? posScaleX: -posScaleX;
       let imgHeight = this.animationNum[2] === 0 ? posScaleY: -posScaleY;
       if(SHOWHITBOXES) {
@@ -171,8 +171,8 @@ class LineWarnZone extends WarnZone {
 }
 
 class Enemy extends Entity {
-  constructor(_pos, _name, _roomId, _level, _health, _defence, _speed, _detectionRange, _combatBalanceRadius, _attackDamage, _attackDamageType, _attackRange, _attackCooldown, _collisionMap, _textureSet) {
-    super(_pos, _health, _defence, _speed, _collisionMap, _textureSet);
+  constructor(_pos, _name, _roomId, _level, _health, _defence, _speed, _detectionRange, _combatBalanceRadius, _attackDamage, _attackDamageType, _attackRange, _attackCooldown, _collisionMap, _textureSet, _animationSpeed, _scaleFactor) {
+    super(_pos, _health, _defence, _speed, _collisionMap, _textureSet, _animationSpeed, _scaleFactor);
     this.name = _name;
     // Default parameters
     this.level = _level;

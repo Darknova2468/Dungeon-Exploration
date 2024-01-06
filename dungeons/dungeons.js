@@ -189,20 +189,6 @@ class Room {
     if(player.activeZone !== this.id + 3) {
       return;
     }
-    // if(this.id === 0) {
-    //   if(myBackground.transitioning) {
-    //     return;
-    //   }
-    //   else if(this.entranceStage) {
-    //     myBackground.changeDimensions([24, 12], 2000);
-    //     this.entranceStage = 0;
-    //   }
-    //   else {
-    //     myBackground.changeDimensions([8, 4], 2000);
-    //     this.entranceStage = 1;
-    //   }
-    //   return;
-    // }
     if(!this.entranceStage) {
       if(this.id >= 1) {
         this.locked = true;
@@ -211,6 +197,7 @@ class Room {
         player.lockedZone = this.id + 3;
         myBackground.changeDimensions([this.radius * 4, this.radius * 2], 700);
         this.entranceStage = 1;
+        myBackground.displayOnly = this.id+3;
       }
     }
     if(myBackground.transitioning || !this.locked) {
@@ -250,6 +237,7 @@ class Room {
         this.locked = false;
         player.locked = false;
         this.activatePortal();
+        myBackground.displayOnly = null;
         myBackground.changeDimensions([12, 6], 1000);
       }
 
