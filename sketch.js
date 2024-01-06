@@ -51,7 +51,7 @@ function preload() {
     hobgoblinTileSet: "chocolate",
     skeletonTileSet: new AnimateSet("textures/skeleton.png", [18, 18]),
     frozenPuddleTileSet: "powderblue",
-    arrowTileSet: "white",
+    arrowTileSet: new AnimateSet("textures/arrow.png", [15, 15]),
     inactivePortalTileSet: "dimgrey",
     activePortalTileSet: "purple",
   };

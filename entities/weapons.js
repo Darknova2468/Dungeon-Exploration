@@ -327,5 +327,9 @@ class LongBow extends ChargedRangedWeapon {
 class Arrow extends Projectile {
   constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _collisionMap) {
     super(_pos, _zone, _dir, _maxDist, _hitDmg, "Piercing", 0.2, false, 0, 0, null, _collisionMap, textures.arrowTileSet);
+    let angle = atan(abs(_dir[1]/_dir[0]));
+    this.animationNum[0] = (angle > PI/6) + (angle > PI/3);
+    this.animationNum[1] = _dir[0] > 0  ? 0:1;
+    this.animationNum[2] = _dir[1] < 0  ? 0:1;
   }
 }
