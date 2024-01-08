@@ -23,6 +23,7 @@ class Entity {
     // Zone locking
     this.locked = false;
     this.lockedZone = 0;
+    this.rotationOffset = 0;
   }
 
   canMoveTo(newZone) {
@@ -49,13 +50,17 @@ class Entity {
       let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.animationSet.size[1])*this.scaleFactor;
       let imgWidth = this.animationNum[1] === 0 ? posScaleX: -posScaleX;
       let imgHeight = this.animationNum[2] === 0 ? posScaleY: -posScaleY;
+      push();
+      translate(x*posScaleX, y*posScaleY);
       if(SHOWHITBOXES) {
         fill("gray");
-        circle(x*posScaleX, y*posScaleY, posScaleX*2*this.radius);
+        circle(0, 0 , posScaleX*2*this.radius);
       }
+      rotate(this.rotationOffset);
       scale(1-2*(this.animationNum[1] === 1), 1-2*(this.animationNum[2] === 1));
-      image(this.animationSet.animations[this.animationNum[0]][Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.animationNum[0]].length], x*imgWidth, y*imgHeight, imgScaleX, imgScaleY);
+      image(this.animationSet.animations[this.animationNum[0]][Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.animationNum[0]].length], 0, 0, imgScaleX, imgScaleY);
       scale(1-2*(this.animationNum[1] === 1), 1-2*(this.animationNum[2] === 1));
+      pop();
     }
     catch{
       fill(this.animationSet);

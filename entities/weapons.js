@@ -11,20 +11,21 @@ class HeldItem {
 }
 
 class Weapon extends HeldItem {
-  constructor(wielder, damage, range, cooldown) {
+  constructor(wielder, damage, range, cooldown, textureSet) {
     super(wielder);
     this.damage = damage;
     this.range = range;
     this.cooldown = cooldown;
     this.attackTimer = 0;
+    this.textureSet = textureSet;
   }
 
   attack(enemies, direction, time, isRolling) {}
 }
 
 class SweepWeapon extends Weapon {
-  constructor(wielder, damage, minRange, range, cooldown, semiSweepAngle, swingTime, cleaveFactor) {
-    super(wielder, damage, range, cooldown);
+  constructor(wielder, damage, minRange, range, cooldown, semiSweepAngle, swingTime, cleaveFactor, textureSet, scaleFactor) {
+    super(wielder, damage, range, cooldown, textureSet);
     this.holdRange = 0.3;
     this.minRange = minRange;
     this.semiSweepAngle = semiSweepAngle;
@@ -34,6 +35,7 @@ class SweepWeapon extends Weapon {
     this.pointingAngle = 0;
     this.cleaveFactor = cleaveFactor;
     this.clockwise = false;
+    this.scaleFactor = scaleFactor ?? 1;
   }
 
   swing(enemies, direction, time) {
@@ -94,18 +96,33 @@ class SweepWeapon extends Weapon {
       let currentAngle = map(millis(), this.swingTimer, this.swingTimer + this.swingTime, -this.semiSweepAngle * (2 * this.clockwise - 1) + this.pointingAngle, this.semiSweepAngle * (2 * this.clockwise - 1) + this.pointingAngle);
       directionVector = [cos(currentAngle), sin(currentAngle)];
     }
-    // let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
-    let heldDisplacement = scaleVector(directionVector, this.holdRange);
-    let shoulderDisplacement = scaleVector(directionVector, this.minRange);
-    let tipDisplacement = scaleVector(directionVector, this.range);
-    let heldPos = dungeonToScreenPos([this.wielder.pos[0] + heldDisplacement[0], this.wielder.pos[1] + heldDisplacement[1]], screenCenter, screenSize);
-    let shoulderPos = dungeonToScreenPos([this.wielder.pos[0] + shoulderDisplacement[0], this.wielder.pos[1] + shoulderDisplacement[1]], screenCenter, screenSize);
-    let tipPos = dungeonToScreenPos([this.wielder.pos[0] + tipDisplacement[0], this.wielder.pos[1] + tipDisplacement[1]], screenCenter, screenSize);
-    stroke(10);
-    line(heldPos[0], heldPos[1], tipPos[0], tipPos[1]);
-    stroke(250);
-    line(shoulderPos[0], shoulderPos[1], tipPos[0], tipPos[1]);
-    noStroke();
+    try {
+      push();
+      imageMode(CENTER);
+      let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.textureSet.size[0])*this.scaleFactor;
+      let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.textureSet.size[1])*this.scaleFactor;
+      let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
+      translate(basePos[0], basePos[1]);
+      // Modified angle formula for p5 rotations
+      let angle = getAngle(directionVector[0], -directionVector[1]);
+      rotate(angle);
+      image(this.textureSet.animations[0][0], 0, 0, imgScaleX, imgScaleY);
+      pop();
+    }
+    catch {
+      // let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
+      let heldDisplacement = scaleVector(directionVector, this.holdRange);
+      let shoulderDisplacement = scaleVector(directionVector, this.minRange);
+      let tipDisplacement = scaleVector(directionVector, this.range);
+      let heldPos = dungeonToScreenPos([this.wielder.pos[0] + heldDisplacement[0], this.wielder.pos[1] + heldDisplacement[1]], screenCenter, screenSize);
+      let shoulderPos = dungeonToScreenPos([this.wielder.pos[0] + shoulderDisplacement[0], this.wielder.pos[1] + shoulderDisplacement[1]], screenCenter, screenSize);
+      let tipPos = dungeonToScreenPos([this.wielder.pos[0] + tipDisplacement[0], this.wielder.pos[1] + tipDisplacement[1]], screenCenter, screenSize);
+      stroke(10);
+      line(heldPos[0], heldPos[1], tipPos[0], tipPos[1]);
+      stroke(250);
+      line(shoulderPos[0], shoulderPos[1], tipPos[0], tipPos[1]);
+      noStroke();
+    }
 
     // console.log(heldPos, tipPos, dungeonWeaponDisplacement);
   }
@@ -113,31 +130,33 @@ class SweepWeapon extends Weapon {
 
 class Dagger extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 7, 0.35, 1, 400, Math.PI / 4, 150, 0);
+    super(wielder, 7, 0.35, 1, 400, Math.PI / 4, 150, 0, "");
   }
 }
 
 class Sword extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 6, 0.4, 1.7, 700, Math.PI / 3, 300, 0.5);
+    super(wielder, 6, 0.4, 1.7, 700, Math.PI / 3, 300, 0.5, "");
   }
 }
 
 class Axe extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 11, 1, 1.5, 1600, Math.PI / 3, 400, 0.6);
+    super(wielder, 11, 1, 1.5, 1600, Math.PI / 3, 400, 0.6, textures.zombieTileSet);
   }
 }
 
 class ThrustWeapon extends Weapon {
-  constructor(wielder, damage, minRange, maxRange, cooldown, thrustTime, pierceFactor) {
-    super(wielder, damage, minRange, cooldown);
+  constructor(wielder, damage, minRange, maxRange, cooldown, thrustTime, pierceFactor, textureSet, scaleFactor) {
+    super(wielder, damage, minRange, cooldown, textureSet);
     this.holdRange = 0.3;
     this.maxRange = maxRange;
     this.thrustTimer = 0;
     this.thrustTime = thrustTime;
     this.pointingAngle = 0;
     this.pierceFactor = pierceFactor;
+    this.draft = false;
+    this.scaleFactor = scaleFactor ?? 1;
   }
 
   thrust(enemies, direction, time) {
@@ -203,32 +222,47 @@ class ThrustWeapon extends Weapon {
       directionVector = [cos(this.pointingAngle), sin(this.pointingAngle)];
     }
     // let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
-    let heldDisplacement, tipDisplacement;
-    if(millis() - this.thrustTimer >= this.thrustTime) {
-      heldDisplacement = scaleVector(directionVector, this.range - this.maxRange + this.holdRange);
-      tipDisplacement = scaleVector(directionVector, this.range);
+    try {
+      push();
+      imageMode(CENTER);
+      let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.textureSet.size[0])*this.scaleFactor;
+      let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.textureSet.size[1])*this.scaleFactor;
+      let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
+      translate(basePos[0], basePos[1]);
+      // Modified angle formula for p5 rotations
+      let angle = getAngle(directionVector[0], -directionVector[1]);
+      rotate(angle);
+      image(this.textureSet.animations[0][0], 0, 0, imgScaleX, imgScaleY);
+      pop();
     }
-    else {
-      heldDisplacement = scaleVector(directionVector, this.holdRange);
-      tipDisplacement = scaleVector(directionVector, this.maxRange);
+    catch {
+      let heldDisplacement, tipDisplacement;
+      if(millis() - this.thrustTimer >= this.thrustTime) {
+        heldDisplacement = scaleVector(directionVector, this.range - this.maxRange + this.holdRange);
+        tipDisplacement = scaleVector(directionVector, this.range);
+      }
+      else {
+        heldDisplacement = scaleVector(directionVector, this.holdRange);
+        tipDisplacement = scaleVector(directionVector, this.maxRange);
+      }
+      let heldPos = dungeonToScreenPos([this.wielder.pos[0] + heldDisplacement[0], this.wielder.pos[1] + heldDisplacement[1]], screenCenter, screenSize);
+      let tipPos = dungeonToScreenPos([this.wielder.pos[0] + tipDisplacement[0], this.wielder.pos[1] + tipDisplacement[1]], screenCenter, screenSize);
+      stroke(10);
+      line(heldPos[0], heldPos[1], tipPos[0], tipPos[1]);
+      noStroke();
     }
-    let heldPos = dungeonToScreenPos([this.wielder.pos[0] + heldDisplacement[0], this.wielder.pos[1] + heldDisplacement[1]], screenCenter, screenSize);
-    let tipPos = dungeonToScreenPos([this.wielder.pos[0] + tipDisplacement[0], this.wielder.pos[1] + tipDisplacement[1]], screenCenter, screenSize);
-    stroke(10);
-    line(heldPos[0], heldPos[1], tipPos[0], tipPos[1]);
-    noStroke();
   }
 }
 
 class Spear extends ThrustWeapon {
   constructor(wielder) {
-    super(wielder, 5, 1.5, 2.3, 600, 200, 0.3);
+    super(wielder, 5, 1.5, 2.3, 600, 200, 0.3, textures.goblinTileSet);
   }
 }
 
 class Hyperion extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 5, 0, 5, 150, Math.PI - 0.01, 100, 1);
+    super(wielder, 5, 0, 5, 150, Math.PI - 0.01, 100, 1, "");
   }
 
   attack(enemies, direction, time, isRolling) {
@@ -239,7 +273,7 @@ class Hyperion extends SweepWeapon {
 }
 
 class ChargedRangedWeapon extends Weapon {
-  constructor(wielder, damage, range, cooldown, minChargeTime, chargeTime, projectileSpeed) {
+  constructor(wielder, damage, range, cooldown, minChargeTime, chargeTime, projectileSpeed, textureSet, scaleFactor) {
     super(wielder, damage, range, cooldown);
     this.minChargeTime = minChargeTime;
     this.chargeTime = chargeTime;
@@ -248,6 +282,8 @@ class ChargedRangedWeapon extends Weapon {
     this.chargeTimer = 0;
     this.projectileSpeed = projectileSpeed;
     this.projectiles = [];
+    this.textureSet = textureSet;
+    this.scaleFactor = scaleFactor ?? 1;
   }
 
   fire(direction) {
@@ -288,28 +324,42 @@ class ChargedRangedWeapon extends Weapon {
     else {
       directionVector = [mouseX - width/2, mouseY - height/2];
     }
-    // let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
-    let heldDisplacement = scaleVector(directionVector, this.holdRange);
-    let tipDisplacement = scaleVector(directionVector, this.holdRange * 3);
-    let heldPos = dungeonToScreenPos([this.wielder.pos[0] + heldDisplacement[0], this.wielder.pos[1] + heldDisplacement[1]], screenCenter, screenSize);
-    let tipPos = dungeonToScreenPos([this.wielder.pos[0] + tipDisplacement[0], this.wielder.pos[1] + tipDisplacement[1]], screenCenter, screenSize);
-    stroke(10);
-    line(heldPos[0], heldPos[1], tipPos[0], tipPos[1]);
-    // console.log(heldPos, tipPos, dungeonWeaponDisplacement);
+    try {
+      push();
+      imageMode(CENTER);
+      let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.textureSet.size[0])*this.scaleFactor;
+      let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.textureSet.size[1])*this.scaleFactor;
+      let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
+      translate(basePos[0], basePos[1]);
+      // Modified angle formula for p5 rotations
+      let angle = getAngle(directionVector[0], -directionVector[1]);
+      rotate(angle);
+      image(this.textureSet.animations[0][0], 0, 0, imgScaleX, imgScaleY);
+      pop();
+    }
+    catch {
+      let heldDisplacement = scaleVector(directionVector, this.holdRange);
+      let tipDisplacement = scaleVector(directionVector, this.holdRange * 3);
+      let heldPos = dungeonToScreenPos([this.wielder.pos[0] + heldDisplacement[0], this.wielder.pos[1] + heldDisplacement[1]], screenCenter, screenSize);
+      let tipPos = dungeonToScreenPos([this.wielder.pos[0] + tipDisplacement[0], this.wielder.pos[1] + tipDisplacement[1]], screenCenter, screenSize);
+      stroke(10);
+      line(heldPos[0], heldPos[1], tipPos[0], tipPos[1]);
+      // console.log(heldPos, tipPos, dungeonWeaponDisplacement);
+      noStroke();
+    }
     this.projectiles.forEach((x) => x.display(screenCenter, screenSize));
-    noStroke();
   }
 }
 
 class ShortBow extends ChargedRangedWeapon {
   constructor(wielder) {
-    super(wielder, 3, 10, 700, 100, 500, 15);
+    super(wielder, 3, 10, 700, 100, 500, 15, "");
   }
 }
 
 class LongBow extends ChargedRangedWeapon {
   constructor(wielder) {
-    super(wielder, 9, 18, 700, 500, 1500, 20);
+    super(wielder, 9, 18, 700, 500, 1500, 20, textures.skeletonTileSet);
   }
 }
 
