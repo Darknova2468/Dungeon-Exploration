@@ -133,6 +133,9 @@ class DungeonMap {
     });
   }
   display(screenCenter, screenSize, scale){
+    if(this.entranceStage < 3) {
+      return;
+    }
     this.otherEntities.forEach(entity => {
       entity.display(screenCenter, screenSize, scale);
     });
@@ -301,6 +304,7 @@ class Room {
 
   spawnEnemies() {
     // this.testSpawnEnemies();
+    this.enemies = [];
     if(!this.summonSlimeBoss()) {
       let slimes = createSlimes(this.difficulties[0]);
       let undeads = createUndead(this.difficulties[2]);

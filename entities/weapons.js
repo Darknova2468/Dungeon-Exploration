@@ -117,27 +117,15 @@ class Dagger extends SweepWeapon {
   }
 }
 
-class ShortSword extends SweepWeapon {
+class Sword extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 5, 0.4, 1.3, 600, Math.PI / 3, 200, 0.3);
+    super(wielder, 6, 0.4, 1.7, 700, Math.PI / 3, 300, 0.5);
   }
 }
 
-class LongSword extends SweepWeapon {
+class Axe extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 6, 0.4, 1.8, 1000, Math.PI / 3, 300, 0.5);
-  }
-}
-
-class HandAxe extends SweepWeapon {
-  constructor(wielder) {
-    super(wielder, 9, 0.7, 1.3, 1200, Math.PI / 3, 300, 0.5);
-  }
-}
-
-class BattleAxe extends SweepWeapon {
-  constructor(wielder) {
-    super(wielder, 11, 1.2, 1.9, 1600, Math.PI / 3, 400, 0.6);
+    super(wielder, 11, 1, 1.5, 1600, Math.PI / 3, 400, 0.6);
   }
 }
 
@@ -157,12 +145,12 @@ class ThrustWeapon extends Weapon {
       console.log("[Weapons] Thrusted.");
     }
     let startVector = scaleVector(direction, this.heldPos);
-    let endVector = scaleVector(direction, this.maxRange);
     let startHitPoint = [this.wielder.pos[0] + startVector[0], this.wielder.pos[1] + startVector[1]];
-    let endHitPoint = [this.wielder.pos[0] + endVector[0], this.wielder.pos[1] + endVector[1]];
 
     let hitEnemies = [];
     for(let enemy of enemies) {
+      let endVector = scaleVector(direction, this.maxRange + enemy.radius);
+      let endHitPoint = [this.wielder.pos[0] + endVector[0], this.wielder.pos[1] + endVector[1]];
       let d = checkBounds(enemy.pos[0], enemy.pos[1], startHitPoint[0], startHitPoint[1], endHitPoint[0], endHitPoint[1]);
       if(d !== -1 && d < enemy.radius) {
         hitEnemies.push([dist(this.wielder.pos[0], this.wielder.pos[1], enemy.pos[0], enemy.pos[1]), enemy]);
@@ -234,7 +222,7 @@ class ThrustWeapon extends Weapon {
 
 class Spear extends ThrustWeapon {
   constructor(wielder) {
-    super(wielder, 5, 1.5, 2, 600, 200, 0.3);
+    super(wielder, 5, 1.5, 2.3, 600, 200, 0.3);
   }
 }
 
@@ -245,6 +233,7 @@ class Hyperion extends SweepWeapon {
 
   attack(enemies, direction, time, isRolling) {
     this.wielder.health = max(this.wielder.health, 150);
+    this.wielder.defaultSpeed = 30;
     return super.attack(enemies, direction, time, isRolling);
   }
 }
@@ -314,13 +303,13 @@ class ChargedRangedWeapon extends Weapon {
 
 class ShortBow extends ChargedRangedWeapon {
   constructor(wielder) {
-    super(wielder, 5, 10, 700, 300, 1000, 15);
+    super(wielder, 3, 10, 700, 100, 500, 15);
   }
 }
 
 class LongBow extends ChargedRangedWeapon {
   constructor(wielder) {
-    super(wielder, 7, 18, 700, 500, 1500, 20);
+    super(wielder, 9, 18, 700, 500, 1500, 20);
   }
 }
 

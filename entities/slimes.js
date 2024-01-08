@@ -235,6 +235,7 @@ class SlimeBoss extends Slime {
   constructor(_pos, _roomId, _collisionMap, _enemies) {
     super(_pos, _roomId, 100, _collisionMap, textures.slimeBossTileSet, 6, 2);
     this.radius = 2;
+    this.attackRange = 2;
     this.health = 20;
     this.tentacles = [];
     this.canJump = false;
@@ -266,7 +267,7 @@ class SlimeBoss extends Slime {
         this.animationNum[0] = 1;
         this.animationSpeed = 12;
       }
-    })
+    });
   }
 
   damage(amountDamage, damageType) {
@@ -339,7 +340,7 @@ class SlimeTentacle extends Slime {
 
     for(let i = 0; i < Math.floor(random(this.maxSlimeSpawn)); i++) {
       let r = random();
-      let slime = new Slime([this.pos[0] * r + this.targetSlamPos[0] * (1-r), this.pos[1] * r + this.targetSlamPos[1] * (1-r)], this.lockedZone - 3, 5, this.collisionMap);
+      let slime = new Slime([this.pos[0] * r + this.targetSlamPos[0] * (1-r), this.pos[1] * r + this.targetSlamPos[1] * (1-r)], this.lockedZone - 3, Math.floor(random(28)), this.collisionMap);
       if(slime.canMoveTo(this.collisionMap[Math.floor(slime.pos[1])][Math.floor(slime.pos[0])])) {
         enemies.push(slime);
       }
