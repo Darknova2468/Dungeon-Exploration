@@ -52,21 +52,27 @@ class Scene {
     this.scale = _scale;
     this.tileSet = _tileSet;
     this.displayOnly = null;
-    this.fall = 0;
+    this.pos = structuredClone(player.pos);
 
     // Transitioning variables
+    this.fade = 0;
     this.transitioning = false;
     this.transitionTimer = 0;
     this.transitionTime = 0;
     this.initialScale = _scale;
     this.objectiveScale = _scale;
+    this.initialPos = structuredClone(player.pos);
+    this.objectivePos = structuredClone(player.pos);
   }
-  changeDimensions(objectiveScale, duration) {
+  changeDimensions(objectiveScale, objectivePos, duration, isFading) {
+    this.initialPos = structuredClone(this.pos);
     this.initialScale = structuredClone(this.scale);
     this.objectiveScale = objectiveScale;
+    this.objectivePos = objectivePos;
     this.transitionTime = duration;
     this.transitionTimer = millis();
     this.transitioning = true;
+    this.isFading = isFading * (1-2*(this.fade > 0.5));
   }
   updateDimensions() {
     if(!this.transitioning) {
@@ -75,22 +81,35 @@ class Scene {
     if(millis() - this.transitionTimer >= this.transitionTime) {
       this.transitioning = false;
       this.scale = this.objectiveScale;
+      this.pos = this.objectivePos;
       return;
     }
     let sigmoid = 1 / (1 + Math.exp(-8*(millis() - (this.transitionTimer + this.transitionTime / 2))/this.transitionTime));
     // console.log(millis() - (this.transitionTimer + this.transitionTime / 2));
     this.scale[0] = this.objectiveScale[0] * sigmoid + this.initialScale[0] * (1 - sigmoid);
     this.scale[1] = this.objectiveScale[1] * sigmoid + this.initialScale[1] * (1 - sigmoid);
+    this.pos[0] = this.objectivePos[0] * sigmoid + this.initialPos[0] * (1-sigmoid);
+    this.pos[1] = this.objectivePos[1] * sigmoid + this.initialPos[1] * (1-sigmoid);
+    
+    if(this.isFading !== 0){
+      if(this.isFading > 0){
+        this.fade = sigmoid*255;
+      }
+      else {
+        this.fade = (1-sigmoid)*255;
+      }
+    }
   }
-  generateScene(center){
+  generateScene(){
     this.updateDimensions();
     let img = createImage(this.tileSet.size[0]*this.scale[0], this.tileSet.size[1]*this.scale[1]);
+    let subImage = createImage(this.tileSet.size[0]*this.scale[0], this.tileSet.size[1]*this.scale[1]);
     const rangeX = Math.ceil((this.scale[0]+2)*0.5);
     const rangeY = Math.ceil((this.scale[1]+2)*0.5);
-    const offsetX = -(center[0]-this.scale[0]*0.5);
-    const offsetY = -(center[1]-this.scale[1]*0.5);
-    for(let y=Math.floor(center[1])-rangeY; y<center[1]+rangeY; y++){
-      for(let x=Math.floor(center[0])-rangeX; x<center[0]+rangeX; x++){
+    const offsetX = -(this.pos[0]-this.scale[0]*0.5);
+    const offsetY = -(this.pos[1]-this.scale[1]*0.5);
+    for(let y=Math.floor(this.pos[1])-rangeY; y<this.pos[1]+rangeY; y++){
+      for(let x=Math.floor(this.pos[0])-rangeX; x<this.pos[0]+rangeX; x++){
         if(y>-1 && y<this.myMap.length && x>-1 && x<this.myMap[0].length){
           if(this.myMap[y][x]){
             this.myMap[y][x].forEach(id => {
@@ -100,10 +119,10 @@ class Scene {
                   (x+offsetX)*this.tileSet.size[0], (y+offsetY)*this.tileSet.size[1], this.tileSet.size[0], this.tileSet.size[1]
                 );
               }
-              else if (this.fall < 10){
-                img.copy(
+              else {
+                subImage.copy(
                   this.tileSet.assets[id], 0, 0, this.tileSet.size[0], this.tileSet.size[1],
-                  (x+offsetX)*this.tileSet.size[0], (y+offsetY+this.fall)*this.tileSet.size[1], this.tileSet.size[0], this.tileSet.size[1]
+                  (x+offsetX)*this.tileSet.size[0], (y+offsetY)*this.tileSet.size[1], this.tileSet.size[0], this.tileSet.size[1]
                 );
               }
             });
@@ -111,13 +130,7 @@ class Scene {
         }
       }
     }
-    if(this.displayOnly === null){
-      this.fall = 0;
-    }
-    else if(this.fall < 10){
-      this.fall += 0.07;
-    }
-    return img;
+    return [img, subImage];
   }
   textureMap(map){
     let textureMap = generateEmptyGrid(map[0].length, map.length, 0);

@@ -12,27 +12,8 @@ let minimap;
 let player;
 let tileSet;
 let myBackground;
-// let playerTileSet;
-// let slimeTileSet;
-// let fireSlimeTileSet;
-// let fireBallTileSet;
-// let iceSlimeTileSet;
-// let zombieTileSet;
-// let boneTileSet;
-// let phantomTileSet;
-// let phantomBallTileSet;
 
 function preload() {
-  // tileSet = new TileSet("textures/CaveTiles.png", [16, 16]);
-  // playerTileSet = new AnimateSet("textures/player.png", [19, 21]);
-  // slimeTileSet = new AnimateSet("textures/slime.png", [19, 21]);
-  // fireSlimeTileSet = new AnimateSet("textures/fireSlime.png", [19, 21]);
-  // fireBallTileSet = new AnimateSet("textures/fireBall.png", [12, 14]);
-  // iceSlimeTileSet = new AnimateSet("textures/iceSlime.png", [19, 21]);
-  // zombieTileSet = new AnimateSet("textures/zombie.png", [19, 21]);
-  // boneTileSet = new AnimateSet("textures/bone.png", [15, 15]);
-  // phantomTileSet = new AnimateSet("textures/phantom.png", [18, 18]);
-  // phantomBallTileSet = new AnimateSet("textures/phantomBall.png", [16, 16]);
   textures = {
     tileSet: new TileSet("textures/CaveTiles.png", [16, 16]),
     playerTileSet: new AnimateSet("textures/player.png", [19, 21]),
@@ -98,9 +79,17 @@ function draw() {
   player.move([keyIsDown(68)-keyIsDown(65) ,keyIsDown(83)-keyIsDown(87)], dt, keyIsDown(16));
   player.attack(myDungeon, dt, keyIsDown(16));
   myDungeon.update(player, dt);
-  image(myBackground.generateScene(player.pos, dt), width/2, height/2, width, height);
-  player.display(player.pos, myBackground.scale, [16, 16]);
-  myDungeon.display(player.pos, myBackground.scale, [16, 16]);
+  myBackground.pos = structuredClone(player.pos);  
+  let images = myBackground.generateScene();
+  images.forEach((img, index) => {
+    if(index === 1){
+      tint(myBackground.fade);
+    }
+    image(img, width/2, height/2, width, height);
+    tint(255);
+  });
+  player.display(myBackground.pos, myBackground.scale, [16, 16]);
+  myDungeon.display(myBackground.pos, myBackground.scale, [16, 16]);
   image(minimap.generateImage(player.pos), width-height*3/20, height*3/20, height/5, height/5);
   fill("white");
   textSize(12);
