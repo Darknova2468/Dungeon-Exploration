@@ -344,7 +344,6 @@ class SlimeTentacle extends Slime {
       if(slime.canMoveTo(this.collisionMap[Math.floor(slime.pos[1])][Math.floor(slime.pos[0])])) {
         enemies.push(slime);
       }
-      console.log(slime);
     }
   }
 

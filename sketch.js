@@ -38,7 +38,7 @@ function preload() {
     axeTileSet: new AnimateSet("textures/axe.png", [17, 66]),
     arrowTileSet: new AnimateSet("textures/arrow.png", [15, 15]),
     inactivePortalTileSet: "dimgrey",
-    activePortalTileSet: "purple",
+    activePortalTileSet: new AnimateSet("textures/portal.png", [60, 60]),
   };
 }
 

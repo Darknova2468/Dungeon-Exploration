@@ -90,7 +90,7 @@ class Entity {
 
 class Portal extends Entity {
   constructor(_pos, _radius, _target, _collisionMap, _textureSet, _activeTextureSet) {
-    super(_pos, 1, 0, 0, _collisionMap, _textureSet);
+    super(_pos, 1, 0, 0, _collisionMap, _textureSet, 3, 2);
     this.inactiveAnimationSet = this.animationSet;
     this.activeAnimationSet = _activeTextureSet;
     this.invincible = true;
