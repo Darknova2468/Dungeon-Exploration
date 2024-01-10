@@ -135,7 +135,7 @@ class FrostSlime extends Slime {
   splash(player, enemies, time) {
     super.splash(player, enemies, time);
     this.activeFrozenPuddle = new FrozenPuddle(this.pos, this.radius * 1.5, 1, 0.5 / this.level, this.collisionMap);
-    enemies.push(this.activeFrozenPuddle);
+    enemies.unshift(this.activeFrozenPuddle);
   }
 
   operate(player, enemies, time) {
