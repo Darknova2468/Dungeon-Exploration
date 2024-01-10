@@ -36,6 +36,8 @@ function preload() {
     swordTileSet: new AnimateSet("textures/sword.png", [11, 72]),
     spearTileSet: new AnimateSet("textures/spear.png", [7, 72]), 
     axeTileSet: new AnimateSet("textures/axe.png", [17, 64]),
+    shortBowTileSet: new AnimateSet("textures/crossBow.png", [17, 40]),
+    longBowTileSet: new AnimateSet("textures/bow.png", [23, 40]),
     arrowTileSet: new AnimateSet("textures/arrow.png", [15, 15]),
     inactivePortalTileSet: "dimgrey",
     activePortalTileSet: new AnimateSet("textures/portal.png", [60, 60]),

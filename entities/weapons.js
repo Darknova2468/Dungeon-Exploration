@@ -286,6 +286,7 @@ class ChargedRangedWeapon extends Weapon {
     this.projectiles = [];
     this.textureSet = textureSet;
     this.scaleFactor = scaleFactor ?? 1;
+    this.animationNum = 0;
   }
 
   fire(direction) {
@@ -336,7 +337,14 @@ class ChargedRangedWeapon extends Weapon {
       // Modified angle formula for p5 rotations
       let angle = getAngle(directionVector[0], -directionVector[1]);
       rotate(angle);
-      image(this.textureSet.animations[0][0], 0, 0, imgScaleX, imgScaleY);
+      this.animationNum = 0;
+      if(this.charging){
+        this.animationNum = Math.round((millis()-this.chargeTimer)/this.chargeTime*this.textureSet.animations[0].length);
+        if(this.animationNum > 2){
+          this.animationNum = 2;
+        }
+      }
+      image(this.textureSet.animations[0][this.animationNum], 0, 0, imgScaleX, imgScaleY);
       pop();
     }
     catch {
@@ -355,13 +363,13 @@ class ChargedRangedWeapon extends Weapon {
 
 class ShortBow extends ChargedRangedWeapon {
   constructor(wielder) {
-    super(wielder, 3, 10, 700, 100, 500, 15, "");
+    super(wielder, 3, 10, 700, 100, 500, 15, textures.shortBowTileSet);
   }
 }
 
 class LongBow extends ChargedRangedWeapon {
   constructor(wielder) {
-    super(wielder, 9, 18, 700, 500, 1500, 20, "");
+    super(wielder, 9, 18, 700, 500, 1500, 20, textures.longBowTileSet);
   }
 }
 
