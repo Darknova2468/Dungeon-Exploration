@@ -2,22 +2,13 @@
 
 const WEAPONDEBUG = 0;
 
-class HeldItem {
-  constructor(_wielder) {
-    this.wielder = _wielder;
-  }
-
-  display(screenCenter, screenSize) {}
-}
-
-class Weapon extends HeldItem {
+class Weapon extends Item {
   constructor(wielder, damage, range, cooldown, textureSet) {
-    super(wielder);
+    super(wielder, textureSet);
     this.damage = damage;
     this.range = range;
     this.cooldown = cooldown;
     this.attackTimer = 0;
-    this.textureSet = textureSet;
   }
 
   attack(enemies, direction, time, isRolling) {}
@@ -81,7 +72,7 @@ class SweepWeapon extends Weapon {
     }
   }
 
-  display(screenCenter, screenSize) {
+  displayHeld(screenCenter, screenSize) {
     let directionVector;
     if(millis() - this.swingTimer >= this.swingTime) {
       // directionVector = [mouseX - width/2, mouseY - height/2];
@@ -214,7 +205,7 @@ class ThrustWeapon extends Weapon {
     }
   }
 
-  display(screenCenter, screenSize) {
+  displayHeld(screenCenter, screenSize) {
     let directionVector;
     if(millis() - this.attackTimer >= this.cooldown) {
       // directionVector = [mouseX - width/2, mouseY - height/2];
@@ -238,7 +229,8 @@ class ThrustWeapon extends Weapon {
       let basePos;
       if(millis() - this.thrustTimer >= this.thrustTime) {
         basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
-      } else {
+      }
+      else {
         let disp = scaleVector(directionVector, this.maxRange - this.range);
         basePos = dungeonToScreenPos([this.wielder.pos[0] + disp[0], this.wielder.pos[1] + disp[1]], screenCenter, screenSize);
       }
@@ -324,7 +316,7 @@ class ChargedRangedWeapon extends Weapon {
     this.projectiles = this.projectiles.filter((x) => x.isAlive);
   }
 
-  display(screenCenter, screenSize) {
+  displayHeld(screenCenter, screenSize) {
     let directionVector;
     if(!this.charging) {
       // directionVector = [mouseX - width/2, mouseY - height/2];
