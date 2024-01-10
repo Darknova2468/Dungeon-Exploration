@@ -3,8 +3,8 @@
 const WEAPONDEBUG = 0;
 
 class Weapon extends Item {
-  constructor(wielder, damage, range, cooldown, textureSet) {
-    super(wielder, textureSet);
+  constructor(wielder, damage, range, cooldown, animationSet, tileSet, scaleFactor) {
+    super(wielder, animationSet, tileSet, scaleFactor);
     this.damage = damage;
     this.range = range;
     this.cooldown = cooldown;
@@ -15,8 +15,8 @@ class Weapon extends Item {
 }
 
 class SweepWeapon extends Weapon {
-  constructor(wielder, damage, minRange, range, cooldown, semiSweepAngle, swingTime, cleaveFactor, textureSet, scaleFactor) {
-    super(wielder, damage, range, cooldown, textureSet);
+  constructor(wielder, damage, minRange, range, cooldown, semiSweepAngle, swingTime, cleaveFactor, animationSet, tileSet, scaleFactor) {
+    super(wielder, damage, range, cooldown, animationSet, tileSet, scaleFactor);
     this.holdRange = 0.3;
     this.minRange = minRange;
     this.semiSweepAngle = semiSweepAngle;
@@ -26,7 +26,6 @@ class SweepWeapon extends Weapon {
     this.pointingAngle = 0;
     this.cleaveFactor = cleaveFactor;
     this.clockwise = false;
-    this.scaleFactor = scaleFactor ?? 1;
   }
 
   swing(enemies, direction, time) {
@@ -88,7 +87,7 @@ class SweepWeapon extends Weapon {
       directionVector = [cos(currentAngle), sin(currentAngle)];
     }
     try {
-      let a = keyIsDown(32) ? "" : this.textureSet; // Temporary
+      let a = keyIsDown(32) ? "" : this.animationSet; // Temporary
       push();
       imageMode(CENTER);
       let imgScaleX = width/(screenSize[0]*baseResolution[0]/a.size[0])*this.scaleFactor;
@@ -146,8 +145,8 @@ class Axe extends SweepWeapon {
 }
 
 class ThrustWeapon extends Weapon {
-  constructor(wielder, damage, minRange, maxRange, cooldown, thrustTime, pierceFactor, textureSet, scaleFactor) {
-    super(wielder, damage, minRange, cooldown, textureSet);
+  constructor(wielder, damage, minRange, maxRange, cooldown, thrustTime, pierceFactor, animationSet, tileSet, scaleFactor) {
+    super(wielder, damage, minRange, cooldown, animationSet, tileSet, scaleFactor);
     this.holdRange = 0.3;
     this.maxRange = maxRange;
     this.thrustTimer = 0;
@@ -155,7 +154,6 @@ class ThrustWeapon extends Weapon {
     this.pointingAngle = 0;
     this.pierceFactor = pierceFactor;
     this.draft = false;
-    this.scaleFactor = scaleFactor ?? 1;
   }
 
   thrust(enemies, direction, time) {
@@ -224,8 +222,8 @@ class ThrustWeapon extends Weapon {
     try {
       push();
       imageMode(CENTER);
-      let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.textureSet.size[0])*this.scaleFactor;
-      let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.textureSet.size[1])*this.scaleFactor;
+      let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.animationSet.size[0])*this.scaleFactor;
+      let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.animationSet.size[1])*this.scaleFactor;
       let basePos;
       if(millis() - this.thrustTimer >= this.thrustTime) {
         basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
@@ -238,7 +236,7 @@ class ThrustWeapon extends Weapon {
       // Modified angle formula for p5 rotations
       let angle = getAngle(directionVector[0], -directionVector[1]);
       rotate(angle);
-      image(this.textureSet.animations[0][0], 0, 0, imgScaleX, imgScaleY);
+      image(this.animationSet.animations[0][0], 0, 0, imgScaleX, imgScaleY);
       pop();
     }
     catch {
@@ -279,8 +277,8 @@ class Hyperion extends SweepWeapon {
 }
 
 class ChargedRangedWeapon extends Weapon {
-  constructor(wielder, damage, range, cooldown, minChargeTime, chargeTime, projectileSpeed, textureSet, scaleFactor) {
-    super(wielder, damage, range, cooldown);
+  constructor(wielder, damage, range, cooldown, minChargeTime, chargeTime, projectileSpeed, animationSet, tileSet, scaleFactor) {
+    super(wielder, damage, range, cooldown, animationSet, tileSet, scaleFactor);
     this.minChargeTime = minChargeTime;
     this.chargeTime = chargeTime;
     this.charging = false;
@@ -288,8 +286,6 @@ class ChargedRangedWeapon extends Weapon {
     this.chargeTimer = 0;
     this.projectileSpeed = projectileSpeed;
     this.projectiles = [];
-    this.textureSet = textureSet;
-    this.scaleFactor = scaleFactor ?? 1;
     this.animationNum = 0;
   }
 
@@ -334,8 +330,8 @@ class ChargedRangedWeapon extends Weapon {
     try {
       push();
       imageMode(CENTER);
-      let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.textureSet.size[0])*this.scaleFactor;
-      let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.textureSet.size[1])*this.scaleFactor;
+      let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.animationSet.size[0])*this.scaleFactor;
+      let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.animationSet.size[1])*this.scaleFactor;
       let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
       translate(basePos[0], basePos[1]);
       // Modified angle formula for p5 rotations
@@ -343,12 +339,12 @@ class ChargedRangedWeapon extends Weapon {
       rotate(angle);
       this.animationNum = 0;
       if(this.charging){
-        this.animationNum = Math.round((millis()-this.chargeTimer)/this.chargeTime*this.textureSet.animations[0].length);
+        this.animationNum = Math.round((millis()-this.chargeTimer)/this.chargeTime*this.animationSet.animations[0].length);
         if(this.animationNum > 2){
           this.animationNum = 2;
         }
       }
-      image(this.textureSet.animations[0][this.animationNum], 0, 0, imgScaleX, imgScaleY);
+      image(this.animationSet.animations[0][this.animationNum], 0, 0, imgScaleX, imgScaleY);
       pop();
     }
     catch {

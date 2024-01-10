@@ -1,10 +1,12 @@
 /* eslint-disable no-undef */
 
 class Item {
-  constructor(_wielder, _textureSet) {
+  constructor(_wielder, _animationSet, _tileSet, _scaleFactor) {
     this.wielder = _wielder;
     this.held = true;
-    this.textureSet = _textureSet;
+    this.animationSet = _animationSet;
+    this.tileSet = _tileSet;
+    this.scaleFactor = _scaleFactor ?? 1;
   }
 
   displayHeld(screenCenter, screenSize) {}
@@ -17,10 +19,9 @@ class Item {
 }
 
 class DroppedItem extends Entity {
-  constructor(pos, item, collisionMap, animationSet, animationSpeed, scaleFactor) {
-    super(pos, 1, 0, 0, collisionMap, animationSet, animationSpeed, scaleFactor);
+  constructor(pos, item, collisionMap) {
+    super(pos, 1, 0, 0, collisionMap, item.tileSet);
     this.item = item;
-    this.textureSet = item.textureSet;
     this.invincible = true;
     this.radius = 0.1;
   }
