@@ -105,8 +105,14 @@ class SweepWeapon extends Weapon {
       let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
       translate(basePos[0], basePos[1]);
       // Modified angle formula for p5 rotations
-      let angle = getAngle(directionVector[0], -directionVector[1]);
-      scale(1-2*this.clockwise, 1);
+      let angle;
+      if(!this.clockwise) {
+        scale(-1, 1);
+        angle = getAngle(-directionVector[0], -directionVector[1]);
+      }
+      else {
+        angle = getAngle(directionVector[0], -directionVector[1]);
+      }
       rotate(angle);
       image(a.animations[0][0], 0, 0, imgScaleX, imgScaleY);
       pop();
@@ -229,7 +235,13 @@ class ThrustWeapon extends Weapon {
       imageMode(CENTER);
       let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.textureSet.size[0])*this.scaleFactor;
       let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.textureSet.size[1])*this.scaleFactor;
-      let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
+      let basePos;
+      if(millis() - this.thrustTimer >= this.thrustTime) {
+        basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
+      } else {
+        let disp = scaleVector(directionVector, this.maxRange - this.range);
+        basePos = dungeonToScreenPos([this.wielder.pos[0] + disp[0], this.wielder.pos[1] + disp[1]], screenCenter, screenSize);
+      }
       translate(basePos[0], basePos[1]);
       // Modified angle formula for p5 rotations
       let angle = getAngle(directionVector[0], -directionVector[1]);
