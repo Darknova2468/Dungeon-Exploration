@@ -2,7 +2,7 @@
 
 const baseResolution = [24, 24];
 const ENEMYDEBUG = 0;
-const SHOWHITBOXES = true;
+const SHOWHITBOXES = false;
 
 class Entity {
   constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet, _animationSpeed, _scaleFactor){
@@ -48,8 +48,6 @@ class Entity {
       imageMode(CENTER);
       let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.animationSet.size[0])*this.scaleFactor;
       let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.animationSet.size[1])*this.scaleFactor;
-      let imgWidth = this.animationNum[1] === 0 ? posScaleX: -posScaleX;
-      let imgHeight = this.animationNum[2] === 0 ? posScaleY: -posScaleY;
       push();
       translate(x*posScaleX, y*posScaleY);
       if(SHOWHITBOXES) {
@@ -320,8 +318,8 @@ class Player extends Entity {
   }
 
   display(screenCenter, screenSize) {
-    super.display(screenCenter, screenSize);
     this.holding.display(screenCenter, screenSize);
+    super.display(screenCenter, screenSize); 
   }
 }
 

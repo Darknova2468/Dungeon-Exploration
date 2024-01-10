@@ -116,7 +116,7 @@ class Scene {
               if(this.displayOnly === null || this.idMap[y][x] === this.displayOnly){
                 img.copy(
                   this.tileSet.assets[id], 0, 0, this.tileSet.size[0], this.tileSet.size[1],
-                  (x+offsetX)*this.tileSet.size[0], (y+offsetY)*this.tileSet.size[1], this.tileSet.size[0], this.tileSet.size[1]
+                  (x+offsetX)*this.tileSet.size[0], (y+offsetY)*this.tileSet.size[1], this.tileSet.size[0]+1, this.tileSet.size[1]+1
                 );
               }
               else {

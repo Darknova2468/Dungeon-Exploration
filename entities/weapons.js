@@ -97,16 +97,18 @@ class SweepWeapon extends Weapon {
       directionVector = [cos(currentAngle), sin(currentAngle)];
     }
     try {
+      let a = keyIsDown(32) ? "" : this.textureSet; // Temporary
       push();
       imageMode(CENTER);
-      let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.textureSet.size[0])*this.scaleFactor;
-      let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.textureSet.size[1])*this.scaleFactor;
+      let imgScaleX = width/(screenSize[0]*baseResolution[0]/a.size[0])*this.scaleFactor;
+      let imgScaleY = height/(screenSize[1]*baseResolution[1]/a.size[1])*this.scaleFactor;
       let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
       translate(basePos[0], basePos[1]);
       // Modified angle formula for p5 rotations
       let angle = getAngle(directionVector[0], -directionVector[1]);
+      scale(1-2*this.clockwise, 1);
       rotate(angle);
-      image(this.textureSet.animations[0][0], 0, 0, imgScaleX, imgScaleY);
+      image(a.animations[0][0], 0, 0, imgScaleX, imgScaleY);
       pop();
     }
     catch {
@@ -130,19 +132,19 @@ class SweepWeapon extends Weapon {
 
 class Dagger extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 7, 0.35, 1, 400, Math.PI / 4, 150, 0, "");
+    super(wielder, 7, 0.35, 1, 400, Math.PI / 4, 150, 0, textures.daggerTileSet);
   }
 }
 
 class Sword extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 6, 0.4, 1.7, 700, Math.PI / 3, 300, 0.5, "");
+    super(wielder, 6, 0.4, 1.5, 700, Math.PI / 3, 300, 0.5, textures.swordTileSet);
   }
 }
 
 class Axe extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 11, 1, 1.5, 1600, Math.PI / 3, 400, 0.6, textures.zombieTileSet);
+    super(wielder, 11, 0.825, 1.25, 1600, Math.PI / 3, 400, 0.6, textures.axeTileSet);
   }
 }
 
@@ -256,7 +258,7 @@ class ThrustWeapon extends Weapon {
 
 class Spear extends ThrustWeapon {
   constructor(wielder) {
-    super(wielder, 5, 1.5, 2.3, 600, 200, 0.3, textures.goblinTileSet);
+    super(wielder, 5, 1.5, 2.3, 600, 200, 0.3, textures.spearTileSet);
   }
 }
 
@@ -359,7 +361,7 @@ class ShortBow extends ChargedRangedWeapon {
 
 class LongBow extends ChargedRangedWeapon {
   constructor(wielder) {
-    super(wielder, 9, 18, 700, 500, 1500, 20, textures.skeletonTileSet);
+    super(wielder, 9, 18, 700, 500, 1500, 20, "");
   }
 }
 

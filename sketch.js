@@ -32,6 +32,10 @@ function preload() {
     hobgoblinTileSet: "chocolate",
     skeletonTileSet: new AnimateSet("textures/skeleton.png", [18, 18]),
     frozenPuddleTileSet: "powderblue",
+    daggerTileSet: new AnimateSet("textures/dagger.png", [9, 47]),
+    swordTileSet: new AnimateSet("textures/sword.png", [11, 72]),
+    spearTileSet: new AnimateSet("textures/spear.png", [7, 72]), 
+    axeTileSet: new AnimateSet("textures/axe.png", [17, 66]),
     arrowTileSet: new AnimateSet("textures/arrow.png", [15, 15]),
     inactivePortalTileSet: "dimgrey",
     activePortalTileSet: "purple",
@@ -88,8 +92,8 @@ function draw() {
     image(img, width/2, height/2, width, height);
     tint(255);
   });
-  player.display(myBackground.pos, myBackground.scale, [16, 16]);
   myDungeon.display(myBackground.pos, myBackground.scale, [16, 16]);
+  player.display(myBackground.pos, myBackground.scale, [16, 16]);
   image(minimap.generateImage(player.pos), width-height*3/20, height*3/20, height/5, height/5);
   fill("white");
   textSize(12);
