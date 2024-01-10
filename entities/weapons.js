@@ -238,7 +238,8 @@ class ThrustWeapon extends Weapon {
       let basePos;
       if(millis() - this.thrustTimer >= this.thrustTime) {
         basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
-      } else {
+      } 
+      else {
         let disp = scaleVector(directionVector, this.maxRange - this.range);
         basePos = dungeonToScreenPos([this.wielder.pos[0] + disp[0], this.wielder.pos[1] + disp[1]], screenCenter, screenSize);
       }
