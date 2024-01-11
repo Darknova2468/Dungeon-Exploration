@@ -91,6 +91,15 @@ class Booyahg extends Goblin {
 class AnnoyingSpark extends EnemyProjectile {
   constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _collisionMap) {
     super(_pos, _zone, _dir, _maxDist, _hitDmg, "Lightning", 0.1, false, 0, 0, null, _collisionMap, textures.annoyingSparkTileSet);
+    this.defaultSpeed = this.speed;
+    this.sparkSpeed = 10;
+  }
+
+  operate(target, enemies, time) {
+    this.speed = this.sparkSpeed;
+    this.move([random(-20, 20), random(-20, 20)], time);
+    this.speed = this.defaultSpeed;
+    super.operate(target, enemies, time);
   }
 }
 
