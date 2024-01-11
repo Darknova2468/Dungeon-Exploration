@@ -242,7 +242,7 @@ class Enemy extends Entity {
 
 class Player extends Entity {
   constructor(_pos, _collisionMap){
-    super(_pos, 10, 0, 3.5, _collisionMap, textures.playerTileSet);
+    super(_pos, 10, 5, 3.5, _collisionMap, textures.playerTileSet);
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
