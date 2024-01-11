@@ -134,7 +134,7 @@ class FrostSlime extends Slime {
 
   splash(player, enemies, time) {
     super.splash(player, enemies, time);
-    this.activeFrozenPuddle = new FrozenPuddle(this.pos, this.radius * 1.5, 1, 0.5 / this.level, this.collisionMap);
+    this.activeFrozenPuddle = new FrozenPuddle(this.pos, this.radius * 1.5, 0.5, 0.5 / this.level, this.collisionMap);
     enemies.unshift(this.activeFrozenPuddle);
   }
 
@@ -158,7 +158,7 @@ class FrozenPuddle extends Entity {
     this.initialFreezeDamage = _freezeDamage;
     this.thawRate = _thawRate;
     this.hitTimer = millis();
-    this.hitCooldown = 500;
+    this.hitCooldown = 750;
     this.damageType = "Cold";
     this.passive = true;
   }
