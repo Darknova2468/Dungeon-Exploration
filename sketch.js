@@ -65,11 +65,13 @@ function setup() {
   noStroke();
   noSmooth();
   myDungeon = createDungeonMap(5);
-  player = new Player(myDungeon.playerPos, myDungeon.minimap);
+  player = new Player(structuredClone(myDungeon.playerPos), myDungeon.minimap);
   enterDungeonMap(myDungeon);
 }
 
 let gameActive = true;
+let deathTimer = 0;
+const deathTime = 2000;
 let thisDeathMessage;
 
 function draw() {
@@ -78,6 +80,19 @@ function draw() {
     fill("white");
     textAlign(CENTER, CENTER);
     text(thisDeathMessage, width/2, height/2);
+    if(millis() - deathTimer > deathTime) {
+      enterDungeonMap(myDungeon);
+      player.health = 10;
+      let room = myDungeon.dungeon[player.activeZone];
+      room.entranceStage = 0;
+      room.locked = false;
+      player.activeZone = -1;
+      player.lockedZone = 0;
+      player.timeLocked = false;
+      player.locked = false;
+      player.isAlive = true;
+      gameActive = true;
+    }
     return;
   }
   else if(!player.isAlive) {
@@ -87,6 +102,7 @@ function draw() {
     thisDeathMessage = deathMessages[0];
     thisDeathMessage = random(deathMessages);
     text(thisDeathMessage, width/2, height/2);
+    deathTimer = millis();
     gameActive = false;
     return;
   }
@@ -108,4 +124,7 @@ function draw() {
   textSize(20);
   text("Health: " + Math.ceil(player.health), height*3/20, height*3/20);
   text("On Floor " + myDungeon.floorNumber, height*3/20, height*2/20);
+  // if(millis() > 1000 && player.isAlive) {
+  //   player.isAlive = false;
+  // }
 }

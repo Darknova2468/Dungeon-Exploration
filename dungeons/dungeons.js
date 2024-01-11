@@ -12,7 +12,7 @@ function createDungeonMap(floor) {
 
 function enterDungeonMap(dungeonMap) {
   minimap = new MiniMap(30, dungeonMap.minimap);
-  player.pos = dungeonMap.playerPos;
+  player.pos = structuredClone(dungeonMap.playerPos);
   player.collisionMap = dungeonMap.minimap;
   myBackground = new Scene(dungeonMap.minimap, [16, 8], textures.tileSet);
 }
@@ -266,6 +266,9 @@ class Room {
   }
 
   display(screenCenter, screenSize, scale){
+    if(this.entranceStage < 3) {
+      return;
+    }
     this.enemies.forEach(enemy => {
       enemy.display(screenCenter, screenSize, scale);
     });
