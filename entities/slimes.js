@@ -248,6 +248,7 @@ class SlimeBoss extends Slime {
         _enemies.push(t);
       }
     }
+    this.endBoss = false;
   }
 
   move() {
@@ -255,6 +256,9 @@ class SlimeBoss extends Slime {
   }
 
   operate(player, enemies, time) {
+    if(this.endBoss) {
+      enemies.forEach((enemy) => {enemy.isAlive = false});
+    }
     super.operate(player, enemies, time);
     this.tentacles = this.tentacles.filter((t) => t.isAlive);
     this.animationNum[0] = 0;
@@ -280,7 +284,8 @@ class SlimeBoss extends Slime {
     this.health -= amountDamage;
     if(this.health <= 0 && !this.invincible) {
       if(this.tentacles.length === 0) {
-        this.isAlive = false;
+        this.isAlive = true;
+        this.endBoss = true;
       }
       else {
         this.health = 20;

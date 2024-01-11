@@ -312,7 +312,7 @@ class Room {
 
   spawnEnemies() {
     this.enemies = [];
-    this.testSpawnEnemies();
+    // this.testSpawnEnemies();
     if(!this.summonSlimeBoss()) {
       let slimes = createSlimes(this.difficulties[0]);
       let undeads = createUndead(this.difficulties[2]);
