@@ -109,3 +109,16 @@ function draw() {
   textSize(20);
   text("On Floor " + myDungeon.floorNumber, height*3/20, height*2/10);
 }
+
+function mouseWheel(event) { 
+  if(frameCount % 2 === 0){
+    if(event.delta > 1 && player.holdingIndex < player.weapons.length-1){
+      player.holding = player.weapons[player.holdingIndex+1];
+      player.holdingIndex += 1;
+    } 
+    else if(event.delta < 1 && player.holdingIndex > 0){
+      player.holding = player.weapons[player.holdingIndex-1];
+      player.holdingIndex -= 1;
+    }
+  }
+}
