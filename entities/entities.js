@@ -48,8 +48,6 @@ class Entity {
       imageMode(CENTER);
       let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.animationSet.size[0])*this.scaleFactor;
       let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.animationSet.size[1])*this.scaleFactor;
-      let imgWidth = this.animationNum[1] === 0 ? posScaleX: -posScaleX;
-      let imgHeight = this.animationNum[2] === 0 ? posScaleY: -posScaleY;
       push();
       translate(x*posScaleX, y*posScaleY);
       if(SHOWHITBOXES) {
@@ -92,8 +90,8 @@ class Entity {
 
 class Portal extends Entity {
   constructor(_pos, _radius, _target, _collisionMap, _textureSet, _activeTextureSet) {
-    super(_pos, 1, 0, 0, _collisionMap, _textureSet);
-    this.inactiveAnimationSet = this.animationSet
+    super(_pos, 1, 0, 0, _collisionMap, _textureSet, 3, 2);
+    this.inactiveAnimationSet = this.animationSet;
     this.activeAnimationSet = _activeTextureSet;
     this.invincible = true;
     this.target = _target; // Floor available to go to once activated
@@ -320,8 +318,8 @@ class Player extends Entity {
   }
 
   display(screenCenter, screenSize) {
-    super.display(screenCenter, screenSize);
     this.holding.display(screenCenter, screenSize);
+    super.display(screenCenter, screenSize); 
   }
 }
 

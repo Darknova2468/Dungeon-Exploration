@@ -31,12 +31,16 @@ class DungeonMap {
 
     // Determines difficulties of initial and boss rooms
     this.difficulties = [[], [0,0,0,0]];
-    this.enemyDifficulties.forEach((bounds) => {this.difficulties[0].push(bounds[1])});
+    this.enemyDifficulties.forEach((bounds) => {
+      this.difficulties[0].push(bounds[1]);
+    });
 
     // Adds difficulties of other rooms
     for(let i = 1; i < this.numberOfRooms - 1; i++) {
       this.difficulties.unshift([]);
-      this.enemyDifficulties.forEach((bounds) => {this.difficulties[0].push(Math.floor(random(bounds[0], bounds[1])))});
+      this.enemyDifficulties.forEach((bounds) => {
+        this.difficulties[0].push(Math.floor(random(bounds[0], bounds[1])));
+      });
     }
 
     // Sorts difficulties to fix everything
@@ -198,9 +202,8 @@ class Room {
         player.locked = true;
         player.timeLocked = true;
         player.lockedZone = this.id + 3;
-        myBackground.changeDimensions([this.radius * 4, this.radius * 2], 700);
+        myBackground.changeDimensions([this.radius * 4, this.radius * 2], this.pos, 700, false);
         this.entranceStage = 1;
-        myBackground.displayOnly = this.id+3;
       }
     }
     if(myBackground.transitioning || !this.locked) {
@@ -208,7 +211,7 @@ class Room {
     }
     else if(this.entranceStage === 1) {
       this.entranceStage = 2;
-      myBackground.changeDimensions([this.radius * 4, this.radius * 2], 700);
+      myBackground.changeDimensions([this.radius * 4, this.radius * 2], this.pos, 700, false);
     }
     else if(this.entranceStage === 2) {
       this.entranceStage = 3;
@@ -217,11 +220,12 @@ class Room {
       this.enemies.forEach(enemy => {
         enemy.invincible = true;
       });
-      myBackground.changeDimensions([this.radius * 4, this.radius * 2], 1500);
+      myBackground.displayOnly = this.id+3;
+      myBackground.changeDimensions([this.radius * 4, this.radius * 2], this.pos, 1500, true);
     }
     else if(this.entranceStage === 3) {
       this.entranceStage = 4;
-      myBackground.changeDimensions([16, 8], 500);
+      myBackground.changeDimensions([16, 8], player.pos, 500, false);
     }
     else if(this.entranceStage === 4) {
       this.entranceStage = 5;
@@ -241,7 +245,7 @@ class Room {
         player.locked = false;
         this.activatePortal();
         myBackground.displayOnly = null;
-        myBackground.changeDimensions([12, 6], 1000);
+        myBackground.changeDimensions([12, 6], player.pos, 1000, true);
       }
 
       // If all enemies are passive (e.g. frozen puddles), despawn them
@@ -420,6 +424,8 @@ function generateEmptyGrid(x = xSize, y = ySize, toFill = 0) {
 
 function getArraySum(arr) {
   acc = 0;
-  arr.forEach((x) => {acc += x});
+  arr.forEach((x) => {
+    acc += x;
+  });
   return acc;
 }

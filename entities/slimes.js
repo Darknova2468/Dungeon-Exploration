@@ -135,7 +135,7 @@ class FrostSlime extends Slime {
   splash(player, enemies, time) {
     super.splash(player, enemies, time);
     this.activeFrozenPuddle = new FrozenPuddle(this.pos, this.radius * 1.5, 1, 0.5 / this.level, this.collisionMap);
-    enemies.push(this.activeFrozenPuddle);
+    enemies.unshift(this.activeFrozenPuddle);
   }
 
   operate(player, enemies, time) {
@@ -240,6 +240,7 @@ class SlimeBoss extends Slime {
     this.tentacles = [];
     this.canJump = false;
     this.detectionRange = 100;
+    this.scaleFactor *= 2;
     for(let dx of [-3, 3]) {
       for(let dy of [-3, 3]) {
         let t = new SlimeTentacle([_pos[0] + dx, _pos[1] + dy], _roomId, _collisionMap);
@@ -344,7 +345,6 @@ class SlimeTentacle extends Slime {
       if(slime.canMoveTo(this.collisionMap[Math.floor(slime.pos[1])][Math.floor(slime.pos[0])])) {
         enemies.push(slime);
       }
-      console.log(slime);
     }
   }
 
