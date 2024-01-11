@@ -166,6 +166,7 @@ class Room {
     this.denseCaveEdgeChance = _denseCaveEdgeChance;
     this.isBoss = _isBoss;
     this.portal = null;
+    this.healed = false;
   }
   addConnection(numberOfConnections, index, numberOfRooms, dungeon, check){
     // Pushes connections to node
@@ -257,6 +258,11 @@ class Room {
       for(let enemy of this.enemies) {
         enemy.isAlive = false;
       }
+
+      if(!this.healed){
+        player.health += 0.5*(player.maxHealth - player.health);
+        this.healed = true;
+      } 
     }
   }
 

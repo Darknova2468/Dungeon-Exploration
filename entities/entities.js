@@ -7,6 +7,7 @@ const SHOWHITBOXES = true;
 class Entity {
   constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet, _animationSpeed, _scaleFactor){
     this.pos = _pos;
+    this.maxHealth = _health;
     this.health = _health;
     this.defence = _defence;
     this.speed = _speed;
