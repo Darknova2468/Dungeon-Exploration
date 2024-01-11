@@ -18,7 +18,7 @@ class Entity {
     this.invincible = false;
     this.invisible = false;
     this.radius = 0.3;
-    this.passive = false; // E.g. frozen puddles are passive
+    this.passive = false;
     this.scaleFactor = _scaleFactor ?? 1;
     // Zone locking
     this.locked = false;
