@@ -9,7 +9,7 @@ class Goblin extends Enemy {
     this.thrusting = false;
     this.backing = false;
     this.fleeing = false;
-    this.thrustChance = 0.02;
+    this.thrustChance = 0.01;
   }
   combat(player, enemies, time, distance, pursuitVector) {
     if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
@@ -62,6 +62,35 @@ class Goblin extends Enemy {
     this.thrusting = false;
     this.backing = false;
     this.fleeing = false;
+  }
+}
+
+class Booyahg extends Goblin {
+  constructor(_pos, _roomId, _level, _collisionMap) {
+    super(_pos, _roomId, _level, _collisionMap, textures.booyahgTileSet);
+    this.combatBalanceRadius = 5;
+    this.thrustRadius = 6;
+    this.attackDamage *= 0.25;
+    
+    // Booyahgs are trickster spellcasters
+    this.spellSpeed = 1;
+    this.spellRange = 20;
+    this.spellDamage = 1;
+  }
+
+  combat(player, enemies, time, distance, pursuitVector) {
+    super.combat(player, enemies, time, distance, pursuitVector);
+    if(this.thrusting && random() < 0.2) {
+      this.thrusting = false;
+      this.backing = true;
+      enemies.push(new AnnoyingSpark(this.pos, this.lockedZone, scaleVector(pursuitVector, this.spellSpeed), this.spellRange, this.spellDamage, this.collisionMap));
+    }
+  }
+}
+
+class AnnoyingSpark extends EnemyProjectile {
+  constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _collisionMap) {
+    super(_pos, _zone, _dir, _maxDist, _hitDmg, "Lightning", 0.1, false, 0, 0, null, _collisionMap, textures.annoyingSparkTileSet);
   }
 }
 
