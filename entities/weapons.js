@@ -344,8 +344,8 @@ class ChargedRangedWeapon extends Weapon {
       this.animationNum = 0;
       if(this.charging){
         this.animationNum = Math.round((millis()-this.chargeTimer)/this.chargeTime*this.textureSet.animations[0].length);
-        if(this.animationNum > 2){
-          this.animationNum = 2;
+        if(this.animationNum > this.textureSet.animations[0].length-1){
+          this.animationNum = this.textureSet.animations[0].length-1;
         }
       }
       image(this.textureSet.animations[0][this.animationNum], 0, 0, imgScaleX, imgScaleY);

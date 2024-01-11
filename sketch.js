@@ -10,12 +10,13 @@ let myDungeon;
 let anotherDungeon;
 let minimap;
 let player;
-let tileSet;
 let myBackground;
+let healthBar;
 
 function preload() {
   textures = {
     tileSet: new TileSet("textures/CaveTiles.png", [16, 16]),
+    healthBarTileSet: new TileSet("textures/Hearts.png", [21, 18]),
     playerTileSet: new AnimateSet("textures/player.png", [19, 21]),
     slimeTileSet: new AnimateSet("textures/slime.png", [19, 21]),
     lavaSlimeTileSet: new AnimateSet("textures/lavaSlime.png", [19, 21]),
@@ -53,6 +54,7 @@ function setup() {
   noSmooth();
   myDungeon = createDungeonMap(5);
   player = new Player(myDungeon.playerPos, myDungeon.minimap);
+  healthBar = new HealthBar(player.health, textures.healthBarTileSet, [50, 50], 2.5);
   enterDungeonMap(myDungeon);
 }
 
@@ -96,11 +98,14 @@ function draw() {
   });
   myDungeon.display(myBackground.pos, myBackground.scale, [16, 16]);
   player.display(myBackground.pos, myBackground.scale, [16, 16]);
-  image(minimap.generateImage(player.pos), width-height*3/20, height*3/20, height/5, height/5);
+  if(keyIsDown(20)){
+    minimap.displayMap(player.pos);
+  } 
+  minimap.displayMinimap(player.pos);
+  healthBar.display(player.health);
   fill("white");
   textSize(12);
   text("fps: " + Math.floor(frameRate()), width-height*3/20, height*6/20);
   textSize(20);
-  text("Health: " + Math.ceil(player.health), height*3/20, height*3/20);
-  text("On Floor " + myDungeon.floorNumber, height*3/20, height*2/20);
+  text("On Floor " + myDungeon.floorNumber, height*3/20, height*2/10);
 }
