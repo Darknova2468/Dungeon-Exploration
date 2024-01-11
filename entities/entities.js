@@ -214,7 +214,7 @@ class Enemy extends Entity {
     else {
       // Chase
       let weights = new Weights();
-      weights.weighObstacles(this.collisionMap, this.pos, 2, 3);
+      weights.weighObstacles(this.collisionMap, this.freeZone, this.pos, 2, 3);
       weights.weighMomentum(this.prevDirection);
       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius);
       let maxDir = weights.getMaxDir();
@@ -365,12 +365,12 @@ class Weights {
     this.weighVector(scaleVector(pursuitVector), (x) => scaling * (1 - Math.abs(x)));
   }
 
-  weighObstacles(collisionMap, pos, radius = 2, expScaling = 3) {
+  weighObstacles(collisionMap, freeZones, pos, radius = 2, expScaling = 3) {
     for(let i = -radius; i <= radius; i++) {
       for(let j = -radius; j <= radius; j++) {
         let blockX = Math.floor(pos[0]) + j;
         let blockY = Math.floor(pos[1]) + i;
-        if(verifyIndices(collisionMap, blockY, blockX) && collisionMap[blockY][blockX] === 0) {
+        if(verifyIndices(collisionMap, blockY, blockX) && collisionMap[blockY][blockX] !== freeZones) {
           // Centre at the centre of the square
           blockX += 0.5;
           blockY += 0.5;
