@@ -19,7 +19,7 @@ class HealthBar {
     for(let i=0; i<n; i++){
       image(this.tileSet.assets[0], this.pos[0]+i*this.scale*this.tileSet.size[0], this.pos[1], this.tileSet.size[0]*this.scale, this.tileSet.size[1]*this.scale);
     }
-    if(Math.ceil(this.health)%2 === 1){
+    if(Math.floor(this.health)%2 === 1){
       image(this.tileSet.assets[1], this.pos[0]+n*this.scale*this.tileSet.size[0], this.pos[1], this.tileSet.size[0]*this.scale, this.tileSet.size[1]*this.scale);
     }
   }
@@ -102,7 +102,7 @@ class Maps {
     img.pixels[i+2] = 0;
     img.updatePixels();
     let scaleX = width/this.map.length > height/this.map[0].length ? this.map.length*(height-2*padding)/this.map[0].length:width-2*padding;
-    let scaleY = this.map[0].length*scaleX/this.map.length;
+    let scaleY = this.map.length*scaleX/this.map[0].length;
     image(img, width/2, height/2, scaleX, scaleY);
   }
 }
