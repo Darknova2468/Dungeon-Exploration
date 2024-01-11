@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 class Slime extends Enemy {
-  constructor(_pos, _roomId, _level, _collisionMap, _textureSet = textures.slimeTileSet) {
-    super(_pos, "Slime", _roomId, _level, Math.floor(4*Math.log10(_level+1)), 0, 1.5, 8, 0.5, Math.floor(4*Math.log10(_level+1)), "Bludgeoning", 0.5, 600, _collisionMap, _textureSet);
+  constructor(_pos, _roomId, _level, _collisionMap, _textureSet = textures.slimeTileSet, _animationSpeed, _scaleFactor) {
+    super(_pos, "Slime", _roomId, _level, Math.floor(4*Math.log10(_level+1)), 0, 1.5, 8, 0.5, Math.floor(4*Math.log10(_level+1)), "Bludgeoning", 0.5, 600, _collisionMap, _textureSet, _animationSpeed, _scaleFactor);
     if(this.level >= 10) {
       this.radius = 0.6;
     }
@@ -135,7 +135,7 @@ class FrostSlime extends Slime {
   splash(player, enemies, time) {
     super.splash(player, enemies, time);
     this.activeFrozenPuddle = new FrozenPuddle(this.pos, this.radius * 1.5, 1, 0.5 / this.level, this.collisionMap);
-    enemies.push(this.activeFrozenPuddle);
+    enemies.unshift(this.activeFrozenPuddle);
   }
 
   operate(player, enemies, time) {
@@ -233,15 +233,17 @@ function createSlimes(slimeDifficulty) {
 
 class SlimeBoss extends Slime {
   constructor(_pos, _roomId, _collisionMap, _enemies) {
-    super(_pos, _roomId, 100, _collisionMap, textures.slimeBossTileSet);
+    super(_pos, _roomId, 100, _collisionMap, textures.slimeBossTileSet, 6, 2);
     this.radius = 2;
+    this.attackRange = 2;
     this.health = 20;
     this.tentacles = [];
     this.canJump = false;
     this.detectionRange = 100;
+    this.scaleFactor *= 2;
     for(let dx of [-3, 3]) {
       for(let dy of [-3, 3]) {
-        let t = new SlimeTentacle([_pos[0] + dx, _pos[1] + dy], _roomId, _collisionMap);
+        let t = new SlimeTentacle([_pos[0] + dx, _pos[1] + dy], _roomId, this, _collisionMap);
         this.tentacles.push(t);
         _enemies.push(t);
       }
@@ -255,6 +257,18 @@ class SlimeBoss extends Slime {
   operate(player, enemies, time) {
     super.operate(player, enemies, time);
     this.tentacles = this.tentacles.filter((t) => t.isAlive);
+    this.animationNum[0] = 0;
+    this.animationSpeed = 6;
+    this.animationNum[0] = 0;
+    if(player.pos[0]<this.pos[0]){
+      this.animationNum[1] = 1;
+    }
+    this.tentacles.forEach(tentacle => {
+      if(tentacle.vulnerable){
+        this.animationNum[0] = 1;
+        this.animationSpeed = 12;
+      }
+    });
   }
 
   damage(amountDamage, damageType) {
@@ -279,8 +293,9 @@ class SlimeBoss extends Slime {
 }
 
 class SlimeTentacle extends Slime {
-  constructor(_pos, _roomId, _collisionMap) {
+  constructor(_pos, _roomId, _boss, _collisionMap) {
     super(_pos, _roomId, 100, _collisionMap, textures.slimeTentacleTileSet);
+    this.boss = _boss;
     this.radius = 1;
     this.suckers = [];
     this.attackRange = 10;
@@ -300,7 +315,7 @@ class SlimeTentacle extends Slime {
     this.finalSlamColour = color(150, 50, 50, 225);
     this.slamColour = color(0, 150, 255, 255);
     this.fadeSlamColour = color(0, 100, 100, 0);
-    this.slamCooldown = 5000 + random(1, 3000);
+    this.slamCooldown = 400 + random(1, 100);
     this.attackTimer = 0;
     this.maxSlimeSpawn = 5;
   }
@@ -327,11 +342,10 @@ class SlimeTentacle extends Slime {
 
     for(let i = 0; i < Math.floor(random(this.maxSlimeSpawn)); i++) {
       let r = random();
-      let slime = new Slime([this.pos[0] * r + this.targetSlamPos[0] * (1-r), this.pos[1] * r + this.targetSlamPos[1] * (1-r)], this.lockedZone - 3, 5, this.collisionMap);
+      let slime = new Slime([this.pos[0] * r + this.targetSlamPos[0] * (1-r), this.pos[1] * r + this.targetSlamPos[1] * (1-r)], this.lockedZone - 3, Math.floor(random(28)), this.collisionMap);
       if(slime.canMoveTo(this.collisionMap[Math.floor(slime.pos[1])][Math.floor(slime.pos[0])])) {
         enemies.push(slime);
       }
-      console.log(slime);
     }
   }
 
@@ -366,7 +380,7 @@ class SlimeTentacle extends Slime {
       }
     }
     else {
-      if(distance <= this.attackRange && millis() - this.attackTimer > this.slamCharge + this.slamCooldown) {
+      if(distance <= this.attackRange && millis() - this.attackTimer > this.slamCharge + Math.pow(2, this.boss.tentacles.length) * this.slamCooldown) {
         this.initiateSlamAttack(player.pos);
       }
     }

@@ -11,7 +11,7 @@ function createDungeonMap(floor) {
 }
 
 function enterDungeonMap(dungeonMap) {
-  minimap = new MiniMap(30, dungeonMap.minimap);
+  minimap = new Maps(30, dungeonMap.minimap, [width-height*3/20, height*3/20], [height/5, height/5]);
   player.pos = structuredClone(dungeonMap.playerPos);
   player.collisionMap = dungeonMap.minimap;
   myBackground = new Scene(dungeonMap.minimap, [16, 8], textures.tileSet);
@@ -31,12 +31,16 @@ class DungeonMap {
 
     // Determines difficulties of initial and boss rooms
     this.difficulties = [[], [0,0,0,0]];
-    this.enemyDifficulties.forEach((bounds) => {this.difficulties[0].push(bounds[1])});
+    this.enemyDifficulties.forEach((bounds) => {
+      this.difficulties[0].push(bounds[1]);
+    });
 
     // Adds difficulties of other rooms
     for(let i = 1; i < this.numberOfRooms - 1; i++) {
       this.difficulties.unshift([]);
-      this.enemyDifficulties.forEach((bounds) => {this.difficulties[0].push(Math.floor(random(bounds[0], bounds[1])))});
+      this.enemyDifficulties.forEach((bounds) => {
+        this.difficulties[0].push(Math.floor(random(bounds[0], bounds[1])));
+      });
     }
 
     // Sorts difficulties to fix everything
@@ -133,6 +137,9 @@ class DungeonMap {
     });
   }
   display(screenCenter, screenSize, scale){
+    if(this.entranceStage < 3) {
+      return;
+    }
     this.otherEntities.forEach(entity => {
       entity.display(screenCenter, screenSize, scale);
     });
@@ -189,27 +196,13 @@ class Room {
     if(player.activeZone !== this.id + 3) {
       return;
     }
-    // if(this.id === 0) {
-    //   if(myBackground.transitioning) {
-    //     return;
-    //   }
-    //   else if(this.entranceStage) {
-    //     myBackground.changeDimensions([24, 12], 2000);
-    //     this.entranceStage = 0;
-    //   }
-    //   else {
-    //     myBackground.changeDimensions([8, 4], 2000);
-    //     this.entranceStage = 1;
-    //   }
-    //   return;
-    // }
     if(!this.entranceStage) {
       if(this.id >= 1) {
         this.locked = true;
         player.locked = true;
         player.timeLocked = true;
         player.lockedZone = this.id + 3;
-        myBackground.changeDimensions([this.radius * 4, this.radius * 2], 700);
+        myBackground.changeDimensions([this.radius * 4, this.radius * 2], this.pos, 700, false);
         this.entranceStage = 1;
       }
     }
@@ -218,7 +211,7 @@ class Room {
     }
     else if(this.entranceStage === 1) {
       this.entranceStage = 2;
-      myBackground.changeDimensions([this.radius * 4, this.radius * 2], 700);
+      myBackground.changeDimensions([this.radius * 4, this.radius * 2], this.pos, 700, false);
     }
     else if(this.entranceStage === 2) {
       this.entranceStage = 3;
@@ -227,11 +220,12 @@ class Room {
       this.enemies.forEach(enemy => {
         enemy.invincible = true;
       });
-      myBackground.changeDimensions([this.radius * 4, this.radius * 2], 1500);
+      myBackground.displayOnly = this.id+3;
+      myBackground.changeDimensions([this.radius * 4, this.radius * 2], this.pos, 1500, true);
     }
     else if(this.entranceStage === 3) {
       this.entranceStage = 4;
-      myBackground.changeDimensions([16, 8], 500);
+      myBackground.changeDimensions([16, 8], player.pos, 500, false);
     }
     else if(this.entranceStage === 4) {
       this.entranceStage = 5;
@@ -250,7 +244,8 @@ class Room {
         this.locked = false;
         player.locked = false;
         this.activatePortal();
-        myBackground.changeDimensions([12, 6], 1000);
+        myBackground.displayOnly = null;
+        myBackground.changeDimensions([12, 6], player.pos, 1000, true);
       }
 
       // If all enemies are passive (e.g. frozen puddles), despawn them
@@ -298,9 +293,9 @@ class Room {
     // for(let i = 0; i < 0; i++) {
     //   this.enemies.push(this.attemptEnemyPlacement(Zombie));
     // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(Goblin));
-    // }
+    for(let i = 0; i < 1; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(Booyahg));
+    }
     // for(let i = 0; i < 1; i++) {
     //   this.enemies.push(this.attemptEnemyPlacement(Hobgoblin));
     // }
@@ -312,10 +307,12 @@ class Room {
     // }
     // this.summonSlimeBoss();
     // this.enemies.push(new SlimeTentacle(this.pos, this.id, this.dungeonMap.minimap));
+    
   }
 
   spawnEnemies() {
-    // this.testSpawnEnemies();
+    this.enemies = [];
+    this.testSpawnEnemies();
     if(!this.summonSlimeBoss()) {
       let slimes = createSlimes(this.difficulties[0]);
       let undeads = createUndead(this.difficulties[2]);
@@ -431,6 +428,8 @@ function generateEmptyGrid(x = xSize, y = ySize, toFill = 0) {
 
 function getArraySum(arr) {
   acc = 0;
-  arr.forEach((x) => {acc += x});
+  arr.forEach((x) => {
+    acc += x;
+  });
   return acc;
 }

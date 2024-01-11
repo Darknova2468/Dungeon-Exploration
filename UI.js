@@ -1,6 +1,32 @@
 /* eslint-disable no-undef */
-class MiniMap {
-  constructor(_radius, _map){
+let squareSize; // Side length of squares
+const padding = 10; // Minimum padding between grid and edges of screen
+let startX; // Top-right x-position of grid
+let startY; // Top-right y-position of grid
+const xSize = 150; // Number of squares across
+const ySize = 75; // Number of squares down
+
+class HealthBar {
+  constructor(_health, _tileSet, _pos, _scale){
+    this.health = _health;
+    this.tileSet = _tileSet;
+    this.pos = _pos;
+    this.scale = _scale;
+  }
+  display(health){
+    this.health = health; 
+    let n = Math.floor(this.health*0.5);
+    for(let i=0; i<n; i++){
+      image(this.tileSet.assets[0], this.pos[0]+i*this.scale*this.tileSet.size[0], this.pos[1], this.tileSet.size[0]*this.scale, this.tileSet.size[1]*this.scale);
+    }
+    if(Math.ceil(this.health)%2 === 1){
+      image(this.tileSet.assets[1], this.pos[0]+n*this.scale*this.tileSet.size[0], this.pos[1], this.tileSet.size[0]*this.scale, this.tileSet.size[1]*this.scale);
+    }
+  }
+}
+
+class Maps {
+  constructor(_radius, _map, _pos, _scale){
     this.raster = generateCircle(_radius);
     this.map = structuredClone(_map);
     for(let i = 0; i < this.map.length; i++) {
@@ -8,8 +34,9 @@ class MiniMap {
         this.map[i][j] -= 100;
       }
     }
+    this.pos = _pos;
+    this.scale = _scale;
   }
-
   updateDiscovered(pos) {
     for(let i = 0; i < this.map.length; i++) {
       for(let j = 0; j < this.map[0].length; j++) {
@@ -19,8 +46,7 @@ class MiniMap {
       }
     }
   }
-
-  generateImage(pos){
+  displayMinimap(pos){
     this.updateDiscovered(pos);
     let posX = Math.floor(pos[0]);
     let posY = Math.floor(pos[1]);
@@ -41,12 +67,6 @@ class MiniMap {
               img.pixels[i+2] = 255;
               img.pixels[i+3] = 255;
             }
-            else if(this.map[v][u] === 0) {
-              img.pixels[i] = 30;
-              img.pixels[i+1] = 30;
-              img.pixels[i+2] = 30;
-              img.pixels[i+3] = 255;
-            }
           }
         }
         i+=4;
@@ -57,8 +77,40 @@ class MiniMap {
     img.pixels[i+1] = 0;
     img.pixels[i+2] = 0;
     img.updatePixels();
-    return img;
+    image(img, this.pos[0], this.pos[1], this.scale[0], this.scale[1]);
   }
+  displayMap(pos){
+    let img = createImage(this.map[0].length, this.map.length);
+    img.loadPixels();
+    let i=0;
+    for(let u = 0; u < this.map.length; u++){
+      for(let v = 0; v < this.map[0].length; v++) {
+        if(this.map[u][v] > 0) {
+          img.pixels[i] = 255;
+          img.pixels[i+1] = 255;
+          img.pixels[i+2] = 255;
+          img.pixels[i+3] = 255;
+        }
+        else{
+          img.pixels[i+3] = 127;
+        }
+        i+=4;
+      }
+    }
+    i = (Math.floor(pos[1])*this.map[0].length+Math.floor(pos[0]))*4;
+    img.pixels[i+1] = 0;
+    img.pixels[i+2] = 0;
+    img.updatePixels();
+    let scaleX = width/this.map.length > height/this.map[0].length ? this.map.length*(height-2*padding)/this.map[0].length:width-2*padding;
+    let scaleY = this.map[0].length*scaleX/this.map.length;
+    image(img, width/2, height/2, scaleX, scaleY);
+  }
+}
+
+function updateDimensions(y = ySize, x = xSize) {
+  squareSize = min((height - 2*padding) / y, (width - 2*padding) / x);
+  startX = max(padding, width/2 - squareSize * x / 2);
+  startY = max(padding, height/2 - squareSize * y / 2);
 }
 
 function generateCircle(radius){

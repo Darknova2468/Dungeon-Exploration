@@ -5,7 +5,7 @@ const ENEMYDEBUG = 0;
 const SHOWHITBOXES = true;
 
 class Entity {
-  constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet){
+  constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet, _animationSpeed, _scaleFactor){
     this.pos = _pos;
     this.health = _health;
     this.defence = _defence;
@@ -14,15 +14,16 @@ class Entity {
     this.animationSet = _animationSet;
     this.animationNum = [0, 0, 0];
     this.isAlive = true;
-    this.animationSpeed = 4;
+    this.animationSpeed = _animationSpeed ?? 4;
     this.invincible = false;
     this.invisible = false;
     this.radius = 0.3;
-    this.passive = false; // E.g. frozen puddles are passive
-
+    this.passive = false;
+    this.scaleFactor = _scaleFactor ?? 1;
     // Zone locking
     this.locked = false;
     this.lockedZone = 0;
+    this.rotationOffset = 0;
   }
 
   canMoveTo(newZone) {
@@ -45,17 +46,19 @@ class Entity {
     y += screenSize[1]*0.5;
     try{
       imageMode(CENTER);
-      let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.animationSet.size[0]);
-      let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.animationSet.size[1]);
-      let imgWidth = this.animationNum[1] === 0 ? posScaleX: -posScaleX;
-      let imgHeight = this.animationNum[2] === 0 ? posScaleY: -posScaleY;
+      let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.animationSet.size[0])*this.scaleFactor;
+      let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.animationSet.size[1])*this.scaleFactor;
+      push();
+      translate(x*posScaleX, y*posScaleY);
       if(SHOWHITBOXES) {
         fill("gray");
-        circle(x*posScaleX, y*posScaleY, posScaleX*2*this.radius);
+        circle(0, 0 , posScaleX*2*this.radius);
       }
+      rotate(this.rotationOffset);
       scale(1-2*(this.animationNum[1] === 1), 1-2*(this.animationNum[2] === 1));
-      image(this.animationSet.animations[this.animationNum[0]][Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.animationNum[0]].length], x*imgWidth, y*imgHeight, imgScaleX, imgScaleY);
+      image(this.animationSet.animations[this.animationNum[0]][Math.floor(frameCount/this.animationSpeed)%this.animationSet.animations[this.animationNum[0]].length], 0, 0, imgScaleX, imgScaleY);
       scale(1-2*(this.animationNum[1] === 1), 1-2*(this.animationNum[2] === 1));
+      pop();
     }
     catch{
       fill(this.animationSet);
@@ -87,8 +90,8 @@ class Entity {
 
 class Portal extends Entity {
   constructor(_pos, _radius, _target, _collisionMap, _textureSet, _activeTextureSet) {
-    super(_pos, 1, 0, 0, _collisionMap, _textureSet);
-    this.inactiveAnimationSet = this.animationSet
+    super(_pos, 1, 0, 0, _collisionMap, _textureSet, 3, 2);
+    this.inactiveAnimationSet = this.animationSet;
     this.activeAnimationSet = _activeTextureSet;
     this.invincible = true;
     this.target = _target; // Floor available to go to once activated
@@ -171,8 +174,8 @@ class LineWarnZone extends WarnZone {
 }
 
 class Enemy extends Entity {
-  constructor(_pos, _name, _roomId, _level, _health, _defence, _speed, _detectionRange, _combatBalanceRadius, _attackDamage, _attackDamageType, _attackRange, _attackCooldown, _collisionMap, _textureSet) {
-    super(_pos, _health, _defence, _speed, _collisionMap, _textureSet);
+  constructor(_pos, _name, _roomId, _level, _health, _defence, _speed, _detectionRange, _combatBalanceRadius, _attackDamage, _attackDamageType, _attackRange, _attackCooldown, _collisionMap, _textureSet, _animationSpeed, _scaleFactor) {
+    super(_pos, _health, _defence, _speed, _collisionMap, _textureSet, _animationSpeed, _scaleFactor);
     this.name = _name;
     // Default parameters
     this.level = _level;
@@ -209,7 +212,7 @@ class Enemy extends Entity {
     else {
       // Chase
       let weights = new Weights();
-      weights.weighObstacles(this.collisionMap, this.pos, 2, 3);
+      weights.weighObstacles(this.collisionMap, this.freeZone, this.pos, 2, 3);
       weights.weighMomentum(this.prevDirection);
       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius);
       let maxDir = weights.getMaxDir();
@@ -239,12 +242,13 @@ class Enemy extends Entity {
 
 class Player extends Entity {
   constructor(_pos, _collisionMap){
-    super(_pos, 10, 0, 3.5, _collisionMap, textures.playerTileSet);
+    super(_pos, 10, 5, 3.5, _collisionMap, textures.playerTileSet);
+    this.weapons = [new Dagger(this), new Sword(this), new Axe(this), new Spear(this), new ShortBow(this), new LongBow(this)];
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
-    this.holding = new ShortSword(this);
-    // this.invincible = true;
+    this.holding =this.weapons[1];
+    this.holdingIndex = 1;
     
     // Attack/use cooldowns
     this.attackTimer = millis();
@@ -259,28 +263,28 @@ class Player extends Entity {
       return;
     }
     if(keyIsDown(49)){
-      this.holding = new Dagger(this);
+      this.holding =this.weapons[0];
+      this.holdingIndex = 0;
     }
     if(keyIsDown(50)){
-      this.holding = new ShortSword(this);
+      this.holding =this.weapons[1];
+      this.holdingIndex = 1;
     }
     if(keyIsDown(51)){
-      this.holding = new LongSword(this);
+      this.holding =this.weapons[2];
+      this.holdingIndex = 2;
     }
     if(keyIsDown(52)){
-      this.holding = new HandAxe(this);
+      this.holding =this.weapons[3];
+      this.holdingIndex = 3;
     }
-    if(keyIsDown(53)){
-      this.holding = new BattleAxe(this);
+    if(keyIsDown(53)) {
+      this.holding =this.weapons[4];
+      this.holdingIndex = 4;
     }
-    if(keyIsDown(54)){
-      this.holding = new Spear(this);
-    }
-    if(keyIsDown(55)) {
-      this.holding = new ShortBow(this);
-    }
-    if(keyIsDown(56)) {
-      this.holding = new LongBow(this);
+    if(keyIsDown(54)) {
+      this.holding =this.weapons[5];
+      this.holdingIndex = 5;
     }
     this.movementDirection = [0, 0];
     let [i, j] = direction;
@@ -321,8 +325,8 @@ class Player extends Entity {
   }
 
   display(screenCenter, screenSize) {
-    super.display(screenCenter, screenSize);
     this.holding.display(screenCenter, screenSize);
+    super.display(screenCenter, screenSize); 
   }
 }
 
@@ -366,12 +370,12 @@ class Weights {
     this.weighVector(scaleVector(pursuitVector), (x) => scaling * (1 - Math.abs(x)));
   }
 
-  weighObstacles(collisionMap, pos, radius = 2, expScaling = 3) {
+  weighObstacles(collisionMap, freeZones, pos, radius = 2, expScaling = 3) {
     for(let i = -radius; i <= radius; i++) {
       for(let j = -radius; j <= radius; j++) {
         let blockX = Math.floor(pos[0]) + j;
         let blockY = Math.floor(pos[1]) + i;
-        if(verifyIndices(collisionMap, blockY, blockX) && collisionMap[blockY][blockX] === 0) {
+        if(verifyIndices(collisionMap, blockY, blockX) && collisionMap[blockY][blockX] !== freeZones) {
           // Centre at the centre of the square
           blockX += 0.5;
           blockY += 0.5;
