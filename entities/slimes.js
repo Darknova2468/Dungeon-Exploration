@@ -4,10 +4,8 @@ class Slime extends Enemy {
     super(_pos, "Slime", _roomId, _level, Math.floor(4*Math.log10(_level+1)), 0, 1.5, 8, 0.5, Math.floor(4*Math.log10(_level+1)), "Bludgeoning", 0.5, 600, _collisionMap, _textureSet, _animationSpeed, _scaleFactor);
     if(this.level >= 10) {
       this.radius = 0.6;
-    }
-
-    if(this.level >= 25) {
-      this.radius = 1;
+      this.animationSet = textures.largeSlimeTileSet;
+      this.animationSpeed = 6;
     }
 
     // Jumping variables
@@ -90,6 +88,10 @@ class LavaSlime extends Slime {
     this.combatBalanceRadius = 5;
     this.attackDamage = 0;
     this.canJump = true;
+
+    if(this.level >= 10) {
+      this.animationSet = textures.largeLavaSlimeTileSet;
+    }
   }
 
   jump(player, enemies, time, d = this.jumpRange) {
@@ -130,6 +132,10 @@ class FrostSlime extends Slime {
     this.defaultSpeed = 0;
     this.canJump = true;
     this.activeFrozenPuddle = null;
+
+    if(this.level >= 10) {
+      this.animationSet = textures.largeFrostSlimeTileSet;
+    }
   }
 
   splash(player, enemies, time) {
@@ -233,8 +239,8 @@ function createSlimes(slimeDifficulty) {
 
 class SlimeBoss extends Slime {
   constructor(_pos, _roomId, _collisionMap, _enemies) {
-    super(_pos, _roomId, 100, _collisionMap, textures.slimeBossTileSet, 6, 2);
-    this.radius = 2;
+    super(_pos, _roomId, 100, _collisionMap, textures.slimeBossTileSet, 6, 1.5);
+    this.radius = 1.5 ;
     this.attackRange = 2;
     this.health = 20;
     this.tentacles = [];
@@ -257,7 +263,9 @@ class SlimeBoss extends Slime {
 
   operate(player, enemies, time) {
     if(this.endBoss) {
-      enemies.forEach((enemy) => {enemy.isAlive = false});
+      enemies.forEach((enemy) => {
+        enemy.isAlive = false;
+      });
     }
     super.operate(player, enemies, time);
     this.tentacles = this.tentacles.filter((t) => t.isAlive);

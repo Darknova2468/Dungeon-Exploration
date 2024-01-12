@@ -17,6 +17,12 @@ function enterDungeonMap(dungeonMap) {
   myBackground = new Scene(dungeonMap.minimap, [16, 8], textures.tileSet);
 }
 
+function reEnterDungeonMap(dungeonMap){
+  player.pos = structuredClone(dungeonMap.playerPos);
+  player.collisionMap = dungeonMap.minimap;
+  myBackground = new Scene(dungeonMap.minimap, [16, 8], textures.tileSet);
+}
+
 class DungeonMap {
   constructor(_floor){
     this.enemies = [];

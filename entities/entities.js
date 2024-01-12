@@ -2,7 +2,7 @@
 
 const baseResolution = [24, 24];
 const ENEMYDEBUG = 0;
-const SHOWHITBOXES = true;
+const SHOWHITBOXES = false;
 
 class Entity {
   constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet, _animationSpeed, _scaleFactor){

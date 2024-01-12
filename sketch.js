@@ -19,9 +19,12 @@ function preload() {
     healthBarTileSet: new TileSet("textures/Hearts.png", [21, 18]),
     playerTileSet: new AnimateSet("textures/player.png", [19, 21]),
     slimeTileSet: new AnimateSet("textures/slime.png", [19, 21]),
+    largeSlimeTileSet: new AnimateSet("textures/largeSlime.png", [31, 31]),
     lavaSlimeTileSet: new AnimateSet("textures/lavaSlime.png", [19, 21]),
+    largeLavaSlimeTileSet: new AnimateSet("textures/largeLavaSlime.png", [31, 31]),
     lavaSlimeBallTileSet: new AnimateSet("textures/lavaSlimeBall.png", [12, 14]),
     frostSlimeTileSet: new AnimateSet("textures/frostSlime.png", [19, 21]),
+    largeFrostSlimeTileSet: new AnimateSet("textures/largeFrostSlime.png", [31,31]),
     slimeTentacleTileSet: "dodgerblue",
     slimeBossTileSet: new AnimateSet("textures/slimeBoss.png", [31, 21]),
     slimeTentacleStunnedTileSet: "lightskyblue",
@@ -34,7 +37,7 @@ function preload() {
     annoyingSparkTileSet: "yellow",
     hobgoblinTileSet: "chocolate",
     skeletonTileSet: new AnimateSet("textures/skeleton.png", [18, 18]),
-    frozenPuddleTileSet: "powderblue",
+    frozenPuddleTileSet: new AnimateSet("textures/frostSlimePuddle.png", [31,31]),
     daggerTileSet: new AnimateSet("textures/dagger.png", [9, 47]),
     swordTileSet: new AnimateSet("textures/sword.png", [11, 72]),
     spearTileSet: new AnimateSet("textures/spear.png", [7, 72]), 
@@ -72,7 +75,7 @@ function draw() {
     textAlign(CENTER, CENTER);
     text(thisDeathMessage, width/2, height/2);
     if(millis() - deathTimer > deathTime) {
-      enterDungeonMap(myDungeon);
+      reEnterDungeonMap(myDungeon);
       player.health = 10;
       let room = myDungeon.dungeon[player.activeZone - 3];
       room.entranceStage = 0;
@@ -84,7 +87,7 @@ function draw() {
       player.isAlive = true;
       gameActive = true;
       myBackground.displayOnly = null;
-      myBackground.fade = 255;
+      myBackground.fade = 255;  
     }
     return;
   }
