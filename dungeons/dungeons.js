@@ -305,9 +305,9 @@ class Room {
     // for(let i = 0; i < 0; i++) {
     //   this.enemies.push(this.attemptEnemyPlacement(Zombie));
     // }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(Booyahg));
-    }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(Booyahg));
+    // }
     // for(let i = 0; i < 1; i++) {
     //   this.enemies.push(this.attemptEnemyPlacement(Hobgoblin));
     // }
@@ -317,6 +317,9 @@ class Room {
     // for(let i = 0; i < 0; i++) {
     //   this.enemies.push(this.attemptEnemyPlacement(Phantom));
     // }
+    for(let i = 0; i < 1; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(BlueDraconian));
+    }
     // this.summonSlimeBoss();
     // this.enemies.push(new SlimeTentacle(this.pos, this.id, this.dungeonMap.minimap));
     
@@ -324,7 +327,7 @@ class Room {
 
   spawnEnemies() {
     this.enemies = [];
-    // this.testSpawnEnemies();
+    this.testSpawnEnemies();
     if(!this.summonSlimeBoss()) {
       let slimes = createSlimes(this.difficulties[0]);
       let undeads = createUndead(this.difficulties[2]);

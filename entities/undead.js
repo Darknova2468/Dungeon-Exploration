@@ -2,7 +2,7 @@
 class Zombie extends Enemy {
   constructor(_pos, _roomId, _level, _collisionMap) {
     // super(_pos, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, _collisionMap, _textureSet);
-    super(_pos, "Zombie", _roomId, _level, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, 10, 1, 2, "Bludgeoning", 1.5, 700, _collisionMap, textures.zombieTileSet);
+    super(_pos, "Zombie", _roomId, _level, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, 10, 1, 2, "Bludgeoning", 1.2, 700, _collisionMap, textures.zombieTileSet);
     this.radius = 0.4;
 
     // Zombies stop when attacking and bite if close
@@ -21,7 +21,7 @@ class Zombie extends Enemy {
     else if(distance > this.biteRadius) {
       // Chase
       let weights = new Weights();
-      weights.weighObstacles(this.collisionMap, this.pos, 2, 3); // Tweak for different AI
+      weights.weighObstacles(this.collisionMap, this.lockedZone, this.pos, 2, 3); // Tweak for different AI
       weights.weighMomentum(this.prevDirection);
       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, 0, this.strafeMultiplier, 20);
       weights.weighSocialDistancing(this.pos, enemies);
@@ -44,7 +44,7 @@ class Zombie extends Enemy {
 class Skeleton extends Enemy {
   constructor(_pos, _roomId, _level, _collisionMap) {
     // super(_pos, Math.floor(_level + 4), 2, 2.5, _collisionMap, _textureSet);
-    super(_pos, "Skeleton", _roomId, _level, Math.floor(_level + 4), 2, 2.5, 10, 6, 1, "Slashing", 1.5, 1000, _collisionMap, textures.skeletonTileSet);
+    super(_pos, "Skeleton", _roomId, _level, Math.floor(_level + 4), 2, 2.5, 10, 6, 1, "Slashing", 1, 1000, _collisionMap, textures.skeletonTileSet);
 
     // I am Skeletor.
     this.retreatMidpoint = 4;
@@ -95,7 +95,7 @@ class Skeleton extends Enemy {
     else {
       // Chase
       let weights = new Weights();
-      weights.weighObstacles(this.collisionMap, this.pos, 2, 3); // Tweak for different AI
+      weights.weighObstacles(this.collisionMap, this.lockedZone, this.pos, 2, 3); // Tweak for different AI
       weights.weighMomentum(this.prevDirection);
       // Skeletons keep their distance
       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, this.retreatMidpoint);
@@ -148,7 +148,7 @@ class Phantom extends Enemy {
     else {
       // Chase
       let weights = new Weights();
-      weights.weighObstacles(this.collisionMap, this.pos, 2, 3); // Tweak for different AI
+      weights.weighObstacles(this.collisionMap, this.lockedZone, this.pos, 2, 3); // Tweak for different AI
       weights.weighMomentum(this.prevDirection);
       // Phantoms also keep their distance
       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, this.retreatMidpoint);
@@ -192,7 +192,7 @@ class DarkSpell extends EnemyProjectile {
   }
 }
 
-const undeadVariants = [Zombie, Skeleton, Phantom]
+const undeadVariants = [Zombie, Skeleton, Phantom];
 
 function createUndead(undeadDifficulty) {
   let skeletonChance = 0;

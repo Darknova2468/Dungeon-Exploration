@@ -213,7 +213,7 @@ class Enemy extends Entity {
     else {
       // Chase
       let weights = new Weights();
-      weights.weighObstacles(this.collisionMap, this.freeZone, this.pos, 2, 3);
+      weights.weighObstacles(this.collisionMap, this.lockedZone, this.pos, 2, 3);
       weights.weighMomentum(this.prevDirection);
       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius);
       let maxDir = weights.getMaxDir();

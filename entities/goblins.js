@@ -22,7 +22,7 @@ class Goblin extends Enemy {
     else {
       // Chase
       let weights = new Weights();
-      weights.weighObstacles(this.collisionMap, this.pos, 2, 3);
+      weights.weighObstacles(this.collisionMap, this.lockedZone, this.pos, 2, 3);
       weights.weighMomentum(this.prevDirection);
       if(distance > this.combatBalanceRadius) {
         this.backing = false;

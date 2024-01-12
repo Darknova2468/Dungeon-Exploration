@@ -43,7 +43,7 @@ class Slime extends Enemy {
     else {
       // Chase
       let weights = new Weights();
-      weights.weighObstacles(this.collisionMap, this.pos, 1, 5);
+      weights.weighObstacles(this.collisionMap, this.lockedZone, this.pos, 1, 5);
       // Retreat midpoint of -1e9 since slimes don't retreat
       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, -1e9);
       weights.weighMomentum(this.prevDirection);
