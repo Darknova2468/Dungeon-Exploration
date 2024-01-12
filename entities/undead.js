@@ -21,7 +21,7 @@ class Zombie extends Enemy {
     else if(distance > this.biteRadius) {
       // Chase
       let weights = new Weights();
-      weights.weighObstacles(this.collisionMap, this.pos, 2, 3); // Tweak for different AI
+      weights.weighObstacles(this.collisionMap, this.lockedZone, this.pos, 2, 3); // Tweak for different AI
       weights.weighMomentum(this.prevDirection);
       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, 0, this.strafeMultiplier, 20);
       weights.weighSocialDistancing(this.pos, enemies);
@@ -95,7 +95,7 @@ class Skeleton extends Enemy {
     else {
       // Chase
       let weights = new Weights();
-      weights.weighObstacles(this.collisionMap, this.pos, 2, 3); // Tweak for different AI
+      weights.weighObstacles(this.collisionMap, this.lockedZone, this.pos, 2, 3); // Tweak for different AI
       weights.weighMomentum(this.prevDirection);
       // Skeletons keep their distance
       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, this.retreatMidpoint);
@@ -148,7 +148,7 @@ class Phantom extends Enemy {
     else {
       // Chase
       let weights = new Weights();
-      weights.weighObstacles(this.collisionMap, this.pos, 2, 3); // Tweak for different AI
+      weights.weighObstacles(this.collisionMap, this.lockedZone, this.pos, 2, 3); // Tweak for different AI
       weights.weighMomentum(this.prevDirection);
       // Phantoms also keep their distance
       weights.weighBalancedApproach(pursuitVector, this.combatBalanceRadius, this.retreatMidpoint);
