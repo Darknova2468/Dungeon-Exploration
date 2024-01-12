@@ -140,7 +140,7 @@ class FrostSlime extends Slime {
 
   splash(player, enemies, time) {
     super.splash(player, enemies, time);
-    this.activeFrozenPuddle = new FrozenPuddle(this.pos, this.radius * 1.5, 0.5, 0.5 / this.level, this.collisionMap);
+    this.activeFrozenPuddle = new FrozenPuddle(this.pos, this.radius * 1.5, 0.5, 0.5 / this.level, this.collisionMap, 0.75 + (this.level >= 10) / 2);
     enemies.unshift(this.activeFrozenPuddle);
   }
 
@@ -156,7 +156,7 @@ class FrostSlime extends Slime {
 }
 
 class FrozenPuddle extends Entity {
-  constructor(_pos, _radius, _freezeDamage, _thawRate, _collisionMap) {
+  constructor(_pos, _radius, _freezeDamage, _thawRate, _collisionMap, _scaleFactor) {
     super(structuredClone(_pos), 0, 0, 0, _collisionMap, textures.frozenPuddleTileSet);
     this.invincible = true;
     this.radius = _radius;
@@ -167,6 +167,7 @@ class FrozenPuddle extends Entity {
     this.hitCooldown = 750;
     this.damageType = "Cold";
     this.passive = true;
+    this.scaleFactor = _scaleFactor;
   }
 
   operate(target, enemies, time) {
@@ -192,6 +193,31 @@ class FrozenPuddle extends Entity {
 
   renew() {
     this.freezeDamage = this.initialFreezeDamage;
+  }
+
+  display(screenCenter, screenSize) {
+    imageMode(CENTER);
+    let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
+    let posScaleX = width/screenSize[0];
+    let posScaleY = height/screenSize[1];
+    x += screenSize[0]*0.5;
+    y += screenSize[1]*0.5;
+    let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.animationSet.size[0])*this.scaleFactor;
+    let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.animationSet.size[1])*this.scaleFactor;
+    push();
+    translate(x*posScaleX, y*posScaleY);
+    if(SHOWHITBOXES) {
+      fill("gray");
+      circle(0, 0 , posScaleX*2*this.radius);
+    }
+    this.animationNum = Math.min(Math.floor((this.initialFreezeDamage-this.freezeDamage)/this.initialFreezeDamage*4), 3);
+    tint(255-(this.initialFreezeDamage-this.freezeDamage)/this.initialFreezeDamage*127);
+    rotate(this.rotationOffset);
+    scale(1-2*(this.animationNum[1] === 1), 1-2*(this.animationNum[2] === 1));
+    image(this.animationSet.animations[0][this.animationNum], 0, 0, imgScaleX, imgScaleY);
+    scale(1-2*(this.animationNum[1] === 1), 1-2*(this.animationNum[2] === 1));
+    tint(255);
+    pop();
   }
 }
 
