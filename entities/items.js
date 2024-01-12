@@ -9,7 +9,7 @@ class Item {
     this.scaleFactor = _scaleFactor ?? 1;
   }
 
-  displayHeld(screenCenter, screenSize) {}
+  displayHeld(screenCenter, screenSize, pos) {}
 
   display(screenCenter, screenSize) {
     if(this.held) {

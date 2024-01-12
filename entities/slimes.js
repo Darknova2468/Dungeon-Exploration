@@ -134,7 +134,7 @@ class FrostSlime extends Slime {
 
   splash(player, enemies, time) {
     super.splash(player, enemies, time);
-    this.activeFrozenPuddle = new FrozenPuddle(this.pos, this.radius * 1.5, 1, 0.5 / this.level, this.collisionMap);
+    this.activeFrozenPuddle = new FrozenPuddle(this.pos, this.radius * 1.5, 0.5, 0.5 / this.level, this.collisionMap);
     enemies.unshift(this.activeFrozenPuddle);
   }
 
@@ -158,7 +158,7 @@ class FrozenPuddle extends Entity {
     this.initialFreezeDamage = _freezeDamage;
     this.thawRate = _thawRate;
     this.hitTimer = millis();
-    this.hitCooldown = 500;
+    this.hitCooldown = 750;
     this.damageType = "Cold";
     this.passive = true;
   }
@@ -243,11 +243,12 @@ class SlimeBoss extends Slime {
     this.scaleFactor *= 2;
     for(let dx of [-3, 3]) {
       for(let dy of [-3, 3]) {
-        let t = new SlimeTentacle([_pos[0] + dx, _pos[1] + dy], _roomId, _collisionMap);
+        let t = new SlimeTentacle([_pos[0] + dx, _pos[1] + dy], _roomId, this, _collisionMap);
         this.tentacles.push(t);
         _enemies.push(t);
       }
     }
+    this.endBoss = false;
   }
 
   move() {
@@ -255,6 +256,9 @@ class SlimeBoss extends Slime {
   }
 
   operate(player, enemies, time) {
+    if(this.endBoss) {
+      enemies.forEach((enemy) => {enemy.isAlive = false});
+    }
     super.operate(player, enemies, time);
     this.tentacles = this.tentacles.filter((t) => t.isAlive);
     this.animationNum[0] = 0;
@@ -280,7 +284,8 @@ class SlimeBoss extends Slime {
     this.health -= amountDamage;
     if(this.health <= 0 && !this.invincible) {
       if(this.tentacles.length === 0) {
-        this.isAlive = false;
+        this.isAlive = true;
+        this.endBoss = true;
       }
       else {
         this.health = 20;
@@ -293,8 +298,9 @@ class SlimeBoss extends Slime {
 }
 
 class SlimeTentacle extends Slime {
-  constructor(_pos, _roomId, _collisionMap) {
+  constructor(_pos, _roomId, _boss, _collisionMap) {
     super(_pos, _roomId, 100, _collisionMap, textures.slimeTentacleTileSet);
+    this.boss = _boss;
     this.radius = 1;
     this.suckers = [];
     this.attackRange = 10;
@@ -314,7 +320,7 @@ class SlimeTentacle extends Slime {
     this.finalSlamColour = color(150, 50, 50, 225);
     this.slamColour = color(0, 150, 255, 255);
     this.fadeSlamColour = color(0, 100, 100, 0);
-    this.slamCooldown = 5000 + random(1, 3000);
+    this.slamCooldown = 400 + random(1, 100);
     this.attackTimer = 0;
     this.maxSlimeSpawn = 5;
   }
@@ -379,7 +385,7 @@ class SlimeTentacle extends Slime {
       }
     }
     else {
-      if(distance <= this.attackRange && millis() - this.attackTimer > this.slamCharge + this.slamCooldown) {
+      if(distance <= this.attackRange && millis() - this.attackTimer > this.slamCharge + Math.pow(2, this.boss.tentacles.length) * this.slamCooldown) {
         this.initiateSlamAttack(player.pos);
       }
     }

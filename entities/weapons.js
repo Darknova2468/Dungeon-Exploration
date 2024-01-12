@@ -287,6 +287,7 @@ class ChargedRangedWeapon extends Weapon {
     this.projectileSpeed = projectileSpeed;
     this.projectiles = [];
     this.animationNum = 0;
+    this.animationSet = animationSet;
   }
 
   fire(direction) {
@@ -340,8 +341,8 @@ class ChargedRangedWeapon extends Weapon {
       this.animationNum = 0;
       if(this.charging){
         this.animationNum = Math.round((millis()-this.chargeTimer)/this.chargeTime*this.animationSet.animations[0].length);
-        if(this.animationNum > 2){
-          this.animationNum = 2;
+        if(this.animationNum > this.animationSet.animations[0].length-1){
+          this.animationNum = this.animationSet.animations[0].length-1;
         }
       }
       image(this.animationSet.animations[0][this.animationNum], 0, 0, imgScaleX, imgScaleY);

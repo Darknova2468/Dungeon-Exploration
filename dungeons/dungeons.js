@@ -11,8 +11,8 @@ function createDungeonMap(floor) {
 }
 
 function enterDungeonMap(dungeonMap) {
-  minimap = new MiniMap(30, dungeonMap.minimap);
-  player.pos = dungeonMap.playerPos;
+  minimap = new Maps(30, dungeonMap.minimap, [width-height*3/20, height*3/20], [height/5, height/5]);
+  player.pos = structuredClone(dungeonMap.playerPos);
   player.collisionMap = dungeonMap.minimap;
   myBackground = new Scene(dungeonMap.minimap, [16, 8], textures.tileSet);
 }
@@ -166,6 +166,7 @@ class Room {
     this.denseCaveEdgeChance = _denseCaveEdgeChance;
     this.isBoss = _isBoss;
     this.portal = null;
+    this.healed = false;
   }
   addConnection(numberOfConnections, index, numberOfRooms, dungeon, check){
     // Pushes connections to node
@@ -257,10 +258,18 @@ class Room {
       for(let enemy of this.enemies) {
         enemy.isAlive = false;
       }
+
+      if(!this.healed){
+        player.health += 0.5*(player.maxHealth - player.health);
+        this.healed = true;
+      } 
     }
   }
 
   display(screenCenter, screenSize, scale){
+    if(this.entranceStage < 3) {
+      return;
+    }
     this.enemies.forEach(enemy => {
       enemy.display(screenCenter, screenSize, scale);
     });
@@ -290,9 +299,9 @@ class Room {
     // for(let i = 0; i < 0; i++) {
     //   this.enemies.push(this.attemptEnemyPlacement(Zombie));
     // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(Goblin));
-    // }
+    for(let i = 0; i < 1; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(Booyahg));
+    }
     // for(let i = 0; i < 1; i++) {
     //   this.enemies.push(this.attemptEnemyPlacement(Hobgoblin));
     // }
@@ -304,11 +313,12 @@ class Room {
     // }
     // this.summonSlimeBoss();
     // this.enemies.push(new SlimeTentacle(this.pos, this.id, this.dungeonMap.minimap));
+    
   }
 
   spawnEnemies() {
-    // this.testSpawnEnemies();
     this.enemies = [];
+    // this.testSpawnEnemies();
     if(!this.summonSlimeBoss()) {
       let slimes = createSlimes(this.difficulties[0]);
       let undeads = createUndead(this.difficulties[2]);
