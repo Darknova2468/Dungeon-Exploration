@@ -312,7 +312,7 @@ class Room {
     //   this.enemies.push(this.attemptEnemyPlacement(Phantom));
     // }
     for(let i = 0; i < 1; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(Draconian));
+      this.enemies.push(this.attemptEnemyPlacement(BlueDraconian));
     }
     // this.summonSlimeBoss();
     // this.enemies.push(new SlimeTentacle(this.pos, this.id, this.dungeonMap.minimap));
