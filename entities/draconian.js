@@ -25,7 +25,7 @@ class Draconian extends Enemy {
     if(millis() - this.breathTimer > this.breathCooldown) {
       this.initiateBreathAttack(player);
     }
-    else if(millis() - this.breathTimer < this.breathStall) {
+    else if(millis() - this.breathTimer < this.breathStall || this.firing) {
       return;
     }
     else if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
@@ -60,14 +60,13 @@ class BlueDraconian extends Draconian {
 
     // Lightning bolts
     this.boltCount = 3;
-    this.boltMultiCount = 2;
     this.boltCountRemaining = 0;
     this.boltTimer = millis();
     this.boltCooldown = this.breathStall / (this.boltCount + 1);
     this.boltDuration = 200;
     this.boltTargetPos = [0, 0];
     this.boltRange = 20;
-    this.boltWidth = 0.3;
+    this.boltWidth = 0.1;
     this.boltDamage = 10;
     this.boltDamageType = "Lightning";
     this.initLightningColour = color(150, 150, 255, 0);
@@ -94,7 +93,7 @@ class BlueDraconian extends Draconian {
     let d = checkBounds(player.pos[0], player.pos[1],
       this.pos[0], this.pos[1],
       this.targetLightningPos[0], this.targetLightningPos[1]);
-    if(d !== -1 && d < this.boltWidth / 2) {
+    if(d !== -1 && d < this.boltWidth / 2 + player.radius) {
       player.damage(this.boltDamage, this.boltDamageType);
     }
   }
@@ -124,5 +123,14 @@ class BlueDraconian extends Draconian {
       b.operate(player, time);
       return b.isAlive;
     });
+  }
+}
+
+class RedDraconian extends Draconian {
+  constructor(_pos, _roomId, _level, _collisionMap) {
+    super(_pos, _roomId, _level, _collisionMap, "red");
+
+    // Fireball spam
+    this.fireBallCooldown = 200;
   }
 }
