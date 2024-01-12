@@ -12,6 +12,7 @@ function createDungeonMap(floor) {
 
 function enterDungeonMap(dungeonMap) {
   minimap = new Maps(30, dungeonMap.minimap, [width-height*3/20, height*3/20], [height/5, height/5]);
+  player.health = structuredClone(player.maxHealth);
   player.pos = structuredClone(dungeonMap.playerPos);
   player.collisionMap = dungeonMap.minimap;
   myBackground = new Scene(dungeonMap.minimap, [16, 8], textures.tileSet);
