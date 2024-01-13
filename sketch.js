@@ -40,12 +40,18 @@ function preload() {
     hobgoblinTileSet: "chocolate",
     skeletonTileSet: new AnimateSet("textures/skeleton.png", [18, 18]),
     frozenPuddleTileSet: new AnimateSet("textures/frostSlimePuddle.png", [31,31]),
-    daggerTileSet: new AnimateSet("textures/dagger.png", [9, 47]),
-    swordTileSet: new AnimateSet("textures/sword.png", [11, 72]),
-    spearTileSet: new AnimateSet("textures/spear.png", [7, 72]), 
-    axeTileSet: new AnimateSet("textures/axe.png", [17, 64]),
-    shortBowTileSet: new AnimateSet("textures/crossBow.png", [17, 40]),
-    longBowTileSet: new AnimateSet("textures/bow.png", [23, 40]),
+    daggerAnimationSet: new AnimateSet("textures/dagger.png", [9, 47]),
+    swordAnimationSet: new AnimateSet("textures/sword.png", [11, 72]),
+    spearAnimationSet: new AnimateSet("textures/spear.png", [7, 72]), 
+    axeAnimationSet: new AnimateSet("textures/axe.png", [17, 64]),
+    shortBowAnimationSet: new AnimateSet("textures/crossBow.png", [17, 40]),
+    longBowAnimationSet: new AnimateSet("textures/bow.png", [23, 40]),
+    daggerTileSet: new TileSet("textures/dagger.png", [9, 25]),
+    swordTileSet: new TileSet("textures/sword.png", [11, 40]),
+    spearTileSet: new TileSet("textures/spear.png", [7, 64]), 
+    axeTileSet: new TileSet("textures/axe.png", [17, 40]),
+    shortBowTileSet: new TileSet("textures/crossBow.png", [17, 25]),
+    longBowTileSet: new TileSet("textures/bow.png", [23, 25]),
     arrowTileSet: new AnimateSet("textures/arrow.png", [15, 15]),
     inactivePortalTileSet: "dimgrey",
     activePortalTileSet: new AnimateSet("textures/portal.png", [40, 40]),
@@ -140,15 +146,18 @@ function draw() {
 
 function mouseWheel(event) { 
   if(frameCount % 2 === 0){
-    if(event.delta > 1 && player.holdingIndex < player.weapons.length-1){
-      player.holding = player.weapons[player.holdingIndex+1];
+    if(event.delta > 1){
+      // player.holding = player.weapons[player.holdingIndex+1];
       player.holdingIndex += 1;
     } 
-    else if(event.delta < 1 && player.holdingIndex > 0){
-      player.holding = player.weapons[player.holdingIndex-1];
+    else if(event.delta < 1){
+      // player.holding = player.weapons[player.holdingIndex-1];
       player.holdingIndex -= 1;
     }
   }
+  player.holdingIndex += player.inventory.hotbarSize;
+  player.holdingIndex %= player.inventory.hotbarSize;
+  player.holding = player.inventory.storage[player.holdingIndex].holding;
 }
 
 function keyPressed() {

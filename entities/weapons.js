@@ -128,19 +128,19 @@ class SweepWeapon extends Weapon {
 
 class Dagger extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 7, 0.35, 1, 400, Math.PI / 4, 150, 0, textures.daggerTileSet);
+    super(wielder, 7, 0.35, 1, 400, Math.PI / 4, 150, 0, textures.daggerAnimationSet, textures.daggerTileSet);
   }
 }
 
 class Sword extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 6, 0.4, 1.5, 700, Math.PI / 3, 300, 0.5, textures.swordTileSet);
+    super(wielder, 6, 0.4, 1.5, 700, Math.PI / 3, 300, 0.5, textures.swordAnimationSet, textures.swordTileSet);
   }
 }
 
 class Axe extends SweepWeapon {
   constructor(wielder) {
-    super(wielder, 11, 0.825, 1.25, 1600, Math.PI / 3, 400, 0.6, textures.axeTileSet);
+    super(wielder, 11, 0.825, 1.25, 1600, Math.PI / 3, 400, 0.6, textures.axeAnimationSet, textures.axeTileSet);
   }
 }
 
@@ -260,7 +260,7 @@ class ThrustWeapon extends Weapon {
 
 class Spear extends ThrustWeapon {
   constructor(wielder) {
-    super(wielder, 5, 1.5, 2.3, 600, 200, 0.3, textures.spearTileSet);
+    super(wielder, 5, 1.5, 2.3, 600, 200, 0.3, textures.spearAnimationSet, textures.spearTileSet);
   }
 }
 
@@ -364,13 +364,13 @@ class ChargedRangedWeapon extends Weapon {
 
 class ShortBow extends ChargedRangedWeapon {
   constructor(wielder) {
-    super(wielder, 3, 10, 700, 100, 500, 15, textures.shortBowTileSet);
+    super(wielder, 3, 10, 700, 100, 500, 15, textures.shortBowAnimationSet, textures.shortBowTileSet);
   }
 }
 
 class LongBow extends ChargedRangedWeapon {
   constructor(wielder) {
-    super(wielder, 9, 18, 700, 500, 1500, 20, textures.longBowTileSet);
+    super(wielder, 9, 18, 700, 500, 1500, 20, textures.longBowAnimationSet, textures.longBowTileSet);
   }
 }
 

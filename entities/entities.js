@@ -258,13 +258,18 @@ class Enemy extends Entity {
 class Player extends Entity {
   constructor(_pos, _collisionMap){
     super(_pos, 10, 5, 3.5, _collisionMap, textures.playerTileSet);
-    this.weapons = [new Dagger(this), new Sword(this), new Axe(this), new Spear(this), new ShortBow(this), new LongBow(this)];
+    // TEMPORARY
+    let tmpWeapons = [new Dagger(this), new Sword(this), new Axe(this), new Spear(this), new ShortBow(this), new LongBow(this)];
+    // this.weapons = [new Dagger(this), new Sword(this), new Axe(this), new Spear(this), new ShortBow(this), new LongBow(this)];
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
-    this.holding =this.weapons[1];
     this.holdingIndex = 1;
     this.inventory = new Inventory(this);
+    for(let i = 0; i < 6; i++) {
+      this.inventory.storage[i].holding = tmpWeapons[i];
+    }
+    this.holding = this.inventory.storage[this.holdingIndex].holding;
     
     // Attack/use cooldowns
     this.attackTimer = millis();
@@ -289,29 +294,11 @@ class Player extends Entity {
     if(this.timeLocked) {
       return;
     }
-    if(keyIsDown(49)){
-      this.holding =this.weapons[0];
-      this.holdingIndex = 0;
-    }
-    if(keyIsDown(50)){
-      this.holding =this.weapons[1];
-      this.holdingIndex = 1;
-    }
-    if(keyIsDown(51)){
-      this.holding =this.weapons[2];
-      this.holdingIndex = 2;
-    }
-    if(keyIsDown(52)){
-      this.holding =this.weapons[3];
-      this.holdingIndex = 3;
-    }
-    if(keyIsDown(53)) {
-      this.holding =this.weapons[4];
-      this.holdingIndex = 4;
-    }
-    if(keyIsDown(54)) {
-      this.holding =this.weapons[5];
-      this.holdingIndex = 5;
+    for(let i = 0; i < this.inventory.hotbarSize; i++) {
+      if(keyIsDown(49 + i)){
+        this.holding = this.inventory.storage[i].holding;
+        this.holdingIndex = i;
+      }
     }
     this.movementDirection = [0, 0];
     let [i, j] = direction;

@@ -14,6 +14,7 @@ class InventoryCell {
     this.size = _size;
     this.pointer = _pointer;
     this.accepts = _accepts;
+    this.holding = null;
   }
 
   display(x, y, toggled = false) {
@@ -27,6 +28,19 @@ class InventoryCell {
       this.graphics.fill(150);
     }
     this.graphics.rect(this.pos[0], this.pos[1], this.size, this.size);
+
+    this.graphics.push();
+    this.graphics.translate(this.pos[0] + this.size / 2, this.pos[1] + this.size / 2);
+    this.graphics.rotate(Math.PI / 4);
+    try {
+      // rotate(0);
+      this.graphics.image(this.holding.tileSet.assets[0], 0, 0);
+      // this.graphics.image(this.holding.tileSet.assets[0], 0, 0);
+    }
+    catch {
+      // console.log(this.holding);
+    }
+    this.graphics.pop();
   }
 
   checkPos(x, y) {
@@ -41,6 +55,7 @@ class Inventory {
   constructor(_player) {
     this.player = _player;
     this.graphics = createGraphics(550, 375);
+    this.graphics.imageMode(CENTER);
     this.squareSize = 75;
     this.padding = 25;
     this.shown = false;
