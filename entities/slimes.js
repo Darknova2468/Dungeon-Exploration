@@ -267,6 +267,7 @@ class SlimeBoss extends Slime {
   constructor(_pos, _roomId, _collisionMap, _enemies) {
     super(_pos, _roomId, 100, _collisionMap, textures.slimeBossTileSet, 6, 1.5);
     this.radius = 1.5 ;
+    this.animationSet = textures.slimeBossTileSet;
     this.attackRange = 2;
     this.health = 20;
     this.tentacles = [];
@@ -344,6 +345,7 @@ class SlimeTentacle extends Slime {
     this.isSlamming = false;
     this.vulnerable = false;
     this.stunnedTexture = textures.slimeTentacleStunnedTileSet;
+    this.animationSet = textures.slimeTentacleTileSet;
     this.normalTexture = this.animationSet;
     this.vulnerableTimer = 0;
     this.targetSlamPos = [0, 0];
