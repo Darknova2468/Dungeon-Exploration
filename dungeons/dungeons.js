@@ -136,8 +136,9 @@ class DungeonMap {
   }
   update(player, time){
     this.enemies = this.enemies.filter(enemy => enemy.isAlive);
-    this.otherEntities.forEach(entity => {
+    this.otherEntities = this.otherEntities.filter(entity => {
       entity.operate(player, time);
+      return entity.isAlive;
     });
     this.dungeon.forEach(room => {
       room.operate(player, time);
@@ -318,17 +319,17 @@ class Room {
     // for(let i = 0; i < 0; i++) {
     //   this.enemies.push(this.attemptEnemyPlacement(Phantom));
     // }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(BlueDraconian));
-    }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(BlueDraconian));
+    // }
     // this.summonSlimeBoss();
     // this.enemies.push(new SlimeTentacle(this.pos, this.id, this.dungeonMap.minimap));
-    
+    this.dungeonMap.otherEntities.push(new TestDroppedItem(structuredClone(this.pos), this.dungeonMap.minimap));
   }
 
   spawnEnemies() {
     this.enemies = [];
-    // this.testSpawnEnemies();
+    this.testSpawnEnemies();
     if(!this.summonSlimeBoss()) {
       let slimes = createSlimes(this.difficulties[0]);
       let undeads = createUndead(this.difficulties[2]);
