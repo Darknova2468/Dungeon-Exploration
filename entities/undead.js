@@ -190,6 +190,21 @@ class DarkSpell extends EnemyProjectile {
     this.animationNum[1] = _dir[0] > 0 && this.animationNum[0] !== 1 ? 0:1;
     this.animationNum[2] = _dir[1] < 0 && this.animationNum[0] !== 0 ? 0:1;
   }
+
+  explode(targets, time) {
+    for(let target of targets) {
+      let distance = dist(target.pos[0], target.pos[1], this.pos[0], this.pos[1]);
+      if(distance < this.explosionRadius) {
+        target.damage(this.explosionDamage, this.explosionDamageType);
+        player.blindnessTimer = max(player.blindnessTimer, millis() + 4000);
+      }
+      else if(distance < this.explosionRadius + target.radius) {
+        target.damage(this.explosionDamage / 2, this.explosionDamageType);
+        player.blindnessTimer = max(player.blindnessTimer, millis() + 2000);
+      }
+    }
+    myDungeon.dungeon[this.lockedZone - 3].enemies.push(new DiskWarnZone(this.pos, this.explosionRadius, 0, millis(), millis() + 1000, color(0,0,0,0), color(0,0,0,0), color(0,0,0,255), color(0,0,0,0), this.collisionMap));
+  }
 }
 
 const undeadVariants = [Zombie, Skeleton, Phantom];

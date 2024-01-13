@@ -15,7 +15,8 @@ function enterDungeonMap(dungeonMap) {
   player.health = structuredClone(player.maxHealth);
   player.pos = structuredClone(dungeonMap.playerPos);
   player.collisionMap = dungeonMap.minimap;
-  myBackground = new Scene(dungeonMap.minimap, [16, 8], textures.tileSet);
+  myBackground = new Scene(dungeonMap.minimap, [16, 8], textures.tileSet)
+  player.updateVision(dungeonMap);
 }
 
 function reEnterDungeonMap(dungeonMap){

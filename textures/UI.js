@@ -25,7 +25,7 @@ class HealthBar {
   }
 }
 
-LIGHTINGDEBUG = true;
+LIGHTINGDEBUG = false;
 
 class Lighting {
   constructor() {
@@ -64,7 +64,6 @@ class Lighting {
       img.loadPixels();
       let xScale = this.screenSize[0] / width;
       let yScale = this.screenSize[1] / height;
-      console.log(this.playerPos, xScale);
       // for(let i = 0; i < width * height; i++) {
       //   let x = i % width;
       //   let y = Math.floor(i / width);
@@ -86,9 +85,7 @@ class Lighting {
           i += 4;
         }
       }
-      // console.log(pixels[0], pixels[1], pixels[2], pixels[3])
       img.updatePixels();
-      console.log("!");
       this.cachedImage = img;
     }
     imageMode(CORNER);

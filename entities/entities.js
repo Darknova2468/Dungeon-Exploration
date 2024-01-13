@@ -174,6 +174,20 @@ class LineWarnZone extends WarnZone {
   }
 }
 
+class DiskWarnZone extends WarnZone {
+  constructor(_pos, _radius, _timerInit, _timerFinal, _timerFade, _colInit, _colFinal, _colExecution, _colFade, _collisionMap) {
+    super(_pos, _timerInit, _timerFinal, _timerFade, _colInit, _colFinal, _colExecution, _colFade, _collisionMap);
+    this.radius = _radius;
+  }
+
+  display(screenCenter, screenSize) {
+    let [posX, posY] = dungeonToScreenPos(this.pos, screenCenter, screenSize);
+    noStroke();
+    fill(this.colour);
+    circle(posX, posY, 2 * this.radius * width / screenSize[0]);
+  }
+}
+
 class Enemy extends Entity {
   constructor(_pos, _name, _roomId, _level, _health, _defence, _speed, _detectionRange, _combatBalanceRadius, _attackDamage, _attackDamageType, _attackRange, _attackCooldown, _collisionMap, _textureSet, _animationSpeed, _scaleFactor) {
     super(_pos, _health, _defence, _speed, _collisionMap, _textureSet, _animationSpeed, _scaleFactor);
@@ -259,7 +273,15 @@ class Player extends Entity {
     this.timeLocked = false;
 
     // Lighting and exploration
-    this.vision = 8;
+    this.defaultVision = 15;
+    this.visionModifier = 0;
+    this.blindnessTimer = millis();
+    this.updateVision(myDungeon);
+  }
+
+  updateVision(dungeonMap) {
+    this.floorVision = Math.max(this.visionModifier + this.defaultVision - dungeonMap.floorNumber, 1);
+    this.vision = this.floorVision;
   }
 
   move(direction, time, isRolling){
@@ -329,6 +351,13 @@ class Player extends Entity {
   }
 
   display(screenCenter, screenSize) {
+    // Also used for some player updates
+    if(millis() > this.blindnessTimer) {
+      this.vision = this.floorVision;
+    }
+    else {
+      this.vision = 1;
+    }
     this.holding.display(screenCenter, screenSize);
     super.display(screenCenter, screenSize); 
   }
