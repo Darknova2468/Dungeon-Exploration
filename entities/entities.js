@@ -264,6 +264,7 @@ class Player extends Entity {
     this.movementDirection = [0, 0]; // Unrelated to texturing
     this.holding =this.weapons[1];
     this.holdingIndex = 1;
+    this.inventory = new Inventory(this);
     
     // Attack/use cooldowns
     this.attackTimer = millis();

@@ -6,6 +6,99 @@ let startY; // Top-right y-position of grid
 const xSize = 150; // Number of squares across
 const ySize = 75; // Number of squares down
 
+class InventoryCell {
+  constructor(_graphics, _inventory, _pos, _size, _pointer, _accepts = "all") {
+    this.graphics = _graphics;
+    this.inventory = _inventory;
+    this.pos = _pos;
+    this.size = _size;
+    this.pointer = _pointer;
+    this.accepts = _accepts;
+  }
+
+  display(x, y, toggled = false) {
+    if(toggled) {
+      this.graphics.fill(255);
+    }
+    else if(this.checkPos(x, y)) {
+      this.graphics.fill(200);
+    }
+    else {
+      this.graphics.fill(150);
+    }
+    this.graphics.rect(this.pos[0], this.pos[1], this.size, this.size);
+  }
+
+  checkPos(x, y) {
+    return this.pos[0] < x && x < this.pos[0] + this.size
+      && this.pos[1] < y && y < this.pos[1] + this.size;
+  }
+}
+
+const ARMORTYPES = ["helmet", "chestplate", "leggings", "boots"];
+
+class Inventory {
+  constructor(_player) {
+    this.player = _player;
+    this.graphics = createGraphics(550, 375);
+    this.squareSize = 75;
+    this.padding = 25;
+    this.shown = false;
+    this.hotbarSize = 5;
+    this.invHeight = 4;
+    this.armorSize = 4;
+    this.storage = [];
+    this.pointer = -1;
+    for(let i = 0; i < this.invHeight; i++) {
+      for(let j = 0; j < this.hotbarSize; j++) {
+        if(i === 0) {
+          this.storage.push(new InventoryCell(this.graphics, this, [this.squareSize * j + this.padding, this.padding], this.squareSize, this.hotbarSize * i + j));
+        }
+        else {
+          this.storage.push(new InventoryCell(this.graphics, this, [this.squareSize * j + this.padding, this.squareSize * i + 2 * this.padding], this.squareSize, this.hotbarSize * i + j));
+        }
+      }
+    }
+    for(let i = 0; i < this.armorSize; i++) {
+      this.storage.push(new InventoryCell(this.graphics, this, [this.graphics.width - this.padding - this.squareSize, 3/2 * this.padding + i * this.squareSize], this.squareSize, this.hotbarSize * this.invHeight + i, ARMORTYPES[i]));
+    }
+  }
+
+  update() {
+    this.x = mouseX - width/2 + this.graphics.width/2;
+    this.y = mouseY - height/2 + this.graphics.height/2;
+    let pointer = -1;
+    for(let cell of this.storage) {
+      if(cell.checkPos(this.x, this.y)) {
+        pointer = cell.pointer;
+        break;
+      }
+    }
+    if(pointer === -1) {
+      this.pointer = -1;
+    }
+    else if(this.pointer === -1) {
+      this.pointer = pointer;
+    }
+    else {
+      this.pointer = -1;
+    }
+  }
+
+  display() {
+    if(!this.shown) {
+      return;
+    }
+    this.graphics.background("midnightblue");
+    this.x = mouseX - width/2 + this.graphics.width/2;
+    this.y = mouseY - height/2 + this.graphics.height/2;
+    for(let cell of this.storage) {
+      cell.display(this.x, this.y, this.pointer === cell.pointer);
+    }
+    image(this.graphics, width/2, height/2);
+  }
+}
+
 class HealthBar {
   constructor(_health, _tileSet, _pos, _scale){
     this.health = _health;

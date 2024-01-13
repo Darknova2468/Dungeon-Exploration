@@ -135,6 +135,7 @@ function draw() {
   text("fps: " + Math.floor(frameRate()), width-height*3/20, height*6/20);
   textSize(20);
   text("On Floor " + myDungeon.floorNumber, height*3/20, height*2/10);
+  player.inventory.display();
 }
 
 function mouseWheel(event) { 
@@ -153,5 +154,14 @@ function mouseWheel(event) {
 function keyPressed() {
   if(keyCode === 77) {
     showMap = !showMap;
+  }
+  if(keyCode === 69) {
+    player.inventory.shown = !player.inventory.shown;
+  }
+}
+
+function mousePressed() {
+  if(player.inventory.shown) {
+    player.inventory.update();
   }
 }
