@@ -13,6 +13,8 @@ let player;
 let myBackground;
 let healthBar;
 
+let showMap = false;
+
 function preload() {
   textures = {
     tileSet: new TileSet("textures/CaveTiles.png", [16, 16]),
@@ -60,6 +62,7 @@ function setup() {
   myDungeon = createDungeonMap(1);
   player = new Player(structuredClone(myDungeon.playerPos), myDungeon.minimap);
   healthBar = new HealthBar(player.health, textures.healthBarTileSet, [50, 50], 2.5);
+  lighting = new Lighting();
   enterDungeonMap(myDungeon);
 }
 
@@ -121,9 +124,10 @@ function draw() {
   });
   myDungeon.display(myBackground.pos, myBackground.scale, [16, 16]);
   player.display(myBackground.pos, myBackground.scale, [16, 16]);
-  if(keyIsDown(20)){
+  lighting.update(player.vision, myBackground.pos, myBackground.scale, player);
+  if(keyIsDown(20) || showMap){
     minimap.displayMap(player.pos);
-  } 
+  }
   minimap.displayMinimap(player.pos);
   healthBar.display(player.health);
   fill("white");
@@ -143,5 +147,11 @@ function mouseWheel(event) {
       player.holding = player.weapons[player.holdingIndex-1];
       player.holdingIndex -= 1;
     }
+  }
+}
+
+function keyPressed() {
+  if(keyCode === 77) {
+    showMap = !showMap;
   }
 }

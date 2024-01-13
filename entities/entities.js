@@ -257,6 +257,9 @@ class Player extends Entity {
     // Zone stuff
     this.activeZone = -1;
     this.timeLocked = false;
+
+    // Lighting and exploration
+    this.vision = 8;
   }
 
   move(direction, time, isRolling){

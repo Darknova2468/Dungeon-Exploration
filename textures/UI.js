@@ -25,6 +25,78 @@ class HealthBar {
   }
 }
 
+LIGHTINGDEBUG = true;
+
+class Lighting {
+  constructor() {
+    this.updateMillis = 50;
+    this.updateTimer = millis();
+    this.light = 0;
+    this.screenSize = [0, 0];
+    this.playerPos = [0, 0];
+    this.cachedImage = createImage(width, height);
+  }
+  update(light, screenCenter, screenSize, player) {
+    if(millis() - this.updateTimer < this.updateMillis) {
+      this.display();
+      return;
+    }
+    this.updateTimer = millis();
+    if(LIGHTINGDEBUG) {
+      console.log("Updating lighting.")
+    }
+    let playerPos = dungeonToScreenPos(player.pos, screenCenter, screenSize);
+    if(this.light === light && this.playerPos[0] === playerPos[0]
+        && this.playerPos[1] === playerPos[1]
+        && this.screenSize[0] === screenSize[0]
+        && this.screenSize[1] === screenSize[1]) {
+      this.display();
+      return;
+    }
+    this.light = light;
+    this.screenSize = structuredClone(screenSize);
+    this.playerPos = structuredClone(playerPos);
+    this.display(false);
+  }
+  display(drawCached = true) {
+    if(!drawCached) {
+      let img = createImage(width, height);
+      img.loadPixels();
+      let xScale = this.screenSize[0] / width;
+      let yScale = this.screenSize[1] / height;
+      console.log(this.playerPos, xScale);
+      // for(let i = 0; i < width * height; i++) {
+      //   let x = i % width;
+      //   let y = Math.floor(i / width);
+      //   let d = dist(0, 0, (this.playerPos[0] - x)*xScale, (this.playerPos[1] - y)*yScale);
+      //   img.pixels[4*i] = 0;
+      //   img.pixels[4*i+1] = 0;
+      //   img.pixels[4*i+2] = 0;
+      //   img.pixels[4*i+3] = Math.min(40*d, 255);
+      //   // if(i === 0) {
+      //   //   console.log(pixels[3]);
+      //   // }
+      // }
+      let lightScale = 1.5 / Math.pow(this.light, 1.5);
+      let i = 0;
+      for(let y = 0; y < height; y++) {
+        for(let x = 0; x < width; x++) {
+          let d = ((this.playerPos[0] - x)) * ((this.playerPos[0] - x)*xScale) +  ((this.playerPos[1] - y)) * ((this.playerPos[1] - y)*yScale);
+          img.pixels[i+3] = Math.min(lightScale * d, 255);
+          i += 4;
+        }
+      }
+      // console.log(pixels[0], pixels[1], pixels[2], pixels[3])
+      img.updatePixels();
+      console.log("!");
+      this.cachedImage = img;
+    }
+    imageMode(CORNER);
+    image(this.cachedImage, 0, 0, width, height);
+    imageMode(CENTER);
+  }
+}
+
 class Maps {
   constructor(_radius, _map, _pos, _scale){
     this.raster = generateCircle(_radius);
@@ -40,7 +112,7 @@ class Maps {
   updateDiscovered(pos) {
     for(let i = 0; i < this.map.length; i++) {
       for(let j = 0; j < this.map[0].length; j++) {
-        if(dist(j, i, pos[0], pos[1]) < 6 && this.map[i][j] < 0) {
+        if(dist(j, i, pos[0], pos[1]) < player.vision && this.map[i][j] < 0) {
           this.map[i][j] += 100;
         }
       }
