@@ -298,7 +298,12 @@ class Player extends Entity {
   }
 
   updateVision(dungeonMap) {
-    this.floorVision = Math.max(this.visionModifier + this.defaultVision - dungeonMap.floorNumber, 1);
+    if(dungeonMap.floorNumber === 0) {
+      this.floorVision = 255;
+    }
+    else {
+      this.floorVision = Math.max(this.visionModifier + this.defaultVision - dungeonMap.floorNumber, 1);
+    }
     this.vision = this.floorVision;
   }
 

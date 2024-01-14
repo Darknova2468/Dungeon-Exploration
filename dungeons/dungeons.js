@@ -1,12 +1,18 @@
 /* eslint-disable no-undef */
 
+const allDungeons = new Map();
+
 function createDungeonMap(floor) {
+  if(allDungeons.has(floor)) {
+    return allDungeons.get(floor);
+  }
   let dungeonMap = new DungeonMap(floor);
   while(dungeonMap.corrupted) {
     console.log("Regenerating...");
     dungeonMap = new DungeonMap(floor);
   }
   console.log("Finished generation.");
+  allDungeons.set(floor, dungeonMap);
   return dungeonMap;
 }
 
@@ -30,6 +36,10 @@ class DungeonMap {
     this.enemies = [];
     this.otherEntities = [];
     this.floorNumber = _floor;
+    if(this.floorNumber === 0) {
+      this.constructGuildHall();
+      return;
+    }
     this.floor = floors[this.floorNumber];
     this.numberOfRooms = this.floor[0];
     this.enemyDifficulties = this.floor[1];
@@ -135,6 +145,23 @@ class DungeonMap {
     // Generate labyrinths
     this.corrupted = !generateLabyrinthEdges(this);
   }
+
+  constructGuildHall() {
+    this.width = Math.floor(random(15, 20));
+    this.height = Math.floor(random(6, 10));
+    this.dungeon = [];
+    this.playerPos = [this.width / 2, this.height / 2];
+    this.minimap = generateEmptyGrid(this.width, this.height);
+    for(let i = 1; i < this.height - 1; i++) {
+      for(let j = 1; j < this.width - 1; j++) {
+        this.minimap[i][j] = 1;
+      }
+    }
+    let portal = new Portal([this.width - 3, this.height / 2], 1.5, this.floorNumber + 1, this.minimap, textures.inactivePortalTileSet, textures.activePortalTileSet);
+    portal.activate();
+    this.otherEntities.push(portal);
+  }
+
   update(player, time){
     this.enemies = this.enemies.filter(enemy => enemy.isAlive);
     this.otherEntities = this.otherEntities.filter(entity => {
@@ -146,9 +173,6 @@ class DungeonMap {
     });
   }
   display(screenCenter, screenSize, scale){
-    if(this.entranceStage < 3) {
-      return;
-    }
     this.otherEntities.forEach(entity => {
       entity.display(screenCenter, screenSize, scale);
     });
@@ -157,6 +181,13 @@ class DungeonMap {
     });
   }
 }
+
+// class GuildHall extends DungeonMap {
+//   constructor() {
+//     this.otherEntities = [];
+//     this.floorNumber = 0;
+//   }
+// }
 
 class Room {
   constructor(_id, _radius, _dungeonMap, _difficulties, _caveEdgeChance, _denseCaveEdgeChance, _isBoss = false){
