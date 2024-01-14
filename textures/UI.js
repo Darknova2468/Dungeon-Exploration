@@ -27,7 +27,11 @@ class InventoryCell {
     else {
       this.graphics.fill(150);
     }
+    this.graphics.stroke(0)
     this.graphics.rect(this.pos[0], this.pos[1], this.size, this.size);
+    if(this.holding === null) {
+      return;
+    }
 
     this.graphics.push();
     this.graphics.translate(this.pos[0] + this.size / 2, this.pos[1] + this.size / 2);
@@ -38,7 +42,9 @@ class InventoryCell {
       // this.graphics.image(this.holding.tileSet.assets[0], 0, 0);
     }
     catch {
-      // console.log(this.holding);
+      this.graphics.fill(this.holding.tileSet);
+      this.graphics.noStroke();
+      this.graphics.circle(0, 0, 20);
     }
     this.graphics.pop();
   }
@@ -120,6 +126,18 @@ class Inventory {
     }
     image(this.graphics, width/2, height/2);
   }
+
+  attemptCollect(item) {
+    for(let i = 0; i < this.hotbarSize * this.invHeight; i++) {
+      if(this.storage[i].holding === null) {
+        this.storage[i].holding = item;
+        item.wielder = this.player;
+        return true;
+      }
+    }
+    console.log("! Inventory full !");
+    return false;
+  }
 }
 
 class HealthBar {
@@ -197,6 +215,9 @@ class Lighting {
       for(let y = 0; y < height; y++) {
         for(let x = 0; x < width; x++) {
           let d = ((this.playerPos[0] - x)) * ((this.playerPos[0] - x)*xScale) +  ((this.playerPos[1] - y)) * ((this.playerPos[1] - y)*yScale);
+          img.pixels[i] = 0;
+          img.pixels[i+1] = 0;
+          img.pixels[i+2] = 50;
           img.pixels[i+3] = Math.min(lightScale * d, 255);
           i += 4;
         }

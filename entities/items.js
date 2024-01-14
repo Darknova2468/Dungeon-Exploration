@@ -16,6 +16,8 @@ class Item {
       this.displayHeld(screenCenter, screenSize);
     }
   }
+
+  attack() {}
 }
 
 class DroppedItem extends Entity {
@@ -31,7 +33,7 @@ class DroppedItem extends Entity {
   // }
   operate(player, time) {
     if(dist(this.pos[0], this.pos[1], player.pos[0], player.pos[1]) < 1) {
-      this.item.wielder = player;
+      player.inventory.attemptCollect(this.item);
     }
     if(this.item.wielder !== null) {
       this.isAlive = false;
