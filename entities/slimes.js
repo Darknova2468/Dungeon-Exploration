@@ -384,7 +384,7 @@ class SlimeTentacle extends Slime {
     for(let i = 0; i < Math.floor(random(this.maxSlimeSpawn)); i++) {
       let r = random();
       let slime = new Slime([this.pos[0] * r + this.targetSlamPos[0] * (1-r), this.pos[1] * r + this.targetSlamPos[1] * (1-r)], this.lockedZone - 3, Math.floor(random(28)), this.collisionMap);
-      if(slime.canMoveTo(this.collisionMap[Math.floor(slime.pos[1])][Math.floor(slime.pos[0])])) {
+      if(verifyIndices(this.collisionMap, Math.floor(slime.pos[1]), Math.floor(slime.pos[0])) && slime.canMoveTo(this.collisionMap[Math.floor(slime.pos[1])][Math.floor(slime.pos[0])])) {
         enemies.push(slime);
       }
     }
