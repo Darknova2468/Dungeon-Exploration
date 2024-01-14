@@ -5,7 +5,7 @@ class Item {
     this.wielder = _wielder;
     this.held = true;
     this.animationSet = _animationSet;
-    this.tileSet = _tileSet;
+    this.tileSet = _tileSet ?? "magenta";
     this.scaleFactor = _scaleFactor ?? 1;
     this.tileScaleFactor = 1;
   }

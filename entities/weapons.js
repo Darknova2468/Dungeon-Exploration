@@ -9,6 +9,7 @@ class Weapon extends Item {
     this.range = range;
     this.cooldown = cooldown;
     this.attackTimer = 0;
+    this.tier = 1;
   }
 
   attack(enemies, direction, time, isRolling) {}
