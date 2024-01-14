@@ -7,6 +7,7 @@ class Item {
     this.animationSet = _animationSet;
     this.tileSet = _tileSet;
     this.scaleFactor = _scaleFactor ?? 1;
+    this.tileScaleFactor = 1;
   }
 
   displayHeld(screenCenter, screenSize, pos) {}

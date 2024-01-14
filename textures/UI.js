@@ -9,6 +9,7 @@ const ySize = 75; // Number of squares down
 class InventoryCell {
   constructor(_graphics, _inventory, _pos, _size, _pointer, _accepts = "all") {
     this.graphics = _graphics;
+    this.graphics.noSmooth();
     this.inventory = _inventory;
     this.pos = _pos;
     this.size = _size;
@@ -44,13 +45,15 @@ class InventoryCell {
     this.graphics.rotate(Math.PI / 4);
     try {
       // rotate(0);
-      this.graphics.image(this.holding.tileSet.assets[0], 0, 0);
+      this.graphics.image(this.holding.tileSet.assets[0], 0, 0, 
+        this.holding.tileSet.size[0]*this.holding.tileScaleFactor, 
+        this.holding.tileSet.size[1]*this.holding.tileScaleFactor);
       // this.graphics.image(this.holding.tileSet.assets[0], 0, 0);
     }
     catch {
       this.graphics.fill(this.holding.tileSet);
       this.graphics.noStroke();
-      this.graphics.circle(0, 0, 20);
+      this.graphics.circle(0, 0, 20 * this.holding.tileScaleFactor);
     }
     this.graphics.pop();
   }
