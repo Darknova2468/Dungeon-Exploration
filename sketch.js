@@ -157,7 +157,7 @@ function mouseWheel(event) {
   }
   player.holdingIndex += player.inventory.hotbarSize;
   player.holdingIndex %= player.inventory.hotbarSize;
-  player.holding = player.inventory.storage[player.holdingIndex].holding;
+  player.updateHolding();
 }
 
 function keyPressed() {

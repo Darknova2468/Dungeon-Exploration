@@ -96,8 +96,16 @@ class Inventory {
       this.pointer = pointer;
     }
     else {
+      this.swap(this.pointer, pointer);
       this.pointer = -1;
     }
+  }
+
+  swap(i, j) {
+    let tmpSlot = this.storage[i].holding;
+    this.storage[i].holding = this.storage[j].holding;
+    this.storage[j].holding = tmpSlot;
+    this.player.updateHolding();
   }
 
   display() {

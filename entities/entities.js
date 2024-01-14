@@ -269,7 +269,7 @@ class Player extends Entity {
     for(let i = 0; i < 6; i++) {
       this.inventory.storage[i].holding = tmpWeapons[i];
     }
-    this.holding = this.inventory.storage[this.holdingIndex].holding;
+    this.updateHolding();
     
     // Attack/use cooldowns
     this.attackTimer = millis();
@@ -288,6 +288,10 @@ class Player extends Entity {
   updateVision(dungeonMap) {
     this.floorVision = Math.max(this.visionModifier + this.defaultVision - dungeonMap.floorNumber, 1);
     this.vision = this.floorVision;
+  }
+
+  updateHolding() {
+    this.holding = this.inventory.storage[this.holdingIndex].holding;
   }
 
   move(direction, time, isRolling){
@@ -335,7 +339,9 @@ class Player extends Entity {
       enemies = dungeon.dungeon[this.lockedZone - 3].enemies;
     }
     let targetVector = [mouseX - width/2, mouseY - height/2];
-    this.holding.attack(enemies, targetVector, time, isRolling);
+    if(this.holding !== null) {
+      this.holding.attack(enemies, targetVector, time, isRolling);
+    }
   }
 
   display(screenCenter, screenSize) {
@@ -346,8 +352,10 @@ class Player extends Entity {
     else {
       this.vision = 1;
     }
-    this.holding.display(screenCenter, screenSize);
-    super.display(screenCenter, screenSize); 
+    if(this.holding !== null) {
+      this.holding.display(screenCenter, screenSize);
+    }
+    super.display(screenCenter, screenSize);
   }
 }
 
