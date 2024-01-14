@@ -96,7 +96,7 @@ function draw() {
       player.isAlive = true;
       gameActive = true;
       myBackground.displayOnly = null;
-      myBackground.fade = 255;  
+      myBackground.fade = 255;
     }
     return;
   }

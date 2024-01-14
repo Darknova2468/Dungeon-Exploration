@@ -17,11 +17,17 @@ class InventoryCell {
     this.holding = null;
   }
 
-  display(x, y, toggled = false) {
-    if(toggled) {
+  display(x, y, toggled = false, held = false) {
+    if(held && toggled) {
+      this.graphics.fill(color(255, 200, 200));
+    }
+    else if(held) {
+      this.graphics.fill(color(255, 100, 100));
+    }
+    else if(toggled) {
       this.graphics.fill(255);
     }
-    else if(this.checkPos(x, y)) {
+    else if(this.inventory.shown && this.checkPos(x, y)) {
       this.graphics.fill(200);
     }
     else {
@@ -69,11 +75,13 @@ class Inventory {
     this.invHeight = 4;
     this.armorSize = 4;
     this.storage = [];
+    this.hotbar = [];
     this.pointer = -1;
     for(let i = 0; i < this.invHeight; i++) {
       for(let j = 0; j < this.hotbarSize; j++) {
         if(i === 0) {
           this.storage.push(new InventoryCell(this.graphics, this, [this.squareSize * j + this.padding, this.padding], this.squareSize, this.hotbarSize * i + j));
+          this.hotbar.push(this.storage[j]);
         }
         else {
           this.storage.push(new InventoryCell(this.graphics, this, [this.squareSize * j + this.padding, this.squareSize * i + 2 * this.padding], this.squareSize, this.hotbarSize * i + j));
@@ -115,16 +123,20 @@ class Inventory {
   }
 
   display() {
-    if(!this.shown) {
-      return;
-    }
     this.graphics.background("midnightblue");
     this.x = mouseX - width/2 + this.graphics.width/2;
     this.y = mouseY - height/2 + this.graphics.height/2;
     for(let cell of this.storage) {
-      cell.display(this.x, this.y, this.pointer === cell.pointer);
+      cell.display(this.x, this.y, this.pointer === cell.pointer, this.player.holdingIndex === cell.pointer);
     }
-    image(this.graphics, width/2, height/2);
+    if(this.shown) {
+      image(this.graphics, width/2, height/2);
+    }
+    else {
+      imageMode(CORNER);
+      image(this.graphics, width - this.padding * 2 - this.squareSize * this.hotbarSize, height - this.padding * 2 - this.squareSize);
+      imageMode(CENTER);
+    }
   }
 
   attemptCollect(item) {
