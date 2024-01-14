@@ -136,11 +136,14 @@ function draw() {
   }
   minimap.displayMinimap(player.pos);
   healthBar.display(player.health);
+  textAlign(CENTER, CENTER);
   fill("white");
   textSize(12);
   text("fps: " + Math.floor(frameRate()), width-height*3/20, height*6/20);
   textSize(20);
-  text("On Floor " + myDungeon.floorNumber, height*3/20, height*2/10);
+  textAlign(LEFT, TOP);
+  text("On Floor " + myDungeon.floorNumber, height*1/20, height*2/10);
+  text("Money in wallet: " + player.money, height*1/20, height*2.5/10);
   player.inventory.display();
 }
 

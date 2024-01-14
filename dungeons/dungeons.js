@@ -325,7 +325,7 @@ class Room {
     // }
     // this.summonSlimeBoss();
     // this.enemies.push(new SlimeTentacle(this.pos, this.id, this.dungeonMap.minimap));
-    this.dungeonMap.otherEntities.push(new TestDroppedItem(structuredClone(this.pos), this.dungeonMap.minimap));
+    // this.dungeonMap.otherEntities.push(new Coin(structuredClone(this.pos), 1, this.dungeonMap.minimap));
   }
 
   spawnEnemies() {

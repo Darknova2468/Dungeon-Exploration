@@ -106,7 +106,8 @@ class Portal extends Entity {
   }
 
   operate(player, time) {
-    if(this.active && dist(this.pos[0], this.pos[1], player.pos[0], player.pos[1]) < this.radius) {
+    if(this.active && dist(this.pos[0], this.pos[1], player.pos[0], player.pos[1]) < this.radius 
+      && keyIsDown(32)) {
       myDungeon = createDungeonMap(this.target);
       enterDungeonMap(myDungeon);
     }
@@ -253,6 +254,16 @@ class Enemy extends Entity {
       this.pos[1] += dy;
     }
   }
+
+  damage(amountDamage, damageType) {
+    super.damage(amountDamage, damageType);
+    if(!this.isAlive) {
+      let netWorth = Math.floor(random(this.level));
+      if(netWorth > 0) {
+        myDungeon.otherEntities.push(new Coin(structuredClone(this.pos), netWorth, this.collisionMap));
+      }
+    }
+  }
 }
 
 class Player extends Entity {
@@ -265,6 +276,7 @@ class Player extends Entity {
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
     this.holdingIndex = 1;
+    this.money = 0;
     this.inventory = new Inventory(this);
     for(let i = 0; i < 6; i++) {
       this.inventory.storage[i].holding = tmpWeapons[i];
