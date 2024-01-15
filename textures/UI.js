@@ -224,7 +224,7 @@ class Lighting {
       let aVal = alpha(this.ambience);
       for(let y = 0; y < height; y++) {
         for(let x = 0; x < width; x++) {
-          let d = ((this.playerPos[0] - x)*xScale) * ((this.playerPos[0] - x)*xScale) +  ((this.playerPos[1] - y)*yScale) * ((this.playerPos[1] - y)*yScale);
+          let d = (this.playerPos[0] - x)*xScale * ((this.playerPos[0] - x)*xScale) +  (this.playerPos[1] - y)*yScale * ((this.playerPos[1] - y)*yScale);
           img.pixels[i] = rVal;
           img.pixels[i+1] = gVal;
           img.pixels[i+2] = bVal;
