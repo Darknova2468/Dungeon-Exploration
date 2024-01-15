@@ -46,6 +46,7 @@ class DungeonMap {
     this.twoPathChance = this.floor[2];
     this.caveEdgeChance = this.floor[3];
     this.denseCaveEdgeChance = this.floor[4];
+    this.ambience = color(0, 0, 50, Math.min(255, this.floorNumber * 20));
 
     // Determines difficulties of initial and boss rooms
     this.difficulties = [[], [0,0,0,0]];
@@ -150,6 +151,7 @@ class DungeonMap {
     this.width = Math.floor(random(15, 20));
     this.height = Math.floor(random(6, 10));
     this.dungeon = [];
+    this.ambience = color(0, 0, 0, 0);
     this.playerPos = [this.width / 2, this.height / 2];
     this.minimap = generateEmptyGrid(this.width, this.height);
     for(let i = 1; i < this.height - 1; i++) {

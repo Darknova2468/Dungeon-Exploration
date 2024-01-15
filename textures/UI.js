@@ -178,14 +178,15 @@ LIGHTINGDEBUG = false;
 
 class Lighting {
   constructor() {
-    this.updateMillis = 50;
+    this.updateMillis = 10;
     this.updateTimer = millis();
     this.light = 0;
+    this.ambience = color(0,0,0,0);
     this.screenSize = [0, 0];
     this.playerPos = [0, 0];
     this.cachedImage = createImage(width, height);
   }
-  update(light, screenCenter, screenSize, player) {
+  update(light, ambience, screenCenter, screenSize, player) {
     if(millis() - this.updateTimer < this.updateMillis) {
       this.display();
       return;
@@ -195,7 +196,8 @@ class Lighting {
       console.log("Updating lighting.");
     }
     let playerPos = dungeonToScreenPos(player.pos, screenCenter, screenSize);
-    if(this.light === light && this.playerPos[0] === playerPos[0]
+    if(this.light === light && compareCols(ambience, this.ambience)
+        && this.playerPos[0] === playerPos[0]
         && this.playerPos[1] === playerPos[1]
         && this.screenSize[0] === screenSize[0]
         && this.screenSize[1] === screenSize[1]) {
@@ -203,6 +205,7 @@ class Lighting {
       return;
     }
     this.light = light;
+    this.ambience = ambience;
     this.screenSize = structuredClone(screenSize);
     this.playerPos = structuredClone(playerPos);
     this.display(false);
@@ -215,13 +218,17 @@ class Lighting {
       let yScale = this.screenSize[1] / height;
       let lightScale = 1.5 / Math.pow(this.light, 1.5);
       let i = 0;
+      let rVal = red(this.ambience);
+      let gVal = green(this.ambience);
+      let bVal = blue(this.ambience);
+      let aVal = alpha(this.ambience);
       for(let y = 0; y < height; y++) {
         for(let x = 0; x < width; x++) {
-          let d = (this.playerPos[0] - x) * ((this.playerPos[0] - x)*xScale) +  (this.playerPos[1] - y) * ((this.playerPos[1] - y)*yScale);
-          img.pixels[i] = 0;
-          img.pixels[i+1] = 0;
-          img.pixels[i+2] = 50;
-          img.pixels[i+3] = Math.min(lightScale * d, 255);
+          let d = ((this.playerPos[0] - x)*xScale) * ((this.playerPos[0] - x)*xScale) +  ((this.playerPos[1] - y)*yScale) * ((this.playerPos[1] - y)*yScale);
+          img.pixels[i] = rVal;
+          img.pixels[i+1] = gVal;
+          img.pixels[i+2] = bVal;
+          img.pixels[i+3] = Math.min(lightScale * d, aVal);
           i += 4;
         }
       }
@@ -232,6 +239,11 @@ class Lighting {
     image(this.cachedImage, 0, 0, width, height);
     imageMode(CENTER);
   }
+}
+
+function compareCols(a, b) {
+  return red(a) === red(b) && green(a) === green(b)
+    && blue(a) === blue(b) && alpha(a) === alpha(b);
 }
 
 class Maps {

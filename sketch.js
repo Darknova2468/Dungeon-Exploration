@@ -132,7 +132,7 @@ function draw() {
   });
   myDungeon.display(myBackground.pos, myBackground.scale, [16, 16]);
   player.display(myBackground.pos, myBackground.scale, [16, 16]);
-  lighting.update(player.vision, myBackground.pos, myBackground.scale, player);
+  lighting.update(player.vision, myDungeon.ambience, myBackground.pos, myBackground.scale, player);
   if(keyIsDown(20) || showMap){
     minimap.displayMap(player.pos);
   }
