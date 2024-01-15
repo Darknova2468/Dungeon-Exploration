@@ -6,6 +6,13 @@ let startY; // Top-right y-position of grid
 const xSize = 150; // Number of squares across
 const ySize = 75; // Number of squares down
 
+class Dialogue {
+  constructor() {
+    this.graphics = createGraphics(550, 375);
+    this.graphics.imageMode(CENTER);
+  }
+}
+
 class InventoryCell {
   constructor(_graphics, _inventory, _pos, _size, _pointer, _accepts = "all") {
     this.graphics = _graphics;
