@@ -329,7 +329,7 @@ class Maps {
     img.pixels[i+1] = 0;
     img.pixels[i+2] = 0;
     img.updatePixels();
-    let scaleX = width/this.map.length > height/this.map[0].length ? this.map.length*(height-2*padding)/this.map[0].length:width-2*padding;
+    let scaleX = this.map.length/(width-16*padding) > this.map[0].length/(height-4*padding) ? this.map.length*(height-4*padding)/this.map[0].length:width-16*padding;
     let scaleY = this.map.length*scaleX/this.map[0].length;
     image(img, width/2, height/2, scaleX, scaleY);
   }

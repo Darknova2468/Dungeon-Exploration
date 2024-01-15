@@ -89,7 +89,12 @@ class Entity {
       this.isAlive = false;
       this.health = 0;
     }
-    myDungeon.otherEntities.push(new Damage([this.pos[0], this.pos[1] - 0.6*this.animationSet.size[1]*this.scaleFactor/baseResolution[1]], amountDamage));
+    try {
+      myDungeon.otherEntities.push(new Damage([this.pos[0], this.pos[1] - 0.6*this.animationSet.size[1]*this.scaleFactor/baseResolution[1]], amountDamage));
+    }
+    catch {
+      myDungeon.otherEntities.push(new Damage([this.pos[0], this.pos[1] - 1.2*this.radius*this.scaleFactor], amountDamage));
+    }
   }
 }
 
