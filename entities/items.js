@@ -22,9 +22,9 @@ class Item {
 }
 
 class DroppedItem extends Entity {
-  constructor(pos, item, collisionMap) {
-    super(pos, 1, 0, 0, collisionMap, item.tileSet);
-    this.item = item;
+  constructor(_pos, _tileSet, _collisionMap, ) {
+    super(_pos, 1, 0, 0, _collisionMap);
+    this.tileSet = _tileSet;
     this.invincible = true;
     this.radius = 0.2;
     this.direction = [random(-1,1), random(-1,1)];
@@ -32,9 +32,6 @@ class DroppedItem extends Entity {
     this.locked = false;
   }
 
-  // display(screenCenter, screenSize) {
-
-  // }
   operate(player, time) {
     this.move(this.direction, time);
     this.speed *= 0.9;
@@ -55,6 +52,15 @@ class DroppedItem extends Entity {
       this.pos[1] += dy;
     }
   }
+
+  display(screenCenter, screenSize){
+    let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
+    let posScaleX = width/screenSize[0];
+    let posScaleY = height/screenSize[1];
+    x += screenSize[0]*0.5;
+    y += screenSize[1]*0.5;
+    image(this.tileSet.assets[0], x*posScaleX, y*posScaleY, this.tileSet.size[0]*2, this.tileSet.size[1]*2);
+  }
 }
 
 class TestItem extends Item {
@@ -72,7 +78,7 @@ class TestDroppedItem extends DroppedItem {
 
 class Coin extends DroppedItem {
   constructor(pos, value, collisionMap) {
-    super(pos, {tileSet : "yellow"}, collisionMap);
+    super(pos, textures.coinTileSet, collisionMap);
     this.value = value;
   }
 

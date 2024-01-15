@@ -56,6 +56,7 @@ function preload() {
     inactivePortalTileSet: "dimgrey",
     activePortalTileSet: new AnimateSet("textures/portal.png", [40, 40]),
     numbers: new TileSet("textures/numbers.png", [6, 7]),  
+    coinTileSet: new TileSet("textures/coin.png", [11, 11]),
   };
 }
 
@@ -71,7 +72,6 @@ function setup() {
   healthBar = new HealthBar(player.health, textures.healthBarTileSet, [50, 50], 2.5);
   lighting = new Lighting();
   enterDungeonMap(myDungeon);
-  console.log(textures.numbers);
 }
 
 let gameActive = true;
