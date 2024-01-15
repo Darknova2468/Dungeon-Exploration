@@ -9,7 +9,8 @@ class Weapon extends Item {
     this.range = range;
     this.cooldown = cooldown;
     this.attackTimer = 0;
-    this.tier = 5;
+    this.tier = 3;
+    this.stackable = false;
   }
 
   attack(enemies, direction, time, isRolling) {}
@@ -369,8 +370,16 @@ class ChargedRangedWeapon extends Weapon {
 
 class ShortBow extends ChargedRangedWeapon {
   constructor(wielder) {
-    super(wielder, 3, 10, 700, 100, 500, 15, textures.shortBowAnimationSet, textures.shortBowTileSet);
+    super(wielder, 3, 10, 700, 100, 400, 15, textures.shortBowAnimationSet, textures.shortBowTileSet);
     this.tileScaleFactor = 2.5;
+  }
+  
+  attack(enemies, direction, time, isRolling) {
+    super.attack(enemies, direction, time, isRolling);
+    if(mouseIsPressed && millis() - this.chargeTimer > this.chargeTime && !isRolling && this.charging) {
+      this.charging = false;
+      this.fire(direction);
+    }
   }
 }
 

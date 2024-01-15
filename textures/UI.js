@@ -92,9 +92,15 @@ class PauseMenu extends Menu {
   }
 }
 
+class UpgradeMenu extends Menu {
+  constructor() {
+    super("Blacksmith", "Buy and upgrade weapons with me!", ["> Buy / Upgrade Dagger", "> Buy / Upgrade Sword", "> Buy / Upgrade Axe", "> Buy / Upgrade Spear", "> Buy / Upgrade Shortbow", "> Buy / Upgrade Longbow"], 100);
+  }
+}
+
 class MenuManager {
   constructor() {
-    this.menus = new Heap([new PauseMenu()], (a, b) => a.priority - b.priority > 0);
+    this.menus = new Heap([new UpgradeMenu()], (a, b) => a.priority - b.priority > 0);
     this.pauseCountDown = 1; // Allow for sufficient frames before pause can work
     this.paused = false;
   }

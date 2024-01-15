@@ -320,7 +320,7 @@ class Player extends Entity {
       this.floorVision = 255;
     }
     else {
-      this.floorVision = Math.max(this.visionModifier + this.defaultVision - dungeonMap.floorNumber, 1);
+      this.floorVision = Math.max(this.visionModifier + this.defaultVision - dungeonMap.floorNumber *3/5, 1); // Remove the "*3/5" if torches are implemented
     }
     this.vision = this.floorVision;
   }

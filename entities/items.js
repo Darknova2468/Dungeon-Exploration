@@ -8,6 +8,7 @@ class Item {
     this.tileSet = _tileSet ?? "magenta";
     this.scaleFactor = _scaleFactor ?? 1;
     this.tileScaleFactor = 1;
+    this.stackable = true;
   }
 
   displayHeld(screenCenter, screenSize, pos) {}
@@ -19,6 +20,8 @@ class Item {
   }
 
   attack() {}
+
+  accepts() {}
 }
 
 class DroppedItem extends Entity {
