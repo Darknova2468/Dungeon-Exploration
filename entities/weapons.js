@@ -105,7 +105,7 @@ class SweepWeapon extends Weapon {
         angle = getAngle(directionVector[0], -directionVector[1]);
       }
       rotate(angle);
-      image(a.animations[0][0], 0, 0, imgScaleX, imgScaleY);
+      image(a.animations[0][this.tier-1], 0, 0, imgScaleX, imgScaleY);
       pop();
     }
     catch {
@@ -240,7 +240,7 @@ class ThrustWeapon extends Weapon {
       // Modified angle formula for p5 rotations
       let angle = getAngle(directionVector[0], -directionVector[1]);
       rotate(angle);
-      image(this.animationSet.animations[0][0], 0, 0, imgScaleX, imgScaleY);
+      image(this.animationSet.animations[0][this.tier-1], 0, 0, imgScaleX, imgScaleY);
       pop();
     }
     catch {
@@ -350,7 +350,7 @@ class ChargedRangedWeapon extends Weapon {
           this.animationNum = this.animationSet.animations[0].length-1;
         }
       }
-      image(this.animationSet.animations[0][this.animationNum], 0, 0, imgScaleX, imgScaleY);
+      image(this.animationSet.animations[this.tier-1][this.animationNum], 0, 0, imgScaleX, imgScaleY);
       pop();
     }
     catch {
