@@ -39,7 +39,8 @@ class Menu {
       }
     }
     if(this.chosenCommand !== -1) {
-      this.toDisplay = false;
+      this.applyCommand(this.chosenCommand);
+      // this.toDisplay = false;
     }
   }
 
@@ -80,12 +81,14 @@ class Menu {
     image(this.graphics, this.x, this.y);
   }
 
-  applyCommand() {}
+  applyCommand(cmd) {
+    this.toDisplay = false;
+  }
 }
 
 class PauseMenu extends Menu {
   constructor() {
-    super("Pause Menu", "The game is paused. Continue?", ["> Resume Game"], 0);
+    super("Pause Menu", "The game is paused. Continue?", ["> Resume Game"], 255);
   }
 }
 
