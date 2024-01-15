@@ -144,6 +144,10 @@ class InventoryCell {
     }
     this.graphics.stroke(0);
     this.graphics.rect(this.pos[0], this.pos[1], this.size, this.size);
+    if(this.pointer < 5) {
+      this.graphics.fill(0);
+      this.graphics.text(this.pointer + 1, this.pos[0] + 5, this.pos[1] + this.inventory.padding / 2);
+    }
     if(this.holding === null) {
       return;
     }
