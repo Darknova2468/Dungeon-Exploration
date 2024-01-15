@@ -367,6 +367,32 @@ class Damage{
   }
 }
 
+class EnemyHealthBar{
+  constructor(_pos, _health, _offset , _scale){
+    this.pos = _pos;
+    this.offset = _offset;
+    this.maxHealth = _health;
+    this.scale = _scale;
+  }
+  display(pos, health, screenCenter, screenSize){
+    this.pos = pos;
+    if(health < this.maxHealth){
+      let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
+      let posScaleX = width/screenSize[0];
+      let posScaleY = height/screenSize[1];
+      x += screenSize[0]*0.5;
+      y += screenSize[1]*0.5;
+      y -= this.offset;
+      strokeWeight(5);
+      stroke("red");
+      line((x-this.scale*0.5)*posScaleX, y*posScaleY, (x+this.scale*0.5)*posScaleX, y*posScaleY);
+      stroke("green");
+      line((x-this.scale*0.5)*posScaleX, y*posScaleY, (x-this.scale*0.5+this.scale*(health/this.maxHealth))*posScaleX, y*posScaleY);
+      noStroke();
+    }
+  }
+}
+
 function updateDimensions(y = ySize, x = xSize) {
   squareSize = min((height - 2*padding) / y, (width - 2*padding) / x);
   startX = max(padding, width/2 - squareSize * x / 2);
