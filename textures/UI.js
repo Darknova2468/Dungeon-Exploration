@@ -6,10 +6,91 @@ let startY; // Top-right y-position of grid
 const xSize = 150; // Number of squares across
 const ySize = 75; // Number of squares down
 
-class Dialogue {
-  constructor() {
+class Menu {
+  constructor(_x = width * 2 / 7, _y = height * 3 / 7, _marginCol = color(100, 50, 50, 255), _fillCol = color(70, 70, 70, 255), _defaultTextCol = color("white"), _highlightedTextCol = color(255, 150, 150)) {
     this.graphics = createGraphics(550, 375);
     this.graphics.imageMode(CENTER);
+    this.toDisplay = true;
+    this.name = "Test NPC";
+    this.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis pharetra dolor. Morbi massa massa, gravida tristique interdum eu, egestas eget arcu. Fusce rhoncus mi sit amet justo hendrerit sollicitudin. In porttitor turpis in nunc rhoncus, eget maximus erat laoreet. Fusce porttitor, erat ac pulvinar elementum, erat felis finibus metus, et scelerisque nibh elit ac dui. Morbi id varius dui. Donec venenatis tempus nisi in efficitur. Morbi justo urna, convallis nec purus sit amet, commodo facilisis lectus. Fusce maximus bibendum risus, nec ultrices nisi. Fusce ac nibh quis orci vestibulum aliquam. Duis sit amet scelerisque erat. Ut at quam eget.";
+    this.commands = ["> Resume game", "> Change key bindings (intentionally disabled)"];
+    this.chosenCommand = -1;
+    this.padding = 10;
+    this.x = _x;
+    this.y = _y;
+    this.marginCol = _marginCol;
+    this.fillCol = _fillCol;
+    this.defaultTextCol = _defaultTextCol;
+    this.highlightedTextCol = _highlightedTextCol;
+  }
+
+  isHovering(i) {
+    return this.padding * 2 < mouseX && mouseX < this.graphics.width - 2 * this.padding 
+      && this.graphics.height / 2 + (2 * i + 1) * this.padding < mouseY 
+      && mouseY < this.graphics.height / 2 + (2 * i + 3) * this.padding;
+  }
+
+  update() {
+    for(let i = 0; i < this.commands.length; i++) {
+      if(this.isHovering(i) && mouseIsPressed) {
+        this.chosenCommand = i;
+      }
+    }
+    if(this.chosenCommand !== -1) {
+      this.toDisplay = false;
+    }
+  }
+
+  display() {
+    if(!this.toDisplay) {
+      return;
+    }
+
+    // Temporary positioning
+    this.graphics.background(this.marginCol);
+    this.graphics.fill(this.fillCol);
+    this.graphics.rectMode(CORNER);
+    this.graphics.rect(this.padding, this.padding,
+      this.graphics.width - 2 * this.padding, this.graphics.height - 2 * this.padding);
+
+    // Name
+    this.graphics.fill(this.defaultTextCol);
+    this.graphics.textSize(20);
+    this.graphics.text(this.name, this.padding * 2, this.padding * 2, this.graphics.width - 4 * this.padding);
+
+    // Text
+    this.graphics.textSize(12);
+    this.graphics.text(this.text, this.padding * 2, this.padding * 5, this.graphics.width - 4 * this.padding);
+    
+    // Commands
+    this.graphics.textSize(15);
+    for(let i = 0; i < this.commands.length; i++) {
+      if(this.isHovering(i)) {
+        this.graphics.fill(this.highlightedTextCol);
+      }
+      else {
+        this.graphics.fill(this.defaultTextCol);
+      }
+      this.graphics.text(this.commands[i], this.padding * 2, this.graphics.height / 2 + 2 * i * this.padding);
+    }
+
+    // Final display
+    image(this.graphics, this.x, this.y);
+  }
+
+  applyCommand() {
+    //
+  }
+}
+
+class MenuManager {
+  constructor() {
+    this.escapeMenu = new Menu();
+    this.paused = true;
+  }
+
+  operate() {
+    
   }
 }
 
