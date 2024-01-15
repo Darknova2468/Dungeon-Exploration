@@ -344,14 +344,12 @@ class Damage{
     this.isAlive = true;
     let num = round(_num).toString().split("");
     this.img = createImage(this.textureSet.size[0]*num.length, this.textureSet.size[1]);
-    this.img.loadPixels();
     for(let i=0; i<num.length; i++){
       this.img.copy(
         this.textureSet.assets[parseInt(num[i])], 0, 0, this.textureSet.size[0], this.textureSet.size[1],
         i*this.textureSet.size[0], 0, this.textureSet.size[0], this.textureSet.size[1]
       );
     }
-    this.img.updatePixels();
   }
   operate(){
     if(millis()-this.time > this.timer){
@@ -365,7 +363,7 @@ class Damage{
     x += screenSize[0]*0.5;
     y += screenSize[1]*0.5;
     image(this.img, x*posScaleX, y*posScaleY, this.img.width*2, this.img.height*2);
-    circle(x*posScaleX, y*posScaleX, 10);
+    // circle(x*posScaleX, y*posScaleX, 10);
   }
 }
 
