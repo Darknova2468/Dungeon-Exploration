@@ -410,7 +410,7 @@ class Maps {
     img.pixels[i+1] = 0;
     img.pixels[i+2] = 0;
     img.updatePixels();
-    let scaleX = width/this.map.length > height/this.map[0].length ? this.map.length*(height-2*padding)/this.map[0].length:width-2*padding;
+    let scaleX = this.map.length/(width-16*padding) > this.map[0].length/(height-4*padding) ? this.map.length*(height-4*padding)/this.map[0].length:width-16*padding;
     let scaleY = this.map.length*scaleX/this.map[0].length;
     image(img, width/2, height/2, scaleX, scaleY);
   }
@@ -445,6 +445,32 @@ class Damage{
     y += screenSize[1]*0.5;
     image(this.img, x*posScaleX, y*posScaleY, this.img.width*2, this.img.height*2);
     // circle(x*posScaleX, y*posScaleX, 10);
+  }
+}
+
+class EnemyHealthBar{
+  constructor(_pos, _health, _offset , _scale){
+    this.pos = _pos;
+    this.offset = _offset;
+    this.maxHealth = _health;
+    this.scale = _scale;
+  }
+  display(pos, health, screenCenter, screenSize){
+    this.pos = pos;
+    if(health < this.maxHealth){
+      let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
+      let posScaleX = width/screenSize[0];
+      let posScaleY = height/screenSize[1];
+      x += screenSize[0]*0.5;
+      y += screenSize[1]*0.5;
+      y -= this.offset;
+      strokeWeight(5);
+      stroke("red");
+      line((x-this.scale*0.5)*posScaleX, y*posScaleY, (x+this.scale*0.5)*posScaleX, y*posScaleY);
+      stroke("green");
+      line((x-this.scale*0.5)*posScaleX, y*posScaleY, (x-this.scale*0.5+this.scale*(health/this.maxHealth))*posScaleX, y*posScaleY);
+      noStroke();
+    }
   }
 }
 

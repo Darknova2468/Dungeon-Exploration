@@ -2,7 +2,7 @@
 
 const baseResolution = [24, 24];
 const ENEMYDEBUG = 0;
-const SHOWHITBOXES = true;
+const SHOWHITBOXES = false;
 
 class Entity {
   constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet, _animationSpeed, _scaleFactor){
@@ -65,6 +65,9 @@ class Entity {
       fill(this.animationSet);
       circle(x*posScaleX, y*posScaleY, posScaleX*2*this.radius);
     }
+    if(this.hasHealthBar){
+      this.healthBar.display(this.pos, this.health, screenCenter, screenSize); 
+    }
   }
   //   displayDraft(screenCenter, screenSize) {
   //     let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
@@ -86,7 +89,12 @@ class Entity {
       this.isAlive = false;
       this.health = 0;
     }
-    myDungeon.otherEntities.push(new Damage([this.pos[0], this.pos[1] - 0.6*this.animationSet.size[1]*this.scaleFactor/baseResolution[1]], amountDamage));
+    try {
+      myDungeon.otherEntities.push(new Damage([this.pos[0], this.pos[1] - 0.6*this.animationSet.size[1]*this.scaleFactor/baseResolution[1]], amountDamage));
+    }
+    catch {
+      myDungeon.otherEntities.push(new Damage([this.pos[0], this.pos[1] - 1.2*this.radius*this.scaleFactor], amountDamage));
+    }
   }
 }
 
@@ -191,7 +199,7 @@ class DiskWarnZone extends WarnZone {
 }
 
 class Enemy extends Entity {
-  constructor(_pos, _name, _roomId, _level, _health, _defence, _speed, _detectionRange, _combatBalanceRadius, _attackDamage, _attackDamageType, _attackRange, _attackCooldown, _collisionMap, _textureSet, _animationSpeed, _scaleFactor) {
+  constructor(_pos, _name, _roomId, _level, _health, _defence, _speed, _detectionRange, _combatBalanceRadius, _attackDamage, _attackDamageType, _attackRange, _attackCooldown, _collisionMap, _textureSet, _animationSpeed, _scaleFactor, _hasHealthBar) {
     super(_pos, _health, _defence, _speed, _collisionMap, _textureSet, _animationSpeed, _scaleFactor);
     this.name = _name;
     // Default parameters
@@ -206,6 +214,15 @@ class Enemy extends Entity {
     this.prevDirection = [0, 0];
     this.locked = true;
     this.lockedZone = _roomId + 3;
+    this.hasHealthBar = _hasHealthBar === undefined ? true:_hasHealthBar;
+    if(this.hasHealthBar){
+      try{
+        this.healthBar = new EnemyHealthBar(_pos, _health, (this.animationSet.size[1]*0.5+0.125)/baseResolution[1], this.animationSet.size[0] /baseResolution[0]);
+      }
+      catch {
+        this.healthBar = new EnemyHealthBar(_pos, _health, this.radius+0.25, this.radius);
+      }
+    }
   }
 
   operate(player, enemies, time) {

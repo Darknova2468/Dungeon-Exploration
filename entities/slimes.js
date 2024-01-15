@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 class Slime extends Enemy {
-  constructor(_pos, _roomId, _level, _collisionMap, _textureSet = textures.slimeTileSet, _animationSpeed, _scaleFactor) {
-    super(_pos, "Slime", _roomId, _level, Math.floor(4*Math.log10(_level+1)), 0, 1.5, 8, 0.5, Math.floor(4*Math.log10(_level+1)), "Bludgeoning", 0.5, 600, _collisionMap, _textureSet, _animationSpeed, _scaleFactor);
-    if(this.level >= 10) {
+  constructor(_pos, _roomId, _level, _collisionMap, _textureSet = textures.slimeTileSet, _animationSpeed, _scaleFactor, _hasHealthBar) {
+    super(_pos, "Slime", _roomId, _level, Math.floor(4*Math.log10(_level+1)), 0, 1.5, 8, 0.5, Math.floor(4*Math.log10(_level+1)), "Bludgeoning", 0.5, 600, _collisionMap, _textureSet, _animationSpeed, _scaleFactor, _hasHealthBar);
+    if(this.level >= 10) {  
       this.radius = 0.6;
       this.animationSet = textures.largeSlimeTileSet;
       this.animationSpeed = 6;
@@ -265,7 +265,7 @@ function createSlimes(slimeDifficulty) {
 
 class SlimeBoss extends Slime {
   constructor(_pos, _roomId, _collisionMap, _enemies) {
-    super(_pos, _roomId, 100, _collisionMap, textures.slimeBossTileSet, 6, 1.5);
+    super(_pos, _roomId, 100, _collisionMap, textures.slimeBossTileSet, 6, 1.5, false);
     this.radius = 1.5 ;
     this.animationSet = textures.slimeBossTileSet;
     this.attackRange = 2;
