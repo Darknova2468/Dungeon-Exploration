@@ -144,8 +144,8 @@ function draw() {
   text("fps: " + Math.floor(frameRate()), width-height*3/20, height*6/20);
   textSize(20);
   textAlign(LEFT, TOP);
-  text("On Floor " + myDungeon.floorNumber, height*1/20, height*2/10);
-  text("Money in wallet: " + player.money, height*1/20, height*2.5/10);
+  text("On Floor " + myDungeon.floorNumber, height*1/20, height*8.5/10);
+  text("Money in wallet: " + player.money, height*1/20, height*9/10);
   player.inventory.display();
 }
 
