@@ -45,6 +45,21 @@ class AnimateSet{
   }
 }
 
+class DyanmicTileSet{
+  constructor(_path, _sizeArray, _height){
+    this.size = _sizeArray;
+    this.assets = [];
+    loadImage(_path, (tileSet) => {
+      let x = 0;
+      for(let i=0; i<_sizeArray.length; i++){
+        let newAsset = tileSet.get(x, 0, _sizeArray[i], _height);
+        x += _sizeArray[i];
+        this.assets.push(newAsset);
+      }
+    });
+  }
+}
+
 class Scene {
   constructor(_map, _scale, _tileSet){
     this.myMap = this.textureMap(_map);

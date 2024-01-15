@@ -41,7 +41,7 @@ class InventoryCell {
     else {
       this.graphics.fill(150);
     }
-    this.graphics.stroke(0)
+    this.graphics.stroke(0);
     this.graphics.rect(this.pos[0], this.pos[1], this.size, this.size);
     if(this.holding === null) {
       return;
@@ -200,7 +200,7 @@ class Lighting {
     }
     this.updateTimer = millis();
     if(LIGHTINGDEBUG) {
-      console.log("Updating lighting.")
+      console.log("Updating lighting.");
     }
     let playerPos = dungeonToScreenPos(player.pos, screenCenter, screenSize);
     if(this.light === light && compareCols(ambience, this.ambience)
@@ -223,19 +223,7 @@ class Lighting {
       img.loadPixels();
       let xScale = this.screenSize[0] / width;
       let yScale = this.screenSize[1] / height;
-      // for(let i = 0; i < width * height; i++) {
-      //   let x = i % width;
-      //   let y = Math.floor(i / width);
-      //   let d = dist(0, 0, (this.playerPos[0] - x)*xScale, (this.playerPos[1] - y)*yScale);
-      //   img.pixels[4*i] = 0;
-      //   img.pixels[4*i+1] = 0;
-      //   img.pixels[4*i+2] = 0;
-      //   img.pixels[4*i+3] = Math.min(40*d, 255);
-      //   // if(i === 0) {
-      //   //   console.log(pixels[3]);
-      //   // }
-      // }
-      let lightScale = 120 / Math.pow(this.light, 1.5);
+      let lightScale = 1.5 / Math.pow(this.light, 1.5);
       let i = 0;
       let rVal = red(this.ambience);
       let gVal = green(this.ambience);
@@ -243,7 +231,7 @@ class Lighting {
       let aVal = alpha(this.ambience);
       for(let y = 0; y < height; y++) {
         for(let x = 0; x < width; x++) {
-          let d = ((this.playerPos[0] - x)*xScale) * ((this.playerPos[0] - x)*xScale) +  ((this.playerPos[1] - y)*yScale) * ((this.playerPos[1] - y)*yScale);
+          let d = (this.playerPos[0] - x)*xScale * ((this.playerPos[0] - x)*xScale) +  (this.playerPos[1] - y)*yScale * ((this.playerPos[1] - y)*yScale);
           img.pixels[i] = rVal;
           img.pixels[i+1] = gVal;
           img.pixels[i+2] = bVal;
@@ -344,6 +332,40 @@ class Maps {
     let scaleX = width/this.map.length > height/this.map[0].length ? this.map.length*(height-2*padding)/this.map[0].length:width-2*padding;
     let scaleY = this.map.length*scaleX/this.map[0].length;
     image(img, width/2, height/2, scaleX, scaleY);
+  }
+}
+
+class Damage{
+  constructor(_pos, _num){
+    this.pos = _pos;
+    this.time = millis();
+    this.timer = 500;
+    this.textureSet = textures.numbers;
+    this.isAlive = true;
+    let num = round(_num).toString().split("");
+    this.img = createImage(this.textureSet.size[0]*num.length, this.textureSet.size[1]);
+    this.img.loadPixels();
+    for(let i=0; i<num.length; i++){
+      this.img.copy(
+        this.textureSet.assets[parseInt(num[i])], 0, 0, this.textureSet.size[0], this.textureSet.size[1],
+        i*this.textureSet.size[0], 0, this.textureSet.size[0], this.textureSet.size[1]
+      );
+    }
+    this.img.updatePixels();
+  }
+  operate(){
+    if(millis()-this.time > this.timer){
+      this.isAlive = false;
+    }
+  }
+  display(screenCenter, screenSize){
+    let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
+    let posScaleX = width/screenSize[0];
+    let posScaleY = height/screenSize[1];
+    x += screenSize[0]*0.5;
+    y += screenSize[1]*0.5;
+    image(this.img, x*posScaleX, y*posScaleY, this.img.width*2, this.img.height*2);
+    circle(x*posScaleX, y*posScaleX, 10);
   }
 }
 
