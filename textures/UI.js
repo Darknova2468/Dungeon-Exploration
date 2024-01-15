@@ -7,13 +7,15 @@ const xSize = 150; // Number of squares across
 const ySize = 75; // Number of squares down
 
 class Menu {
-  constructor(_x = width * 2 / 7, _y = height * 3 / 7, _marginCol = color(100, 50, 50, 255), _fillCol = color(70, 70, 70, 255), _defaultTextCol = color("white"), _highlightedTextCol = color(255, 150, 150)) {
+  constructor(_name, _text, _commands, _priority, _x = width * 2 / 7, _y = height * 3 / 7, _marginCol = color(100, 50, 50, 255), _fillCol = color(70, 70, 70, 255), _defaultTextCol = color("white"), _highlightedTextCol = color(255, 150, 150)) {
     this.graphics = createGraphics(550, 375);
     this.graphics.imageMode(CENTER);
     this.toDisplay = true;
-    this.name = "Test NPC";
-    this.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis pharetra dolor. Morbi massa massa, gravida tristique interdum eu, egestas eget arcu. Fusce rhoncus mi sit amet justo hendrerit sollicitudin. In porttitor turpis in nunc rhoncus, eget maximus erat laoreet. Fusce porttitor, erat ac pulvinar elementum, erat felis finibus metus, et scelerisque nibh elit ac dui. Morbi id varius dui. Donec venenatis tempus nisi in efficitur. Morbi justo urna, convallis nec purus sit amet, commodo facilisis lectus. Fusce maximus bibendum risus, nec ultrices nisi. Fusce ac nibh quis orci vestibulum aliquam. Duis sit amet scelerisque erat. Ut at quam eget.";
-    this.commands = ["> Resume game", "> Change key bindings (intentionally disabled)"];
+    this.priority = _priority ?? -1;
+    this.name = _name ?? "";
+    this.text = _text ?? "";
+    // this.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis pharetra dolor. Morbi massa massa, gravida tristique interdum eu, egestas eget arcu. Fusce rhoncus mi sit amet justo hendrerit sollicitudin. In porttitor turpis in nunc rhoncus, eget maximus erat laoreet. Fusce porttitor, erat ac pulvinar elementum, erat felis finibus metus, et scelerisque nibh elit ac dui. Morbi id varius dui. Donec venenatis tempus nisi in efficitur. Morbi justo urna, convallis nec purus sit amet, commodo facilisis lectus. Fusce maximus bibendum risus, nec ultrices nisi. Fusce ac nibh quis orci vestibulum aliquam. Duis sit amet scelerisque erat. Ut at quam eget.";
+    this.commands = _commands ?? [];
     this.chosenCommand = -1;
     this.padding = 10;
     this.x = _x;
@@ -78,19 +80,37 @@ class Menu {
     image(this.graphics, this.x, this.y);
   }
 
-  applyCommand() {
-    //
+  applyCommand() {}
+}
+
+class PauseMenu extends Menu {
+  constructor() {
+    super("Pause Menu", "The game is paused. Continue?", ["> Resume Game"], 0);
   }
 }
 
 class MenuManager {
   constructor() {
-    this.escapeMenu = new Menu();
-    this.paused = true;
+    this.menus = new Heap([new PauseMenu()], (a, b) => a.priority - b.priority > 0);
+    this.pauseCountDown = 1; // Allow for sufficient frames before pause can work
+    this.paused = false;
   }
 
   operate() {
-    
+    while(this.menus.heap.length > 1 && !this.menus.heap[1].toDisplay) {
+      this.menus.pop();
+    }
+    if(this.menus.heap.length <= 1 || this.pauseCountDown > 0) {
+      this.paused = false;
+      if(this.pauseCountDown > 0) {
+        this.pauseCountDown -= 1;
+      }
+      return;
+    }
+    this.paused = true;
+    let activeMenu = this.menus.heap[1];
+    activeMenu.update();
+    activeMenu.display();
   }
 }
 

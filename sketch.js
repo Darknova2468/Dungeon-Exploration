@@ -71,7 +71,7 @@ function setup() {
   player = new Player(structuredClone(myDungeon.playerPos), myDungeon.minimap);
   healthBar = new HealthBar(player.health, textures.healthBarTileSet, [50, 50], 2.5);
   lighting = new Lighting();
-  menu = new Menu();
+  menuManager = new MenuManager();
   enterDungeonMap(myDungeon);
 }
 
@@ -79,6 +79,7 @@ let gameActive = true;
 let deathTimer = 0;
 const deathTime = 2000;
 let thisDeathMessage;
+let menuManager;
 
 function draw() {
   if(!gameActive) {
@@ -114,42 +115,45 @@ function draw() {
     gameActive = false;
     return;
   }
-  background(0);
-  let dt = 1 / frameRate();
-  if(dt > 0.2) {
-    dt = 0.2;
-  }
-  player.move([keyIsDown(68)-keyIsDown(65) ,keyIsDown(83)-keyIsDown(87)], dt, keyIsDown(16));
-  player.attack(myDungeon, dt, keyIsDown(16));
-  myDungeon.update(player, dt);
-  myBackground.pos = structuredClone(player.pos);  
-  let images = myBackground.generateScene();
-  images.forEach((img, index) => {
-    if(index === 1){
-      tint(myBackground.fade);
+  else {
+    let dt = 1 / frameRate();
+    if(dt > 0.2) {
+      dt = 0.2;
     }
-    image(img, width/2, height/2, width, height);
-    tint(255);
-  });
-  myDungeon.display(myBackground.pos, myBackground.scale, [16, 16]);
-  player.display(myBackground.pos, myBackground.scale, [16, 16]);
-  lighting.update(player.vision, myDungeon.ambience, myBackground.pos, myBackground.scale, player);
-  if(keyIsDown(20) || showMap){
-    minimap.displayMap(player.pos);
+    if(!menuManager.paused) {
+      player.move([keyIsDown(68)-keyIsDown(65) ,keyIsDown(83)-keyIsDown(87)], dt, keyIsDown(16));
+      player.attack(myDungeon, dt, keyIsDown(16));
+      myDungeon.update(player, dt);
+    }
+    background(0);
+    myBackground.pos = structuredClone(player.pos);  
+    let images = myBackground.generateScene();
+    images.forEach((img, index) => {
+      if(index === 1){
+        tint(myBackground.fade);
+      }
+      image(img, width/2, height/2, width, height);
+      tint(255);
+    });
+    myDungeon.display(myBackground.pos, myBackground.scale, [16, 16]);
+    player.display(myBackground.pos, myBackground.scale, [16, 16]);
+    lighting.update(player.vision, myDungeon.ambience, myBackground.pos, myBackground.scale, player);
+    if(keyIsDown(20) || showMap){
+      minimap.displayMap(player.pos);
+    }
+    minimap.displayMinimap(player.pos);
+    healthBar.display(player.health);
+    textAlign(CENTER, CENTER);
+    fill("white");
+    textSize(12);
+    text("fps: " + Math.floor(frameRate()), width-height*3/20, height*6/20);
+    textSize(20);
+    textAlign(LEFT, TOP);
+    text("On Floor " + myDungeon.floorNumber, height*1/20, height*8.5/10);
+    text("Money in wallet: " + player.money, height*1/20, height*9/10);
+    player.inventory.display();
   }
-  minimap.displayMinimap(player.pos);
-  healthBar.display(player.health);
-  textAlign(CENTER, CENTER);
-  fill("white");
-  textSize(12);
-  text("fps: " + Math.floor(frameRate()), width-height*3/20, height*6/20);
-  textSize(20);
-  textAlign(LEFT, TOP);
-  menu.update();
-  menu.display();
-  text("On Floor " + myDungeon.floorNumber, height*1/20, height*8.5/10);
-  text("Money in wallet: " + player.money, height*1/20, height*9/10);
-  player.inventory.display();
+  menuManager.operate();
 }
 
 function mouseWheel(event) { 
@@ -174,6 +178,17 @@ function keyPressed() {
   }
   if(keyCode === 69) {
     player.inventory.shown = !player.inventory.shown;
+  }
+  if(keyCode === 27) {
+    if(player.inventory.shown) {
+      player.inventory.shown = false;
+    }
+    else if(menuManager.paused) {
+      menuManager.menus = new Heap([]);
+    }
+    else {
+      menuManager.menus.push(new PauseMenu());
+    }
   }
 }
 
