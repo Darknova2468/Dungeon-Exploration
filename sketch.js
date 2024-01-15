@@ -53,7 +53,6 @@ function preload() {
     shortBowTileSet: new TileSet("textures/crossBow.png", [17, 18]),
     longBowTileSet: new TileSet("textures/bow.png", [23, 18]),
     arrowTileSet: new AnimateSet("textures/arrow.png", [15, 15]),
-    inactivePortalTileSet: "dimgrey",
     activePortalTileSet: new AnimateSet("textures/portal.png", [40, 40]),
     numbers: new TileSet("textures/numbers.png", [6, 7]),  
     coinTileSet: new TileSet("textures/coin.png", [11, 11]),
