@@ -223,7 +223,7 @@ class Lighting {
       img.loadPixels();
       let xScale = this.screenSize[0] / width;
       let yScale = this.screenSize[1] / height;
-      let lightScale = 1.5 / Math.pow(this.light, 1.5);
+      let lightScale = 120 / Math.pow(this.light, 1.5);
       let i = 0;
       let rVal = red(this.ambience);
       let gVal = green(this.ambience);
@@ -231,7 +231,7 @@ class Lighting {
       let aVal = alpha(this.ambience);
       for(let y = 0; y < height; y++) {
         for(let x = 0; x < width; x++) {
-          let d = (this.playerPos[0] - x)*xScale * ((this.playerPos[0] - x)*xScale) +  (this.playerPos[1] - y)*yScale * ((this.playerPos[1] - y)*yScale);
+          let d = (this.playerPos[0] - x)*xScale * ((this.playerPos[0] - x)*xScale) + (this.playerPos[1] - y)*yScale * ((this.playerPos[1] - y)*yScale);
           img.pixels[i] = rVal;
           img.pixels[i+1] = gVal;
           img.pixels[i+2] = bVal;
