@@ -94,7 +94,9 @@ class PauseMenu extends Menu {
 
 class UpgradeMenu extends Menu {
   constructor() {
-    super("Blacksmith", "Buy and upgrade weapons with me!", ["> Buy / Upgrade Dagger", "> Buy / Upgrade Sword", "> Buy / Upgrade Axe", "> Buy / Upgrade Spear", "> Buy / Upgrade Shortbow", "> Buy / Upgrade Longbow"], 100);
+    super("Blacksmith", "Buy and upgrade weapons with me!", ["> Buy / Upgrade Dagger", 
+      "> Buy / Upgrade Sword", "> Buy / Upgrade Axe", "> Buy / Upgrade Spear",
+      "> Buy / Upgrade Shortbow", "> Buy / Upgrade Longbow"], 100);
   }
 }
 

@@ -1,7 +1,8 @@
 /* eslint-disable no-undef */
 
 class Item {
-  constructor(_wielder, _animationSet, _tileSet, _scaleFactor) {
+  constructor(_name, _wielder, _animationSet, _tileSet, _scaleFactor) {
+    this.name = _name;
     this.wielder = _wielder;
     this.held = true;
     this.animationSet = _animationSet;
@@ -25,7 +26,7 @@ class Item {
 }
 
 class DroppedItem extends Entity {
-  constructor(_pos, _tileSet, _collisionMap, ) {
+  constructor(_pos, _tileSet, _collisionMap) {
     super(_pos, 1, 0, 0, _collisionMap);
     this.tileSet = _tileSet;
     this.invincible = true;
@@ -68,7 +69,7 @@ class DroppedItem extends Entity {
 
 class TestItem extends Item {
   constructor() {
-    super(null, "white", "black");
+    super("test", null, "white", "black");
   }
 }
 

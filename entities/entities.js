@@ -277,8 +277,10 @@ class Enemy extends Entity {
     super.damage(amountDamage, damageType);
     if(!this.isAlive) {
       let netWorth = Math.floor(random(this.level));
-      if(netWorth > 0) {
-        myDungeon.otherEntities.push(new Coin(structuredClone(this.pos), netWorth, this.collisionMap));
+      while(netWorth > 0) {
+        let amt = min(5, netWorth);
+        myDungeon.otherEntities.push(new Coin(structuredClone(this.pos), amt, this.collisionMap));
+        netWorth -= amt;
       }
     }
   }
