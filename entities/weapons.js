@@ -1,6 +1,13 @@
 /* eslint-disable no-undef */
 
 const WEAPONDEBUG = 0;
+const WEAPONS = ["Dagger", "Sword", "Axe", "Spear", "Shortbow", "Longbow"];
+const WEAPONCOSTS = [[0, 100, 200, 400, 800],
+                     [800, 100, 300, 1000, 2000],
+                     [800, 100, 300, 1000, 2000],
+                     [800, 100, 300, 1000, 2000],
+                     [800, 100, 300, 1000, 2000],
+                     [800, 100, 300, 1000, 2000]];
 
 class Weapon extends Item {
   constructor(name, wielder, damage, range, cooldown, animationSet, tileSet, scaleFactor) {
@@ -9,7 +16,7 @@ class Weapon extends Item {
     this.range = range;
     this.cooldown = cooldown;
     this.attackTimer = 0;
-    this.tier = 3;
+    this.tier = 1;
     this.stackable = false;
   }
 
@@ -400,3 +407,5 @@ class Arrow extends Projectile {
     this.animationNum[2] = _dir[1] < 0  ? 0:1;
   }
 }
+
+const WEAPONCLASSES = [Dagger, Sword, Axe, Spear, ShortBow, LongBow];

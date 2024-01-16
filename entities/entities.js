@@ -290,17 +290,18 @@ class Player extends Entity {
   constructor(_pos, _collisionMap){
     super(_pos, 10, 5, 3.5, _collisionMap, textures.playerTileSet);
     // TEMPORARY
-    let tmpWeapons = [new Dagger(this), new Sword(this), new Axe(this), new Spear(this), new ShortBow(this), new LongBow(this)];
+    // let tmpWeapons = [new Dagger(this), new Sword(this), new Axe(this), new Spear(this), new ShortBow(this), new LongBow(this)];
     // this.weapons = [new Dagger(this), new Sword(this), new Axe(this), new Spear(this), new ShortBow(this), new LongBow(this)];
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
     this.holdingIndex = 1;
-    this.money = 0;
+    this.money = 1000000;
     this.inventory = new Inventory(this);
-    for(let i = 0; i < 6; i++) {
-      this.inventory.storage[i].holding = tmpWeapons[i];
-    }
+    this.inventory.storage[0].holding = new Dagger(this);
+    // for(let i = 0; i < 6; i++) {
+    //   this.inventory.storage[i].holding = tmpWeapons[i];
+    // }
     this.updateHolding();
     
     // Attack/use cooldowns

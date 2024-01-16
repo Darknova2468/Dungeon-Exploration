@@ -34,7 +34,7 @@ class Menu {
 
   update() {
     for(let i = 0; i < this.commands.length; i++) {
-      if(this.isHovering(i) && mouseIsPressed) {
+      if(this.isHovering(i)) {
         this.chosenCommand = i;
       }
     }
@@ -92,11 +92,80 @@ class PauseMenu extends Menu {
   }
 }
 
+class SpecificUpgradeMenu extends Menu {
+  constructor(_index, _weapon) {
+    super("Blacksmith > Buy / Upgrade ".concat(_weapon), "Querying ".concat(_weapon.concat("...")), ["> Back to Upgrade Menu"]);
+    this.index = _index;
+    this.weapon = _weapon;
+    this.mode = 0;
+    this.costs = 0;
+    for(let cell of player.inventory.storage) {
+      if(cell.holding !== null && cell.holding.name === this.weapon) {
+        this.mode = cell.holding.tier;
+      }
+    }
+
+    // See weapons.js for specific costs
+    if(this.mode >= 5) {
+      this.text = "You've already reached tier 5, I don't have the power to upgrade it any further!"
+    }
+    else {
+      this.costs = WEAPONCOSTS[this.index][this.mode];
+      if(this.mode === 0) {
+        this.text = "Want a ".concat(_weapon.concat(" for ".concat(this.costs.toString().concat(" coins?"))));
+        this.commands.push("> Buy weapon");
+      }
+      else {
+        this.text = "Upgrade this ".concat(_weapon.concat(" to tier ".concat((this.mode + 1).toString().concat(" for ".concat(this.costs.toString().concat(" coins!"))))));
+        this.commands.push("> Upgrade weapon");
+      }
+    }
+  }
+
+  applyCommand(cmd) {
+    if(cmd === 0) {
+      menuManager.menus.push(new UpgradeMenu());
+    }
+    else {
+      if(player.money < this.costs) {
+        this.text = "You don't have enough coins!";
+        return;
+      }
+      else if(this.mode === 0) {
+        if(player.inventory.attemptCollect(new WEAPONCLASSES[this.index](null))) {
+          player.money -= this.costs;
+        }
+      }
+      else {
+        let found = false;
+        for(let cell of player.inventory.storage) {
+          if(cell.holding !== null && cell.holding.name === this.weapon) {
+            cell.holding.tier += 1;
+            found = true;
+            break;
+          }
+        }
+        if(found) {
+          player.money -= this.costs;
+        }
+      }
+      menuManager.menus.push(new SpecificUpgradeMenu(this.index, this.weapon));
+    }
+    
+    super.applyCommand(cmd);
+  }
+}
+
 class UpgradeMenu extends Menu {
   constructor() {
     super("Blacksmith", "Buy and upgrade weapons with me!", ["> Buy / Upgrade Dagger", 
       "> Buy / Upgrade Sword", "> Buy / Upgrade Axe", "> Buy / Upgrade Spear",
       "> Buy / Upgrade Shortbow", "> Buy / Upgrade Longbow"], 100);
+  }
+
+  applyCommand(cmd) {
+    menuManager.menus.push(new SpecificUpgradeMenu(cmd, WEAPONS[cmd]));
+    super.applyCommand(cmd);
   }
 }
 
@@ -105,6 +174,10 @@ class MenuManager {
     this.menus = new Heap([new UpgradeMenu()], (a, b) => a.priority - b.priority > 0);
     this.pauseCountDown = 1; // Allow for sufficient frames before pause can work
     this.paused = false;
+  }
+
+  triggerUpdate() {
+    this.menus.heap[1].update();
   }
 
   operate() {
@@ -119,9 +192,7 @@ class MenuManager {
       return;
     }
     this.paused = true;
-    let activeMenu = this.menus.heap[1];
-    activeMenu.update();
-    activeMenu.display();
+    this.menus.heap[1].display();
   }
 }
 

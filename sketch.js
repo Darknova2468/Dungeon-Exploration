@@ -194,6 +194,9 @@ function keyPressed() {
 
 
 function mousePressed() {
+  if(menuManager.paused) {
+    menuManager.triggerUpdate();
+  }
   if(player.inventory.shown) {
     player.inventory.update();
   }
