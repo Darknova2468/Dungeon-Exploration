@@ -54,9 +54,9 @@ function preload() {
     longBowTileSet: new TileSet("textures/bow.png", [23, 18]),
     arrowTileSet: new AnimateSet("textures/arrow.png", [15, 15]),
     portalTileSet: new AnimateSet("textures/portal.png", [40, 40]),
-    // inactivePortalTileSet: "gray", // Temporary: to be removed once portals actually work
     numbers: new TileSet("textures/numbers.png", [6, 7]),  
     coinTileSet: new TileSet("textures/coin.png", [11, 11]),
+    blacksmithTileSet: "black",
   };
 }
 

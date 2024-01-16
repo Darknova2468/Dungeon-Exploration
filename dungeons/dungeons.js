@@ -148,13 +148,15 @@ class DungeonMap {
   }
 
   constructGuildHall() {
-    this.width = Math.floor(random(15, 20));
-    this.height = Math.floor(random(6, 10));
+    this.width = 15;
+    this.height = 12;
+    this.wallDepth = 4;
     this.dungeon = [];
     this.ambience = color(0, 0, 0, 0);
     this.playerPos = [this.width / 2, this.height / 2];
     this.minimap = generateEmptyGrid(this.width, this.height);
-    for(let i = 1; i < this.height - 1; i++) {
+    // Main hall
+    for(let i = this.wallDepth; i < this.height - this.wallDepth; i++) {
       for(let j = 1; j < this.width - 1; j++) {
         this.minimap[i][j] = 1;
       }
@@ -162,6 +164,21 @@ class DungeonMap {
     let portal = new Portal([this.width - 3, this.height / 2], 1.5, this.floorNumber + 1, this.minimap, textures.portalTileSet);
     portal.activate();
     this.otherEntities.push(portal);
+
+    // Blacksmith
+    for(let i = 1; i < this.wallDepth; i++) {
+      for(let j = 4; j < 8; j++) {
+        this.minimap[i][j] = 1;
+      }
+    }
+    this.otherEntities.push(new Blacksmith([6, 2], this.minimap));
+
+    // Empty shop (add something here)
+    for(let i = this.height - this.wallDepth; i < this.height - 1; i++) {
+      for(let j = 4; j < 8; j++) {
+        this.minimap[i][j] = 1;
+      }
+    }
   }
 
   update(player, time){
