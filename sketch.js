@@ -67,7 +67,7 @@ function setup() {
   frameRate(30);
   noStroke();
   noSmooth();
-  myDungeon = createDungeonMap(0);
+  myDungeon = createDungeonMap(12);
   player = new Player(structuredClone(myDungeon.playerPos), myDungeon.minimap);
   healthBar = new HealthBar(player.health, textures.healthBarTileSet, [50, 50], 2.5);
   lighting = new Lighting();
@@ -184,7 +184,7 @@ function keyPressed() {
       player.inventory.shown = false;
     }
     else if(menuManager.paused) {
-      menuManager.menus = new Heap([]);
+      menuManager.menus = new Heap([], (a, b) => a.priority - b.priority > 0);
     }
     else {
       menuManager.menus.push(new PauseMenu());

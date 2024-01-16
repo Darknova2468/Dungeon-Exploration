@@ -223,9 +223,39 @@ class Enemy extends Entity {
         this.healthBar = new EnemyHealthBar(_pos, _health, this.radius+0.25, this.radius);
       }
     }
+
+    // Knockback variables
+    this.knockback = false;
+    this.shoveTimer = millis();
+    this.shoveTime = 500;
+    this.shoveSpeed = 2;
+    this.shoveDir = [1, 0];
+  }
+
+  beginShove(player) {
+    if(this.knockback) {
+      this.knockback = false;
+      this.shoveTimer = millis() + this.shoveTime;
+      this.shoveDir = scaleVector(this.pos, this.shoveSpeed, player.pos);
+    }
+  }
+
+  shove(time) {
+    let [dx, dy] = scaleVector(this.shoveDir, this.shoveSpeed * time);
+    if(this.canMoveTo(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)])){
+      this.pos[0] += dx;
+    }
+    if(this.canMoveTo(this.collisionMap[floor(this.pos[1]+dy)][floor(this.pos[0])])){
+      this.pos[1] += dy;
+    }
   }
 
   operate(player, enemies, time) {
+    this.beginShove(player);
+    if(this.shoveTimer > millis()) {
+      this.shove(time);
+      return;
+    }
     let distance = dist(player.pos[0], player.pos[1], this.pos[0], this.pos[1]);
     let pursuitVector = [player.pos[0] - this.pos[0], player.pos[1] - this.pos[1]];
     if(distance > this.detectionRange) {
@@ -275,6 +305,9 @@ class Enemy extends Entity {
 
   damage(amountDamage, damageType) {
     super.damage(amountDamage, damageType);
+    if(!this.invincible && ["Piercing", "Slashing", "Bludgeoning"].includes(damageType)) {
+      this.knockback = true;
+    }
     if(!this.isAlive) {
       let netWorth = Math.floor(random(this.level));
       while(netWorth > 0) {
@@ -295,8 +328,8 @@ class Player extends Entity {
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
-    this.holdingIndex = 1;
-    this.money = 1000000;
+    this.holdingIndex = 0;
+    this.money = 10000;
     this.inventory = new Inventory(this);
     this.inventory.storage[0].holding = new Dagger(this);
     // for(let i = 0; i < 6; i++) {

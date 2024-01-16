@@ -359,6 +359,7 @@ class SlimeTentacle extends Slime {
     this.slamCooldown = 400 + random(1, 100);
     this.attackTimer = 0;
     this.maxSlimeSpawn = 5;
+    this.shoveTime = 0;
   }
 
   initiateSlamAttack(pos) {

@@ -94,7 +94,7 @@ class PauseMenu extends Menu {
 
 class SpecificUpgradeMenu extends Menu {
   constructor(_index, _weapon) {
-    super("Blacksmith > Buy / Upgrade ".concat(_weapon), "Querying ".concat(_weapon.concat("...")), ["> Back to Upgrade Menu"]);
+    super("Blacksmith > Buy / Upgrade ".concat(_weapon), "Querying ".concat(_weapon.concat("...")), ["> Back to Upgrade Menu"], 105);
     this.index = _index;
     this.weapon = _weapon;
     this.mode = 0;

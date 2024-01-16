@@ -5,12 +5,13 @@ class Zombie extends Enemy {
     super(_pos, "Zombie", _roomId, _level, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, 10, 1, 2, "Bludgeoning", 1.2, 700, _collisionMap, textures.zombieTileSet);
     this.radius = 0.4;
 
-    // Zombies stop when attacking and bite if close
+    // Zombies stop when attacking and bite if close; also quite heavy
     this.isMoving = 0;
     this.strafeMultiplier = -1;
     this.biteRadius = 0.7;
     this.biteDamage = 2;
     this.biteDamageType = "Piercing";
+    this.shoveTime = 200;
   }
   combat(player, enemies, time, distance, pursuitVector) {
     if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
