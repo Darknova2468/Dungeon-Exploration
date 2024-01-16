@@ -99,10 +99,8 @@ class Entity {
 }
 
 class Portal extends Entity {
-  constructor(_pos, _radius, _target, _collisionMap, _textureSet, _activeTextureSet) {
+  constructor(_pos, _radius, _target, _collisionMap, _textureSet) {
     super(_pos, 1, 0, 0, _collisionMap, _textureSet, 3, 2);
-    this.inactiveAnimationSet = this.animationSet;
-    this.activeAnimationSet = _activeTextureSet;
     this.invincible = true;
     this.target = _target; // Floor available to go to once activated
     this.radius = _radius;
@@ -111,7 +109,8 @@ class Portal extends Entity {
 
   activate() {
     this.active = true;
-    this.animationSet = this.activeAnimationSet;
+    // this.animationSet = this.activeAnimationSet;
+    this.animationNum[0] = 1;
   }
 
   operate(player, time) {

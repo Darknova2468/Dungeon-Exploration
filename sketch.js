@@ -53,8 +53,8 @@ function preload() {
     shortBowTileSet: new TileSet("textures/crossBow.png", [17, 18]),
     longBowTileSet: new TileSet("textures/bow.png", [23, 18]),
     arrowTileSet: new AnimateSet("textures/arrow.png", [15, 15]),
-    activePortalTileSet: new AnimateSet("textures/portal.png", [40, 40]),
-    inactivePortalTileSet: "gray", // Temporary: to be removed once portals actually work
+    portalTileSet: new AnimateSet("textures/portal.png", [40, 40]),
+    // inactivePortalTileSet: "gray", // Temporary: to be removed once portals actually work
     numbers: new TileSet("textures/numbers.png", [6, 7]),  
     coinTileSet: new TileSet("textures/coin.png", [11, 11]),
   };
@@ -67,7 +67,7 @@ function setup() {
   frameRate(30);
   noStroke();
   noSmooth();
-  myDungeon = createDungeonMap(12);
+  myDungeon = createDungeonMap(0);
   player = new Player(structuredClone(myDungeon.playerPos), myDungeon.minimap);
   healthBar = new HealthBar(player.health, textures.healthBarTileSet, [50, 50], 2.5);
   lighting = new Lighting();

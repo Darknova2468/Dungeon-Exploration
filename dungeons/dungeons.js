@@ -159,7 +159,7 @@ class DungeonMap {
         this.minimap[i][j] = 1;
       }
     }
-    let portal = new Portal([this.width - 3, this.height / 2], 1.5, this.floorNumber + 1, this.minimap, textures.inactivePortalTileSet, textures.activePortalTileSet);
+    let portal = new Portal([this.width - 3, this.height / 2], 1.5, this.floorNumber + 1, this.minimap, textures.portalTileSet);
     portal.activate();
     this.otherEntities.push(portal);
   }
@@ -385,7 +385,7 @@ class Room {
       return;
     }
     console.log("[Portal] Portal spawned.");
-    this.portal = new Portal(this.pos, 1.5, this.dungeonMap.floorNumber + 1, this.dungeonMap.minimap, textures.inactivePortalTileSet, textures.activePortalTileSet);
+    this.portal = new Portal(this.pos, 1.5, this.dungeonMap.floorNumber + 1, this.dungeonMap.minimap, textures.portalTileSet);
     this.dungeonMap.otherEntities.push(this.portal);
   }
 
