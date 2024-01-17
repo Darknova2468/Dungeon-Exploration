@@ -10,10 +10,10 @@ const WEAPONCOSTS = [[0, 10, 20, 40, 80],
                      [80, 100, 300, 1000, 2000]];
 const WEAPONDAMAGE = [[1, 3, 7, 15, 21],
                       [2, 5, 10, 19, 26],
-                      [3, 7, 13, 23, 31],
+                      [3, 7, 15, 29, 40],
                       [2, 6, 12, 21, 29],
-                      [1, 2, 6, 13, 18],
-                      [2, 6, 12, 21, 29], [100]];
+                      [1, 2, 4, 7, 10],
+                      [2, 6, 12, 21, 29], [10000000]];
 
 class Weapon extends Item {
   constructor(name, id, wielder, range, cooldown, animationSet, tileSet, scaleFactor) {
@@ -153,6 +153,11 @@ class Dagger extends SweepWeapon {
     super("Dagger", 0, wielder, 0.35, 1, 400, Math.PI / 4, 150, 0, textures.daggerAnimationSet, textures.daggerTileSet);
     this.tileScaleFactor = 2;
   }
+
+  attack(enemies, direction, time, isRolling) {
+    this.cooldown = 500 - 60 * this.tier;
+    super.attack(enemies, direction, time, isRolling);
+  }
 }
 
 class Sword extends SweepWeapon {
@@ -160,12 +165,23 @@ class Sword extends SweepWeapon {
     super("Sword", 1, wielder, 0.4, 1.5, 700, Math.PI / 3, 300, 0.5, textures.swordAnimationSet, textures.swordTileSet);
     this.tileScaleFactor = 2;
   }
+
+  attack(enemies, direction, time, isRolling) {
+    this.cooldown = 800 - 60 * this.tier;
+    this.cleaveFactor = 0.3 + 0.06 * this.tier;
+    super.attack(enemies, direction, time, isRolling);
+  }
 }
 
 class Axe extends SweepWeapon {
   constructor(wielder) {
     super("Axe", 2, wielder, 0.825, 1.25, 1600, Math.PI / 3, 400, 0.6, textures.axeAnimationSet, textures.axeTileSet);
     this.tileScaleFactor = 2;
+  }
+
+  attack(enemies, direction, time, isRolling) {
+    this.cleaveFactor = 0.4 + 0.12 * this.tier;
+    super.attack(enemies, direction, time, isRolling);
   }
 }
 
@@ -289,8 +305,14 @@ class ThrustWeapon extends Weapon {
 
 class Spear extends ThrustWeapon {
   constructor(wielder) {
-    super("Spear", 2, wielder, 1.5, 2.3, 600, 200, 0.3, textures.spearAnimationSet, textures.spearTileSet);
+    super("Spear", 2, wielder, 1.5, 2.3, 600, 100, 0.3, textures.spearAnimationSet, textures.spearTileSet);
     this.tileScaleFactor = 1.5;
+  }
+
+  attack(enemies, direction, time, isRolling) {
+    this.cooldown = 800 - 60 * this.tier;
+    this.pierceFactor = 0.3 + 0.1 * this.tier;
+    super.attack(enemies, direction, time, isRolling);
   }
 }
 
@@ -400,6 +422,7 @@ class ShortBow extends ChargedRangedWeapon {
   }
   
   attack(enemies, direction, time, isRolling) {
+    this.chargeTime = 1000 - 140 * this.tier;
     super.attack(enemies, direction, time, isRolling);
     if(mouseIsPressed && millis() - this.chargeTimer > this.chargeTime && !isRolling && this.charging) {
       // Auto-fire
