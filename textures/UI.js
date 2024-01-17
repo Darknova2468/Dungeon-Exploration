@@ -89,9 +89,22 @@ class Menu {
   }
 }
 
+const PAUSEMENUTEXT = `The game is paused.
+
+Controls:
+WASD - Move
+Shift - Roll (move faster while moving with WASD)
+1/2/3/4/5 - Switch to hotbar slot
+E - Open inventory
+M - Toggle map / Caps Lock - View map
+Space - interact with NPCs / portals
+Click/hold in direction with weapon to attack
+`
+
 class PauseMenu extends Menu {
   constructor() {
-    super("Pause Menu", "The game is paused. Continue?", ["> Resume Game"], 255);
+    super("Pause Menu", PAUSEMENUTEXT, ["> Resume Game"], 255);
+    this.commandStartHeight = 3/4;
   }
 }
 
@@ -231,7 +244,7 @@ class PortalMenu extends Menu {
 
 class MenuManager {
   constructor() {
-    this.menus = new Heap([new UpgradeMenu()], (a, b) => a.priority - b.priority > 0);
+    this.menus = new Heap([new PauseMenu()], (a, b) => a.priority - b.priority > 0);
     this.pauseCountDown = 1; // Allow for sufficient frames before pause can work
     this.paused = false;
   }
