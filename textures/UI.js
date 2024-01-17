@@ -24,12 +24,15 @@ class Menu {
     this.fillCol = _fillCol;
     this.defaultTextCol = _defaultTextCol;
     this.highlightedTextCol = _highlightedTextCol;
+    this.commandFontSize = 15;
+    this.commandStartHeight = 1/2;
+    this.commandOffset = 1;
   }
 
   isHovering(i) {
     return this.padding * 2 < mouseX && mouseX < this.graphics.width - 2 * this.padding 
-      && this.graphics.height / 2 + (2 * i + 1) * this.padding < mouseY 
-      && mouseY < this.graphics.height / 2 + (2 * i + 3) * this.padding;
+      && this.graphics.height * this.commandStartHeight + (2 * i + this.commandOffset) * this.padding * this.commandFontSize / 15 < mouseY 
+      && mouseY < this.graphics.height * this.commandStartHeight + (2 * i + this.commandOffset + 2) * this.padding * this.commandFontSize / 15;
   }
 
   update() {
@@ -66,7 +69,7 @@ class Menu {
     this.graphics.text(this.text, this.padding * 2, this.padding * 5, this.graphics.width - 4 * this.padding);
     
     // Commands
-    this.graphics.textSize(15);
+    this.graphics.textSize(this.commandFontSize);
     for(let i = 0; i < this.commands.length; i++) {
       if(this.isHovering(i)) {
         this.graphics.fill(this.highlightedTextCol);
@@ -74,7 +77,7 @@ class Menu {
       else {
         this.graphics.fill(this.defaultTextCol);
       }
-      this.graphics.text(this.commands[i], this.padding * 2, this.graphics.height / 2 + 2 * i * this.padding);
+      this.graphics.text(this.commands[i], this.padding * 2, this.graphics.height * this.commandStartHeight + 2 * i * this.padding * this.commandFontSize / 15);
     }
 
     // Final display
@@ -166,6 +169,63 @@ class UpgradeMenu extends Menu {
   applyCommand(cmd) {
     menuManager.menus.push(new SpecificUpgradeMenu(cmd, WEAPONS[cmd]));
     super.applyCommand(cmd);
+  }
+}
+
+class PortalMenu extends Menu {
+  constructor(_floorNum) {
+    super("Portal", "Querying...", [], 50);
+    this.floorNum = _floorNum;
+    if(this.floorNum === 0) {
+      this.commandFontSize = 10;
+      this.commandStartHeight = 1/4;
+      this.commandOffset = 2
+      this.openFloors = [];
+      this.text = "Select floor below to conquer!";
+      this.openFloors.push(1);
+      allDungeons.forEach((value, key, map) => {
+        if(value.floorNumber !== 0 && value.dungeon[value.dungeon.length - 1].healed) {
+          this.openFloors.push(value.floorNumber + 1);
+        }
+      });
+      // for(let d of allDungeons) {
+      //   this.openFloors.push(d.floorNumber);
+      // }
+      this.commands = ["> Stay in guild hall"];
+      for(let n of this.openFloors) {
+        this.commands.push("> Go to floor ".concat(n));
+      }
+    }
+    else {
+      this.text = "Where do you wish to go?"
+      this.commands = ["> Stay on floor ".concat(this.floorNum),
+        "> Proceed to floor ".concat(this.floorNum + 1),
+        "> Return to guild hall"];
+    }
+  }
+
+  applyCommand(cmd) {
+    super.applyCommand(cmd);
+    if(this.floorNum === 0) {
+      if(cmd === 0) {
+        return;
+      }
+      myDungeon = createDungeonMap(this.openFloors[cmd - 1]);
+      enterDungeonMap(myDungeon);
+    }
+    else {
+      if(cmd === 0) {
+        return;
+      }
+      else if(cmd === 1) {
+        myDungeon = createDungeonMap(this.floorNum + 1);
+        enterDungeonMap(myDungeon);
+      }
+      else {
+        myDungeon = createDungeonMap(0);
+        enterDungeonMap(myDungeon);
+      }
+    }
   }
 }
 

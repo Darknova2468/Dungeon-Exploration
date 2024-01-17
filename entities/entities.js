@@ -99,10 +99,10 @@ class Entity {
 }
 
 class Portal extends Entity {
-  constructor(_pos, _radius, _target, _collisionMap, _textureSet) {
+  constructor(_pos, _radius, _floor, _collisionMap, _textureSet) {
     super(_pos, 1, 0, 0, _collisionMap, _textureSet, 3, 2);
     this.invincible = true;
-    this.target = _target; // Floor available to go to once activated
+    this.floor = _floor; // Floor available to go to once activated
     this.radius = _radius;
     this.active = false;
   }
@@ -116,8 +116,9 @@ class Portal extends Entity {
   operate(player, time) {
     if(this.active && dist(this.pos[0], this.pos[1], player.pos[0], player.pos[1]) < this.radius 
       && keyIsDown(32)) {
-      myDungeon = createDungeonMap(this.target);
-      enterDungeonMap(myDungeon);
+      // myDungeon = createDungeonMap(this.target);
+      // enterDungeonMap(myDungeon);
+      menuManager.menus.push(new PortalMenu(this.floor));
     }
   }
 }
@@ -328,7 +329,7 @@ class Player extends Entity {
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
     this.holdingIndex = 0;
-    this.money = 50000;
+    this.money = 0;
     this.inventory = new Inventory(this);
     this.inventory.storage[0].holding = new Dagger(this);
     // for(let i = 0; i < 6; i++) {
