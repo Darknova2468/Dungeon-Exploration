@@ -2,34 +2,39 @@
 
 const WEAPONDEBUG = 0;
 const WEAPONS = ["Dagger", "Sword", "Axe", "Spear", "Shortbow", "Longbow"];
-const WEAPONCOSTS = [[0, 100, 200, 400, 800],
-                     [800, 100, 300, 1000, 2000],
-                     [800, 100, 300, 1000, 2000],
-                     [800, 100, 300, 1000, 2000],
-                     [800, 100, 300, 1000, 2000],
-                     [800, 100, 300, 1000, 2000]];
+const WEAPONCOSTS = [[0, 10, 20, 40, 80],
+                     [80, 100, 300, 1000, 2000],
+                     [80, 100, 300, 1000, 2000],
+                     [80, 100, 300, 1000, 2000],
+                     [80, 100, 300, 1000, 2000],
+                     [80, 100, 300, 1000, 2000]];
 const WEAPONDAMAGE = [[1, 3, 7, 15, 21],
                       [2, 5, 10, 19, 26],
                       [3, 7, 13, 23, 31],
                       [2, 6, 12, 21, 29],
                       [1, 2, 6, 13, 18],
-                      [2, 6, 12, 21, 29]];
+                      [2, 6, 12, 21, 29], [100]];
 
 class Weapon extends Item {
-  constructor(name, wielder, damage, range, cooldown, animationSet, tileSet, scaleFactor) {
+  constructor(name, id, wielder, range, cooldown, animationSet, tileSet, scaleFactor) {
     super(name, wielder, animationSet, tileSet, scaleFactor);
-    this.damage = damage;
+    this.damage = 0;
     this.range = range;
     this.cooldown = cooldown;
     this.attackTimer = 0;
     this.tier = 1;
     this.stackable = false;
+    this.weaponId = id;
+  }
+
+  attack(enemies, direction, time, isRolling) {
+    this.damage = WEAPONDAMAGE[this.weaponId][this.tier - 1];
   }
 }
 
 class SweepWeapon extends Weapon {
-  constructor(name, wielder, damage, minRange, range, cooldown, semiSweepAngle, swingTime, cleaveFactor, animationSet, tileSet, scaleFactor) {
-    super(name, wielder, damage, range, cooldown, animationSet, tileSet, scaleFactor);
+  constructor(name, id, wielder, minRange, range, cooldown, semiSweepAngle, swingTime, cleaveFactor, animationSet, tileSet, scaleFactor) {
+    super(name, id, wielder, range, cooldown, animationSet, tileSet, scaleFactor);
     this.holdRange = 0.3;
     this.minRange = minRange;
     this.semiSweepAngle = semiSweepAngle;
@@ -82,6 +87,7 @@ class SweepWeapon extends Weapon {
   }
 
   attack(enemies, direction, time, isRolling) {
+    super.attack(enemies, direction, time, isRolling);
     if(mouseIsPressed && millis() > this.attackTimer && !isRolling) {
       this.attackTimer = this.swing(enemies, direction, time);
     }
@@ -144,28 +150,28 @@ class SweepWeapon extends Weapon {
 
 class Dagger extends SweepWeapon {
   constructor(wielder) {
-    super("Dagger", wielder, 7, 0.35, 1, 400, Math.PI / 4, 150, 0, textures.daggerAnimationSet, textures.daggerTileSet);
+    super("Dagger", 0, wielder, 0.35, 1, 400, Math.PI / 4, 150, 0, textures.daggerAnimationSet, textures.daggerTileSet);
     this.tileScaleFactor = 2;
   }
 }
 
 class Sword extends SweepWeapon {
   constructor(wielder) {
-    super("Sword", wielder, 6, 0.4, 1.5, 700, Math.PI / 3, 300, 0.5, textures.swordAnimationSet, textures.swordTileSet);
+    super("Sword", 1, wielder, 0.4, 1.5, 700, Math.PI / 3, 300, 0.5, textures.swordAnimationSet, textures.swordTileSet);
     this.tileScaleFactor = 2;
   }
 }
 
 class Axe extends SweepWeapon {
   constructor(wielder) {
-    super("Axe", wielder, 11, 0.825, 1.25, 1600, Math.PI / 3, 400, 0.6, textures.axeAnimationSet, textures.axeTileSet);
+    super("Axe", 2, wielder, 0.825, 1.25, 1600, Math.PI / 3, 400, 0.6, textures.axeAnimationSet, textures.axeTileSet);
     this.tileScaleFactor = 2;
   }
 }
 
 class ThrustWeapon extends Weapon {
-  constructor(name, wielder, damage, minRange, maxRange, cooldown, thrustTime, pierceFactor, animationSet, tileSet, scaleFactor) {
-    super(name, wielder, damage, minRange, cooldown, animationSet, tileSet, scaleFactor);
+  constructor(name, id, wielder, minRange, maxRange, cooldown, thrustTime, pierceFactor, animationSet, tileSet, scaleFactor) {
+    super(name, id, wielder, minRange, cooldown, animationSet, tileSet, scaleFactor);
     this.holdRange = 0.3;
     this.maxRange = maxRange;
     this.thrustTimer = 0;
@@ -220,6 +226,7 @@ class ThrustWeapon extends Weapon {
   }
 
   attack(enemies, direction, time, isRolling) {
+    super.attack(enemies, direction, time, isRolling);
     if(mouseIsPressed && millis() > this.attackTimer && !isRolling) {
       this.attackTimer = this.thrust(enemies, direction, time);
     }
@@ -282,14 +289,14 @@ class ThrustWeapon extends Weapon {
 
 class Spear extends ThrustWeapon {
   constructor(wielder) {
-    super("Spear", wielder, 5, 1.5, 2.3, 600, 200, 0.3, textures.spearAnimationSet, textures.spearTileSet);
+    super("Spear", 2, wielder, 1.5, 2.3, 600, 200, 0.3, textures.spearAnimationSet, textures.spearTileSet);
     this.tileScaleFactor = 1.5;
   }
 }
 
 class Hyperion extends SweepWeapon {
   constructor(wielder) {
-    super("Hyperion", wielder, 5, 0, 5, 150, Math.PI - 0.01, 100, 1, "");
+    super("Hyperion", 6, wielder, 0, 5, 150, Math.PI - 0.01, 100, 1, "");
   }
 
   attack(enemies, direction, time, isRolling) {
@@ -300,8 +307,8 @@ class Hyperion extends SweepWeapon {
 }
 
 class ChargedRangedWeapon extends Weapon {
-  constructor(name, wielder, damage, range, cooldown, minChargeTime, chargeTime, projectileSpeed, animationSet, tileSet, scaleFactor) {
-    super(name, wielder, damage, range, cooldown, animationSet, tileSet, scaleFactor);
+  constructor(name, id, wielder, range, cooldown, minChargeTime, chargeTime, projectileSpeed, animationSet, tileSet, scaleFactor) {
+    super(name, id, wielder, range, cooldown, animationSet, tileSet, scaleFactor);
     this.minChargeTime = minChargeTime;
     this.chargeTime = chargeTime;
     this.charging = false;
@@ -322,6 +329,7 @@ class ChargedRangedWeapon extends Weapon {
   }
 
   attack(enemies, direction, time, isRolling) {
+    super.attack(enemies, direction, time, isRolling);
     if(mouseIsPressed && millis() > this.attackTimer && !isRolling && !this.charging) {
       this.charging = true;
       this.chargeTimer = millis();
@@ -387,7 +395,7 @@ class ChargedRangedWeapon extends Weapon {
 
 class ShortBow extends ChargedRangedWeapon {
   constructor(wielder) {
-    super("Shortbow", wielder, 3, 10, 700, 100, 400, 15, textures.shortBowAnimationSet, textures.shortBowTileSet);
+    super("Shortbow", 4, wielder, 10, 700, 100, 400, 15, textures.shortBowAnimationSet, textures.shortBowTileSet);
     this.tileScaleFactor = 2.5;
   }
   
@@ -403,7 +411,7 @@ class ShortBow extends ChargedRangedWeapon {
 
 class LongBow extends ChargedRangedWeapon {
   constructor(wielder) {
-    super("Longbow", wielder, 9, 18, 700, 500, 1500, 20, textures.longBowAnimationSet, textures.longBowTileSet);
+    super("Longbow", 5, wielder, 18, 700, 500, 1500, 20, textures.longBowAnimationSet, textures.longBowTileSet);
     this.tileScaleFactor = 2.5;
   }
 }
