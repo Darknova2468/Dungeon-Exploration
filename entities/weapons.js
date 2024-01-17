@@ -61,6 +61,9 @@ class SweepWeapon extends Weapon {
         enemy.damage(this.damage / Math.pow(hitEnemies.length, 1 - this.cleaveFactor), "Slashing");
       }
       else if(!hitFirstEnemy) {
+        if(enemy.passive) {
+          continue;
+        }
         enemy.damage(this.damage, "Slashing");
         hitFirstEnemy = true;
       }
@@ -197,6 +200,9 @@ class ThrustWeapon extends Weapon {
         enemy.damage(this.damage / Math.pow(hitEnemies.length, 1 - this.pierceFactor), "Piercing");
       }
       else if(!hitFirstEnemy) {
+        if(enemy.passive) {
+          continue;
+        }
         enemy.damage(this.damage, "Piercing");
         hitFirstEnemy = true;
       }
