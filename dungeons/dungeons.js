@@ -31,6 +31,11 @@ function reEnterDungeonMap(dungeonMap){
   myBackground = new Scene(dungeonMap.minimap, [16, 8], textures.tileSet);
 }
 
+function respawn() {
+  myDungeon = createDungeonMap(0);
+  enterDungeonMap(myDungeon);
+}
+
 class DungeonMap {
   constructor(_floor){
     this.enemies = [];

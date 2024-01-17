@@ -88,8 +88,9 @@ function draw() {
     textAlign(CENTER, CENTER);
     text(thisDeathMessage, width/2, height/2);
     if(millis() - deathTimer > deathTime) {
-      reEnterDungeonMap(myDungeon);
-      player.health = 10;
+      // reEnterDungeonMap(myDungeon);
+
+      // Clean up dungeon
       let room = myDungeon.dungeon[player.activeZone - 3];
       room.entranceStage = 0;
       room.locked = false;
@@ -99,6 +100,9 @@ function draw() {
       player.locked = false;
       player.isAlive = true;
       gameActive = true;
+      
+      // Respawn at guild hall
+      respawn();
       myBackground.displayOnly = null;
       myBackground.fade = 255;
     }

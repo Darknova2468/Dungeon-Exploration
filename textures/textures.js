@@ -70,7 +70,7 @@ class Scene {
     this.pos = structuredClone(player.pos);
 
     // Transitioning variables
-    this.fade = 0;
+    this.fade = 255;
     this.transitioning = false;
     this.transitionTimer = 0;
     this.transitionTime = 0;

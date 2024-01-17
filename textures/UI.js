@@ -92,14 +92,16 @@ class Menu {
 const PAUSEMENUTEXT = `The game is paused.
 
 Controls:
+Escape - Pause game / hide inventory / close menu
 WASD - Move
 Shift - Roll (move faster while moving with WASD)
 1/2/3/4/5 - Switch to hotbar slot
-E - Open inventory
-M - Toggle map / Caps Lock - View map
+E - Toggle inventory
+M - Toggle map
+Caps Lock - View map
 Space - interact with NPCs / portals
 Click/hold in direction with weapon to attack
-`
+`;
 
 class PauseMenu extends Menu {
   constructor() {
@@ -123,7 +125,7 @@ class SpecificUpgradeMenu extends Menu {
 
     // See weapons.js for specific costs
     if(this.mode >= 5) {
-      this.text = "You've already reached tier 5, I don't have the power to upgrade it any further!"
+      this.text = "You've already reached tier 5, I don't have the power to upgrade it any further!";
     }
     else {
       this.costs = WEAPONCOSTS[this.index][this.mode];
@@ -192,7 +194,7 @@ class PortalMenu extends Menu {
     if(this.floorNum === 0) {
       this.commandFontSize = 10;
       this.commandStartHeight = 1/4;
-      this.commandOffset = 2
+      this.commandOffset = 2;
       this.openFloors = [];
       this.text = "Select floor below to conquer!";
       this.openFloors.push(1);
@@ -210,7 +212,7 @@ class PortalMenu extends Menu {
       }
     }
     else {
-      this.text = "Where do you wish to go?"
+      this.text = "Where do you wish to go?";
       this.commands = ["> Stay on floor ".concat(this.floorNum),
         "> Proceed to floor ".concat(this.floorNum + 1),
         "> Return to guild hall"];
