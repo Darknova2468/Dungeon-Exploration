@@ -8,6 +8,12 @@ const WEAPONCOSTS = [[0, 100, 200, 400, 800],
                      [800, 100, 300, 1000, 2000],
                      [800, 100, 300, 1000, 2000],
                      [800, 100, 300, 1000, 2000]];
+const WEAPONDAMAGE = [[1, 3, 7, 15, 21],
+                      [2, 5, 10, 19, 26],
+                      [3, 7, 13, 23, 31],
+                      [2, 6, 12, 21, 29],
+                      [1, 2, 6, 13, 18],
+                      [2, 6, 12, 21, 29]];
 
 class Weapon extends Item {
   constructor(name, wielder, damage, range, cooldown, animationSet, tileSet, scaleFactor) {
@@ -19,8 +25,6 @@ class Weapon extends Item {
     this.tier = 1;
     this.stackable = false;
   }
-
-  attack(enemies, direction, time, isRolling) {}
 }
 
 class SweepWeapon extends Weapon {

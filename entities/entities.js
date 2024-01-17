@@ -328,7 +328,7 @@ class Player extends Entity {
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
     this.holdingIndex = 0;
-    this.money = 10000;
+    this.money = 0;
     this.inventory = new Inventory(this);
     this.inventory.storage[0].holding = new Dagger(this);
     // for(let i = 0; i < 6; i++) {
