@@ -48,6 +48,9 @@ class Projectile extends Entity {
         continue;
       }
       if(distance < this.hitRange + target.radius && millis() - this.hitTimer > this.hitCooldown) {
+        if(target.passive) {
+          continue;
+        }
         this.hit(target, time);
         this.hitTimer = millis();
       }
