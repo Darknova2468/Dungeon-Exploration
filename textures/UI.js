@@ -314,7 +314,8 @@ class InventoryCell {
     this.graphics.rotate(Math.PI / 4);
     try {
       // rotate(0);
-      this.graphics.image(this.holding.tileSet.assets[0], 0, 0, 
+      this.holding.updateTileNumber();
+      this.graphics.image(this.holding.tileSet.assets[this.holding.tileNumber], 0, 0, 
         this.holding.tileSet.size[0]*this.holding.tileScaleFactor, 
         this.holding.tileSet.size[1]*this.holding.tileScaleFactor);
       // this.graphics.image(this.holding.tileSet.assets[0], 0, 0);

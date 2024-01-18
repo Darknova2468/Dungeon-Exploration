@@ -10,6 +10,7 @@ class Item {
     this.scaleFactor = _scaleFactor ?? 1;
     this.tileScaleFactor = 1;
     this.stackable = true;
+    this.tileNumber = 0;
   }
 
   displayHeld(screenCenter, screenSize, pos) {}
@@ -23,6 +24,8 @@ class Item {
   attack() {}
 
   accepts() {}
+
+  updateTileNumber() {}
 }
 
 class DroppedItem extends Entity {

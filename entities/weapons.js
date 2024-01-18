@@ -42,6 +42,10 @@ class Weapon extends Item {
   attack(enemies, direction, time, isRolling) {
     this.damage = WEAPONDAMAGE[this.weaponId][this.tier - 1];
   }
+
+  updateTileNumber() {
+    this.tileNumber = this.tier - 1;
+  }
 }
 
 class SweepWeapon extends Weapon {
@@ -434,7 +438,7 @@ class ShortBow extends ChargedRangedWeapon {
   }
   
   attack(enemies, direction, time, isRolling) {
-    this.chargeTime = 1000 - 140 * this.tier;
+    this.chargeTime = 1000 - 150 * this.tier;
     super.attack(enemies, direction, time, isRolling);
     if(mouseIsPressed && millis() - this.chargeTimer > this.chargeTime && !isRolling && this.charging) {
       // Auto-fire

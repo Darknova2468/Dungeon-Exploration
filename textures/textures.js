@@ -3,17 +3,28 @@
 let textures;
 
 class TileSet{
-  constructor(_path, _size){
+  constructor(_path, _size, _verticalOffset = _size[1], _verticalTiling = false){
     this.size = _size;
     this.assets = [];
     loadImage(_path, (tileSet) => {
-      for (let j = 0; j < tileSet.height; j += _size[1]) {
+      for (let j = 0; j < tileSet.height; j += _verticalOffset) {
         for (let i = 0; i < tileSet.width; i += _size[0]) {
           let newAsset = tileSet.get(i, j, _size[0], _size[1]);
           this.assets.push(newAsset);
+          i += tileSet.width * _verticalTiling;
         }
       }
     });
+  }
+
+  updateVerticalOffset(_verticalOffset = 0) {
+    this.assets = [];
+    for (let j = _verticalOffset; j < this.rawImage.height + _verticalOffset; j += _size[1]) {
+      for (let i = 0; i < this.rawImage.width; i += _size[0]) {
+        let newAsset = this.rawImage.get(i, j, _size[0], _size[1]);
+        this.assets.push(newAsset);
+      }
+    }
   }
 }
 
