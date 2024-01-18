@@ -670,17 +670,17 @@ class slimeBossHealthBar{
     stroke(20);
     strokeWeight(height/16);
     line(width/8, height/6, width*7/8, height/6);
-    strokeWeight(height/24)
+    strokeWeight(height/24);
     stroke("red");
     if(tentacleNum === 0){
       line(width/8, height/6, width*7/8, height/6);
       stroke("green");
-      line(width/8, height/6, width/8 + (health/this.maxHealth*(width*3/4)), height/6)
+      line(width/8, height/6, width/8 + health/this.maxHealth*(width*3/4), height/6);
     }
     else{
       let x = width/8;
       const space = height/16;
-      const offset = (width*3/4)/this.maxTentacles+space/(this.maxTentacles);
+      const offset = width*3/4/this.maxTentacles+space/this.maxTentacles;
       for(let i=0; i<this.maxTentacles; i++){
         line(x, height/6, x+offset-space, height/6);
         x += offset;

@@ -9,6 +9,15 @@ const WEAPONCOSTS = [
   [80, 100, 300, 700, 2000],
   [80, 50, 100, 500, 1000],
   [80, 100, 300, 700, 1500]];
+
+// const WEAPONCOSTS = [
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0]];
+
 const WEAPONDAMAGE = [
   [1, 3, 7, 15, 21],
   [2, 5, 10, 19, 26],
@@ -308,7 +317,7 @@ class ThrustWeapon extends Weapon {
 
 class Spear extends ThrustWeapon {
   constructor(wielder) {
-    super("Spear", 2, wielder, 1.5, 2.3, 600, 100, 0.3, textures.spearAnimationSet, textures.spearTileSet);
+    super("Spear", 3, wielder, 1.5, 2.3, 600, 100, 0.3, textures.spearAnimationSet, textures.spearTileSet);
     this.tileScaleFactor = 1.5;
   }
 
