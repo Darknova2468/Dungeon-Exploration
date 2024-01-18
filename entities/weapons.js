@@ -293,7 +293,7 @@ class ThrustWeapon extends Weapon {
       // Modified angle formula for p5 rotations
       let angle = getAngle(directionVector[0], -directionVector[1]);
       rotate(angle);
-      image(this.animationSet.animations[0][this.tier-1], 0, 0, imgScaleX, imgScaleY);
+      image(this.animationSet.animations[this.tier-1][0], 0, 0, imgScaleX, imgScaleY);
       pop();
     }
     catch {
