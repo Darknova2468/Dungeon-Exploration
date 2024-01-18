@@ -138,7 +138,7 @@ class SweepWeapon extends Weapon {
         angle = getAngle(directionVector[0], -directionVector[1]);
       }
       rotate(angle);
-      image(a.animations[0][this.tier-1], 0, 0, imgScaleX, imgScaleY);
+      image(a.animations[this.tier - 1][0], 0, 0, imgScaleX, imgScaleY);
       pop();
     }
     catch {
