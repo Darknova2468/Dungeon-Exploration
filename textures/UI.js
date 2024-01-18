@@ -655,6 +655,48 @@ class EnemyHealthBar{
   }
 }
 
+class slimeBossHealthBar{
+  constructor(_maxHealth, _maxTentacles){
+    this.maxHealth = _maxHealth;
+    this.maxTentacles = _maxTentacles;
+  }
+  display(health, tentacleNum){
+    textAlign(CENTER);
+    textSize(height/12);
+    stroke("white");
+    strokeWeight(2);
+    fill("black");
+    text("Slime King", width/2, height/20);
+    stroke(20);
+    strokeWeight(height/16);
+    line(width/8, height/6, width*7/8, height/6);
+    strokeWeight(height/24)
+    stroke("red");
+    if(tentacleNum === 0){
+      line(width/8, height/6, width*7/8, height/6);
+      stroke("green");
+      line(width/8, height/6, width/8 + (health/this.maxHealth*(width*3/4)), height/6)
+    }
+    else{
+      let x = width/8;
+      const space = height/16;
+      const offset = (width*3/4)/this.maxTentacles+space/(this.maxTentacles);
+      for(let i=0; i<this.maxTentacles; i++){
+        line(x, height/6, x+offset-space, height/6);
+        x += offset;
+      }
+      stroke("green");
+      x = width/8;
+      for(let i=0; i<tentacleNum-1; i++){
+        line(x, height/6, x+offset-space, height/6);
+        x += offset;
+      }
+      line(x, height/6, x+(offset-space)*(health/this.maxHealth), height/6);
+    }
+    noStroke();
+  }
+}
+
 function updateDimensions(y = ySize, x = xSize) {
   squareSize = min((height - 2*padding) / y, (width - 2*padding) / x);
   startX = max(padding, width/2 - squareSize * x / 2);
