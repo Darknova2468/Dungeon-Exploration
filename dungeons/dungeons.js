@@ -340,6 +340,7 @@ class Room {
   }
 
   attemptEnemyPlacement(EnemyType, level = 1, radiusPortion = 1) {
+    console.log(EnemyType);
     let enemy = new EnemyType([this.pos[0]+ random(-this.radius * radiusPortion / 2, this.radius * radiusPortion / 2), this.pos[1] + random(-this.radius * radiusPortion / 2, this.radius * radiusPortion / 2)], this.id, level, this.dungeonMap.minimap);
     if(enemy.canMoveTo(this.dungeonMap.minimap[Math.floor(enemy.pos[1])][Math.floor(enemy.pos[0])])) {
       return enemy;
@@ -388,9 +389,13 @@ class Room {
     this.testSpawnEnemies();
     if(!this.summonSlimeBoss()) {
       let slimes = createSlimes(this.difficulties[0]);
+      let goblins = createGoblins(this.difficulties[1]);
       let undeads = createUndead(this.difficulties[2]);
       for(let [slimeClass, level, radiusPortion] of slimes) {
         this.enemies.push(this.attemptEnemyPlacement(slimeClass, level, radiusPortion));
+      }
+      for(let [goblinClass, level, radiusPortion] of goblins) {
+        this.enemies.push(this.attemptEnemyPlacement(goblinClass, level, radiusPortion));
       }
       for(let [undeadClass, level, radiusPortion] of undeads) {
         this.enemies.push(this.attemptEnemyPlacement(undeadClass, level, radiusPortion));

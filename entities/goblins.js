@@ -111,3 +111,45 @@ class Hobgoblin extends Goblin {
     this.attackDamage *= 1.5;
   }
 }
+
+const goblinVariants = [Goblin, Hobgoblin, Booyahg];
+
+function createGoblins(goblinDifficulty) {
+  let hobgoblinVariantChance = 0;
+  let booyahgVariantChance = 0;
+  let goblins = [];
+  goblinDifficulty *= 5;
+  if(goblinDifficulty > 50) {
+    hobgoblinVariantChance = 0.9;
+  }
+  if(goblinDifficulty > 100) {
+    booyahgVariantChance = 0.8;
+    hobgoblinVariantChance = 0.3;
+  }
+  if(goblinDifficulty > 150) {
+    booyahgVariantChance = 0.2;
+    hobgoblinVariantChance = 0.3;
+  }
+  while(goblinDifficulty > 0) {
+    let goblinType = 0;
+    let maxLevel = goblinDifficulty;
+    if(random() < booyahgVariantChance) {
+      goblinType = 2;
+    }
+    else if(random() < hobgoblinVariantChance) {
+      goblinType = 1;
+    }
+    if(goblinType) {
+      maxLevel = goblinDifficulty / 2;
+    }
+    let chosenLevel = Math.ceil(Math.pow(random(0.1, Math.sqrt(maxLevel)), 2));
+    goblins.push([goblinVariants[goblinType], chosenLevel, 1]);
+    if(goblinType) {
+      goblinDifficulty -= 2 * chosenLevel;
+    }
+    else {
+      goblinDifficulty -= chosenLevel;
+    }
+  }
+  return goblins;
+}
