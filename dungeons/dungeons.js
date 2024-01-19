@@ -1,9 +1,11 @@
 /* eslint-disable no-undef */
 
 const allDungeons = new Map();
+let floorBitmask = 1; // Stores the available floors as a bitmask
+let persistentDungeons = true;
 
 function createDungeonMap(floor) {
-  if(allDungeons.has(floor)) {
+  if(persistentDungeons && allDungeons.has(floor)) {
     return allDungeons.get(floor);
   }
   let dungeonMap = new DungeonMap(floor);
@@ -212,8 +214,10 @@ class DungeonMap {
   cleanUp(playerActiveZone) {
     if(playerActiveZone >= 3) {
       let room = this.dungeon[playerActiveZone - 3];
-      room.entranceStage = 0;
-      room.locked = false;
+      if(room.locked) {
+        room.entranceStage = 0;
+        room.locked = false;
+      }
     }
   }
 }
@@ -323,6 +327,9 @@ class Room {
         this.activatePortal();
         myBackground.displayOnly = null;
         myBackground.changeDimensions([12, 6], player.pos, 1000, true);
+        if(this.isBoss) {
+          floorBitmask |= (1 << this.dungeonMap.floorNumber);
+        }
       }
 
       // If all enemies are passive (e.g. frozen puddles), despawn them

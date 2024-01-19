@@ -206,16 +206,21 @@ class PortalMenu extends Menu {
     this.floorNum = _floorNum;
     if(this.floorNum === 0) {
       this.commandFontSize = 10;
-      this.commandStartHeight = 1/4;
+      this.commandStartHeight = 1/5;
       this.commandOffset = 2;
       this.openFloors = [];
       this.text = "Select floor below to conquer!";
-      this.openFloors.push(1);
-      allDungeons.forEach((value, key, map) => {
-        if(value.floorNumber !== 0 && value.dungeon[value.dungeon.length - 1].healed) {
-          this.openFloors.push(value.floorNumber + 1);
+      // this.openFloors.push(1);
+      // allDungeons.forEach((value, key, map) => {
+      //   if(value.floorNumber !== 0 && value.dungeon[value.dungeon.length - 1].healed) {
+      //     this.openFloors.push(value.floorNumber + 1);
+      //   }
+      // });
+      for(let i = 1; i <= 20; i++) {
+        if((1 << (i-1)) & floorBitmask) {
+          this.openFloors.push(i);
         }
-      });
+      }
       // for(let d of allDungeons) {
       //   this.openFloors.push(d.floorNumber);
       // }
