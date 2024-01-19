@@ -75,7 +75,7 @@ class Booyahg extends Goblin {
     // Booyahgs are trickster spellcasters
     this.spellSpeed = 1;
     this.spellRange = 20;
-    this.spellDamage = 1;
+    this.spellDamage = this.attackDamage * 4;
   }
 
   combat(player, enemies, time, distance, pursuitVector) {
@@ -90,16 +90,43 @@ class Booyahg extends Goblin {
 
 class AnnoyingSpark extends EnemyProjectile {
   constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _collisionMap) {
-    super(_pos, _zone, _dir, _maxDist, _hitDmg, "Lightning", 0.1, false, 0, 0, null, _collisionMap, textures.annoyingSparkTileSet);
+    super(_pos, _zone, _dir, _maxDist, _hitDmg, "Lightning", 1, false, 0, 0, null, _collisionMap, textures.annoyingSparkTileSet);
     this.defaultSpeed = this.speed;
     this.sparkSpeed = 10;
+    this.remainChance = 0.5;
+    this.radius = 0.1;
   }
 
   operate(target, enemies, time) {
     this.speed = this.sparkSpeed;
     this.move([random(-20, 20), random(-20, 20)], time);
+    console.log(this.hitRange);
     this.speed = this.defaultSpeed;
-    super.operate(target, enemies, time);
+    if(!this.isAlive) {
+      return;
+    }
+    this.move(this.dir, time);
+    let distance = dist(target.pos[0], target.pos[1], this.pos[0], this.pos[1]);
+    if(distance < this.hitRange + target.radius && millis() - this.hitTimer > this.hitCooldown) {
+      this.hit(target, time);
+      this.hitTimer = millis();
+    }
+    if(dist(this.pos[0], this.pos[1], this.initPos[0], this.initPos[1]) > this.maxDist) {
+      this.isAlive = false;
+    }
+    if(!this.isAlive) {
+      this.explode([target], time);
+    }
+  }
+
+  hit(target, time) {
+    target.damage(this.hitDamage, this.damageType);
+    if(random() > this.remainChance) {
+      this.isAlive = false;
+    }
+    else {
+      this.remainChance += 0.1;
+    }
   }
 }
 
@@ -132,10 +159,10 @@ function createGoblins(goblinDifficulty) {
     let goblinType = 0;
     let maxLevel = goblinDifficulty;
     if(random() < hobgoblinVariantChance) {
-      goblinType = 2;
+      goblinType = 1;
     }
     else if(random() < booyahgVariantChance) {
-      goblinType = 1;
+      goblinType = 2;
     }
     let reductionFactor = (goblinType === 1) ? 1 : 2;
     let chosenLevel = Math.ceil(Math.pow(random(0.1, Math.sqrt(maxLevel)), reductionFactor));
