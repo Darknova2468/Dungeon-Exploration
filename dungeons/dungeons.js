@@ -3,6 +3,7 @@
 const allDungeons = new Map();
 let floorBitmask = 1; // Stores the available floors as a bitmask
 let persistentDungeons = true;
+const GENERATIONDEBUG = false;
 
 function createDungeonMap(floor) {
   if(persistentDungeons && allDungeons.has(floor)) {
@@ -10,10 +11,14 @@ function createDungeonMap(floor) {
   }
   let dungeonMap = new DungeonMap(floor);
   while(dungeonMap.corrupted) {
-    console.log("Regenerating...");
+    if(GENERATIONDEBUG) {
+      console.log("Regenerating...");
+    }
     dungeonMap = new DungeonMap(floor);
   }
-  console.log("Finished generation.");
+  if(GENERATIONDEBUG) {
+    console.log("Finished generation.");
+  }
   allDungeons.set(floor, dungeonMap);
   return dungeonMap;
 }

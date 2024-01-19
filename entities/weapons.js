@@ -125,11 +125,10 @@ class SweepWeapon extends Weapon {
       directionVector = [cos(currentAngle), sin(currentAngle)];
     }
     try {
-      let a = keyIsDown(32) ? "" : this.animationSet; // Temporary
       push();
       imageMode(CENTER);
-      let imgScaleX = width/(screenSize[0]*baseResolution[0]/a.size[0])*this.scaleFactor;
-      let imgScaleY = height/(screenSize[1]*baseResolution[1]/a.size[1])*this.scaleFactor;
+      let imgScaleX = width/(screenSize[0]*baseResolution[0]/this.animationSet.size[0])*this.scaleFactor;
+      let imgScaleY = height/(screenSize[1]*baseResolution[1]/this.animationSet.size[1])*this.scaleFactor;
       let basePos = dungeonToScreenPos(this.wielder.pos, screenCenter, screenSize);
       translate(basePos[0], basePos[1]);
       // Modified angle formula for p5 rotations
@@ -142,7 +141,7 @@ class SweepWeapon extends Weapon {
         angle = getAngle(directionVector[0], -directionVector[1]);
       }
       rotate(angle);
-      image(a.animations[this.tier - 1][0], 0, 0, imgScaleX, imgScaleY);
+      image(this.animationSet.animations[this.tier - 1][0], 0, 0, imgScaleX, imgScaleY);
       pop();
     }
     catch {
