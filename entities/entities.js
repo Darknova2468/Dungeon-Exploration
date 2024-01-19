@@ -420,6 +420,9 @@ class Player extends Entity {
   }
 
   display(screenCenter, screenSize) {
+    if(this.timeLocked) {
+      this.animationNum[0] = 7;
+    }
     // Also used for some player updates
     if(millis() > this.blindnessTimer) {
       this.vision = this.floorVision;
