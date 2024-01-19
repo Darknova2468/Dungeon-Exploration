@@ -107,6 +107,19 @@ class PauseMenu extends Menu {
   constructor() {
     super("Pause Menu", PAUSEMENUTEXT, ["> Resume Game"], 255);
     this.commandStartHeight = 3/4;
+    if(myDungeon.floorNumber > 0) {
+      this.commands.push("> Return to Guild Hall");
+    }
+  }
+
+  applyCommand(cmd) {
+    if(cmd === 1) {
+      myDungeon.cleanUp(player.activeZone);
+      myDungeon = createDungeonMap(0);
+      restorePlayer(player);
+      enterDungeonMap(myDungeon);
+    }
+    super.applyCommand(cmd);
   }
 }
 
@@ -241,6 +254,14 @@ class PortalMenu extends Menu {
         enterDungeonMap(myDungeon);
       }
     }
+  }
+}
+
+class RespawnMenu extends PauseMenu {
+  constructor() {
+    super();
+    this.name = "You died!";
+    this.text = thisDeathMessage;
   }
 }
 

@@ -95,23 +95,11 @@ function draw() {
     textAlign(CENTER, CENTER);
     text(thisDeathMessage, width/2, height/2);
     if(millis() - deathTimer > deathTime) {
-      // reEnterDungeonMap(myDungeon);
-
-      // Clean up dungeon
-      let room = myDungeon.dungeon[player.activeZone - 3];
-      room.entranceStage = 0;
-      room.locked = false;
-      player.activeZone = -1;
-      player.lockedZone = 0;
-      player.timeLocked = false;
-      player.locked = false;
-      player.isAlive = true;
+      reEnterDungeonMap(myDungeon);
+      myDungeon.cleanUp(player.activeZone);
+      restorePlayer(player);
+      menuManager.menus.push(new RespawnMenu());
       gameActive = true;
-      
-      // Respawn at guild hall
-      respawn();
-      myBackground.displayOnly = null;
-      myBackground.fade = 255;
     }
     return;
   }

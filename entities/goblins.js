@@ -100,7 +100,6 @@ class AnnoyingSpark extends EnemyProjectile {
   operate(target, enemies, time) {
     this.speed = this.sparkSpeed;
     this.move([random(-20, 20), random(-20, 20)], time);
-    console.log(this.hitRange);
     this.speed = this.defaultSpeed;
     if(!this.isAlive) {
       return;

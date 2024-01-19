@@ -31,9 +31,13 @@ function reEnterDungeonMap(dungeonMap){
   myBackground = new Scene(dungeonMap.minimap, [16, 8], textures.tileSet);
 }
 
-function respawn() {
-  myDungeon = createDungeonMap(0);
-  enterDungeonMap(myDungeon);
+function restorePlayer(player) {
+  player.health = player.maxHealth;
+  player.activeZone = -1;
+  player.lockedZone = 0;
+  player.timeLocked = false;
+  player.locked = false;
+  player.isAlive = true;
 }
 
 class DungeonMap {
@@ -204,6 +208,14 @@ class DungeonMap {
       room.display(screenCenter, screenSize, scale);
     });
   }
+
+  cleanUp(playerActiveZone) {
+    if(playerActiveZone >= 3) {
+      let room = this.dungeon[playerActiveZone - 3];
+      room.entranceStage = 0;
+      room.locked = false;
+    }
+  }
 }
 
 // class GuildHall extends DungeonMap {
@@ -340,7 +352,9 @@ class Room {
   }
 
   attemptEnemyPlacement(EnemyType, level = 1, radiusPortion = 1) {
-    console.log(EnemyType);
+    if(ENEMYDEBUG) {
+      console.log(EnemyType);
+    }
     let enemy = new EnemyType([this.pos[0]+ random(-this.radius * radiusPortion / 2, this.radius * radiusPortion / 2), this.pos[1] + random(-this.radius * radiusPortion / 2, this.radius * radiusPortion / 2)], this.id, level, this.dungeonMap.minimap);
     if(enemy.canMoveTo(this.dungeonMap.minimap[Math.floor(enemy.pos[1])][Math.floor(enemy.pos[0])])) {
       return enemy;
@@ -411,7 +425,6 @@ class Room {
     if(!this.isBoss) {
       return;
     }
-    console.log("[Portal] Portal spawned.");
     this.portal = new Portal(this.pos, 1.5, this.dungeonMap.floorNumber, this.dungeonMap.minimap, textures.portalTileSet);
     this.dungeonMap.otherEntities.push(this.portal);
   }
