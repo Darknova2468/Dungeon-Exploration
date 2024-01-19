@@ -12,6 +12,7 @@ let minimap;
 let player;
 let myBackground;
 let healthBar;
+let music;
 let sfx;
 
 let showMap = false;
@@ -59,6 +60,7 @@ function preload() {
     coinTileSet: new TileSet("textures/coin.png", [11, 11]),
     blacksmithTileSet: "black",
   };
+  music = new Music("music/theme.mp3");
   sfx = {
     hitSound: new SFX("music/damage.wav"),
   };
@@ -86,6 +88,7 @@ let thisDeathMessage;
 let menuManager;
 
 function draw() {
+  music.play();
   if(!gameActive) {
     background(100, 0, 0, 10);
     fill("white");
