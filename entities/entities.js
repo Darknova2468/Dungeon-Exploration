@@ -92,6 +92,7 @@ class Entity {
       this.isAlive = false;
       this.health = 0;
     }
+    sfx.hitSound.play();
     try {
       myDungeon.otherEntities.push(new Damage([this.pos[0], this.pos[1] - 0.6*this.animationSet.size[1]*this.scaleFactor/baseResolution[1]], amountDamage));
     }

@@ -12,6 +12,7 @@ let minimap;
 let player;
 let myBackground;
 let healthBar;
+let sfx;
 
 let showMap = false;
 
@@ -57,6 +58,9 @@ function preload() {
     numbers: new TileSet("textures/numbers.png", [6, 7]),  
     coinTileSet: new TileSet("textures/coin.png", [11, 11]),
     blacksmithTileSet: "black",
+  };
+  sfx = {
+    hitSound: new SFX("music/damage.wav"),
   };
 }
 
