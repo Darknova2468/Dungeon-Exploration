@@ -2,7 +2,7 @@
 class Goblin extends Enemy {
   constructor(_pos, _roomId, _level, _collisionMap, _textureSet = textures.goblinTileSet) {
     // super(_pos, _level + 4, 0, 4.5, _collisionMap, _textureSet);
-    super(_pos, "Goblin", _roomId, _level, _level + 4, 0, 4.5, 12, 2, 3, "Slashing", 1, 700, _collisionMap, _textureSet);
+    super(_pos, "Goblin", _roomId, _level, 4 + Math.floor(Math.pow(_level, 0.5)), 0, 3.5, 12, 2, 1 + Math.floor(Math.log(1 + _level / 3)), "Slashing", 1, 700, _collisionMap, _textureSet);
 
     // Goblin bully tactics
     this.thrustRadius = 3;
@@ -70,7 +70,7 @@ class Booyahg extends Goblin {
     super(_pos, _roomId, _level, _collisionMap, textures.booyahgTileSet);
     this.combatBalanceRadius = 5;
     this.thrustRadius = 6;
-    this.attackDamage *= 0.25;
+    this.attackDamage *= 0.8;
     
     // Booyahgs are trickster spellcasters
     this.spellSpeed = 1;
@@ -108,7 +108,7 @@ class Hobgoblin extends Goblin {
     super(_pos, _roomId, _level, _collisionMap, textures.hobgoblinTileSet);
     this.combatBalanceRadius = 3.5;
     this.thrustRadius = 4;
-    this.attackDamage *= 1.5;
+    this.attackDamage *= 2;
   }
 }
 
@@ -118,31 +118,30 @@ function createGoblins(goblinDifficulty) {
   let hobgoblinVariantChance = 0;
   let booyahgVariantChance = 0;
   let goblins = [];
-  goblinDifficulty *= 5;
+  goblinDifficulty *= 4;
   if(goblinDifficulty > 50) {
-    hobgoblinVariantChance = 0.9;
+    booyahgVariantChance = 0.3;
   }
   if(goblinDifficulty > 100) {
-    booyahgVariantChance = 0.8;
-    hobgoblinVariantChance = 0.3;
+    hobgoblinVariantChance = 0.4;
   }
   if(goblinDifficulty > 150) {
-    booyahgVariantChance = 0.2;
-    hobgoblinVariantChance = 0.3;
+    hobgoblinVariantChance = 0.9;
   }
   while(goblinDifficulty > 0) {
     let goblinType = 0;
     let maxLevel = goblinDifficulty;
-    if(random() < booyahgVariantChance) {
+    if(random() < hobgoblinVariantChance) {
       goblinType = 2;
     }
-    else if(random() < hobgoblinVariantChance) {
+    else if(random() < booyahgVariantChance) {
       goblinType = 1;
     }
-    if(goblinType) {
-      maxLevel = goblinDifficulty / 2;
+    let reductionFactor = (goblinType === 1) ? 1 : 2;
+    let chosenLevel = Math.ceil(Math.pow(random(0.1, Math.sqrt(maxLevel)), reductionFactor));
+    if(goblinType !== 1) {
+      chosenLevel = Math.min(20, chosenLevel);
     }
-    let chosenLevel = Math.ceil(Math.pow(random(0.1, Math.sqrt(maxLevel)), 2));
     goblins.push([goblinVariants[goblinType], chosenLevel, 1]);
     if(goblinType) {
       goblinDifficulty -= 2 * chosenLevel;
