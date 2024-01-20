@@ -63,6 +63,22 @@ class Goblin extends Enemy {
     this.backing = false;
     this.fleeing = false;
   }
+
+  damage(amountDamage, damageType) {
+    // Redefined to drop more coins
+    super.damage(amountDamage, damageType);
+    if(!this.invincible && ["Piercing", "Slashing", "Bludgeoning"].includes(damageType)) {
+      this.knockback = true;
+    }
+    if(!this.isAlive) {
+      let netWorth = Math.floor(random(this.level) / Math.max(0.05, random(2)));
+      while(netWorth > 0) {
+        let amt = min(5, netWorth);
+        myDungeon.otherEntities.push(new Coin(structuredClone(this.pos), amt, this.collisionMap));
+        netWorth -= amt;
+      }
+    }
+  }
 }
 
 class Booyahg extends Goblin {
