@@ -683,7 +683,7 @@ class EnemyHealthBar{
   }
 }
 
-class slimeBossHealthBar{
+class SlimeBossHealthBar{
   constructor(_maxHealth, _maxTentacles){
     this.maxHealth = _maxHealth;
     this.maxTentacles = _maxTentacles;
@@ -694,7 +694,7 @@ class slimeBossHealthBar{
     stroke("white");
     strokeWeight(2);
     fill("black");
-    text("Slime King", width/2, height/20);
+    text("Gargantuan Slime", width/2, height/20);
     stroke(20);
     strokeWeight(height/16);
     line(width/8, height/6, width*7/8, height/6);

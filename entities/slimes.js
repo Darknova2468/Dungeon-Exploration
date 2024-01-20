@@ -283,7 +283,7 @@ class SlimeBoss extends Slime {
     }
     this.endBoss = false;
     this.slimeBossHealthBar = true;
-    this.healthBar = new slimeBossHealthBar(this.health, this.tentacles.length);
+    this.healthBar = new SlimeBossHealthBar(this.health, this.tentacles.length);
   }
 
   move() {
