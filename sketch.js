@@ -29,9 +29,9 @@ function preload() {
     lavaSlimeBallTileSet: new AnimateSet("textures/lavaSlimeBall.png", [12, 14]),
     frostSlimeTileSet: new AnimateSet("textures/frostSlime.png", [19, 21]),
     largeFrostSlimeTileSet: new AnimateSet("textures/largeFrostSlime.png", [31,31]),
-    slimeTentacleTileSet: "dodgerblue",
+    slimeTentacleTileSet: new AnimateSet("textures/slimeTentacle.png", [37,62]),
+    slimeTentacleStunnedTileSet: new AnimateSet("textures/stunnedSlimeTentacle.png", [37,62]),
     slimeBossTileSet: new AnimateSet("textures/slimeBoss.png", [31, 21]),
-    slimeTentacleStunnedTileSet: "lightskyblue",
     zombieTileSet: new AnimateSet("textures/zombie.png", [19, 21]),
     boneTileSet: new AnimateSet("textures/bone.png", [15, 15]),
     phantomTileSet: new AnimateSet("textures/phantom.png", [18, 18]),
@@ -77,7 +77,7 @@ function setup() {
   frameRate(30);
   noStroke();
   noSmooth();
-  myDungeon = createDungeonMap(0);
+  myDungeon = createDungeonMap(5);
   player = new Player(structuredClone(myDungeon.playerPos), myDungeon.minimap);
   healthBar = new HealthBar(player.health, textures.healthBarTileSet, [50, 50], 2.5);
   lighting = new Lighting();
