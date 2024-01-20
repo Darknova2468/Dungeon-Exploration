@@ -95,6 +95,7 @@ class AnnoyingSpark extends EnemyProjectile {
     this.sparkSpeed = 10;
     this.remainChance = 0.5;
     this.radius = 0.1;
+    this.scaleFactor = 0.5;
   }
 
   operate(target, enemies, time) {
