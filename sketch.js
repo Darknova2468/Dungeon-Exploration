@@ -39,7 +39,7 @@ function preload() {
     goblinTileSet: new AnimateSet("textures/goblin.png", [18, 18]),
     booyahgTileSet: "green",
     annoyingSparkTileSet: "yellow",
-    hobgoblinTileSet: "chocolate",
+    hobgoblinTileSet: new AnimateSet("textures/hobGoblin.png", [23, 19]),
     skeletonTileSet: new AnimateSet("textures/skeleton.png", [18, 18]),
     frozenPuddleTileSet: new AnimateSet("textures/frostSlimePuddle.png", [31,31]),
     daggerAnimationSet: new AnimateSet("textures/dagger.png", [9, 47]),
