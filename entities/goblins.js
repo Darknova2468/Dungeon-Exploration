@@ -78,6 +78,8 @@ class Goblin extends Enemy {
         netWorth -= amt;
       }
     }
+    this.thrusting = false;
+    this.backing = true;
   }
 }
 
@@ -195,4 +197,59 @@ function createGoblins(goblinDifficulty) {
     }
   }
   return goblins;
+}
+
+class Warlord extends Goblin {
+  constructor(_pos, _roomId, _collisionMap) {
+    super(_pos, _roomId, 300, _collisionMap, textures.hobgoblinTileSet); // Temporary textures
+    this.combatBalanceRadius = 5;
+    this.thrustRadius = 7;
+    this.maxHealth *= 4;
+    this.health *= 4;
+    this.healthBar.maxHealth = this.maxHealth;
+    this.bossHealthBar = new WarlordHealthBar(this.maxHealth);
+    this.healthStage = 0;
+  }
+
+  combat(player, enemies, time, distance, pursuitVector) {
+    super.combat(player, enemies, time, distance, pursuitVector);
+    if(this.backing) {
+      this.defence = 0;
+      this.attackRange = 1;
+      // enemies.push(new AnnoyingSpark(this.pos, this.lockedZone, scaleVector(pursuitVector, this.spellSpeed), this.spellRange, this.spellDamage, this.collisionMap));
+    }
+    else if(this.thrusting){
+      this.defence = 5;
+      this.attackRange = 2;
+    }
+    else {
+      this.defence = 30;
+      this.attackRange = 1;
+    }
+    if(this.health / this.maxHealth < 1 - this.healthStage / 4) {
+      this.healthStage += 1;
+      switch(this.healthStage) {
+        case 2:
+          for(let i = 0; i < 5; i++) {
+            enemies.push(myDungeon.dungeon[this.lockedZone - 3].attemptEnemyPlacement(Goblin, 20, 0.5));
+          }
+          break;
+        case 3:
+          for(let i = 0; i < 5; i++) {
+            enemies.push(myDungeon.dungeon[this.lockedZone - 3].attemptEnemyPlacement(Booyahg, 20, 0.5));
+          }
+          break;
+        case 4:
+          for(let i = 0; i < 5; i++) {
+            enemies.push(myDungeon.dungeon[this.lockedZone - 3].attemptEnemyPlacement(Hobgoblin, 100, 0.5));
+          }
+          break;
+      }
+    }
+  }
+
+  display(screenCenter, screenSize) {
+    super.display(screenCenter, screenSize);
+    this.bossHealthBar.display(this.health);
+  }
 }
