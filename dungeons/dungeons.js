@@ -2,7 +2,7 @@
 
 const allDungeons = new Map();
 let floorBitmask = 1; // Stores the available floors as a bitmask
-let persistentDungeons = true;
+let persistentDungeons = false;
 const GENERATIONDEBUG = false;
 
 function createDungeonMap(floor) {
