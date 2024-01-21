@@ -2,7 +2,13 @@
  * Min-heap implementation, based on Durr and Vie (2021)
  * Copied from cave-dungeons
  */
+
 class Heap {
+  /**
+   * Creates a new priority queue heap from an initial list.
+   * @param {Array.<any>} items The initial list.
+   * @param {function} compareFn The comparator.
+   */
   constructor(items, compareFn) {
     this.heap = [0];
     this.rank = [];
