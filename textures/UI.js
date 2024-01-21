@@ -827,7 +827,6 @@ class WarlordHealthBar {
   display(health) {
     let stagesRemaining = Math.floor(4 * health / this.maxHealth);
     let stagePortionRemaining = 4 * health / this.maxHealth - stagesRemaining;
-    console.log(stagePortionRemaining);
     textAlign(CENTER);
     textSize(height/12);
     stroke("white");
