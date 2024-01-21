@@ -209,6 +209,8 @@ class Warlord extends Goblin {
     this.healthBar.maxHealth = this.maxHealth;
     this.bossHealthBar = new WarlordHealthBar(this.maxHealth);
     this.healthStage = 0;
+    this.hasHealthBar = false;
+    this.warlordBossHealthBar = true;
   }
 
   combat(player, enemies, time, distance, pursuitVector) {

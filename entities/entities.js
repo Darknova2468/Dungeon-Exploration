@@ -72,6 +72,9 @@ class Entity {
     else if(this.slimeBossHealthBar){
       this.healthBar.display(this.health, this.tentacles.length);
     }
+    else if(this.warlordBossHealthBar){
+      this.healthBar.display(this.health);
+    }
   }
   //   displayDraft(screenCenter, screenSize) {
   //     let [x, y] = [this.pos[0] - screenCenter[0], this.pos[1] - screenCenter[1]];
