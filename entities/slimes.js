@@ -346,9 +346,7 @@ class SlimeTentacle extends Slime {
     this.detectionRange = 25;
     this.isSlamming = false;
     this.vulnerable = false;
-    this.stunnedTexture = textures.slimeTentacleStunnedTileSet;
     this.animationSet = textures.slimeTentacleTileSet;
-    this.normalTexture = this.animationSet;
     this.vulnerableTimer = 0;
     this.targetSlamPos = [0, 0];
     this.slamCharge = 1500;
@@ -394,7 +392,7 @@ class SlimeTentacle extends Slime {
   }
 
   stun(duration) {
-    this.animationSet = this.stunnedTexture;
+    this.animationNum[0] = 1;
     this.vulnerable = true;
     this.isSlamming = false;
     this.suckers = [];
@@ -405,7 +403,7 @@ class SlimeTentacle extends Slime {
   operate(player, enemies, time) {
     if(this.vulnerable && millis() > this.vulnerableTimer) {
       this.vulnerable = false;
-      this.animationSet = this.normalTexture;
+      this.animationNum[0] = 0;
     }
     if(!this.vulnerable) {
       this.invincible = true;
