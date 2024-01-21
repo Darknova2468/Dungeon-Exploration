@@ -328,7 +328,9 @@ class SlimeBoss extends Slime {
         this.health = 20;
         let stunnedTentacle = random(this.tentacles);
         stunnedTentacle.stun(5000);
-        console.log("Stunned!");
+        if(ENEMYDEBUG) {
+          console.log("[Gargantuan Slime] Stunned!");
+        }
       }
     }
   }
@@ -336,7 +338,7 @@ class SlimeBoss extends Slime {
 
 class SlimeTentacle extends Slime {
   constructor(_pos, _roomId, _boss, _collisionMap) {
-    super(_pos, _roomId, 100, _collisionMap, textures.slimeTentacleTileSet, 3, 1.5);
+    super(_pos, _roomId, 100, _collisionMap, textures.slimeTentacleTileSet, 3, 3);
     this.boss = _boss;
     this.radius = 1;
     this.suckers = [];
@@ -346,14 +348,12 @@ class SlimeTentacle extends Slime {
     this.detectionRange = 25;
     this.isSlamming = false;
     this.vulnerable = false;
-    this.stunnedTexture = textures.slimeTentacleStunnedTileSet;
     this.animationSet = textures.slimeTentacleTileSet;
-    this.normalTexture = this.animationSet;
     this.vulnerableTimer = 0;
     this.targetSlamPos = [0, 0];
     this.slamCharge = 1500;
     this.slamDuration = 500;
-    this.slamWidth = 2;
+    this.slamWidth = 1.5;
     this.initSlamColour = color(0, 100, 100, 100);
     this.finalSlamColour = color(150, 50, 50, 225);
     this.slamColour = color(0, 150, 255, 255);
@@ -394,7 +394,7 @@ class SlimeTentacle extends Slime {
   }
 
   stun(duration) {
-    this.animationSet = this.stunnedTexture;
+    this.animationNum[0] = 1;
     this.vulnerable = true;
     this.isSlamming = false;
     this.suckers = [];
@@ -405,7 +405,7 @@ class SlimeTentacle extends Slime {
   operate(player, enemies, time) {
     if(this.vulnerable && millis() > this.vulnerableTimer) {
       this.vulnerable = false;
-      this.animationSet = this.normalTexture;
+      this.animationNum[0] = 0;
     }
     if(!this.vulnerable) {
       this.invincible = true;
