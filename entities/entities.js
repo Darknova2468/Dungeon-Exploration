@@ -3,6 +3,7 @@
 const baseResolution = [24, 24];
 const ENEMYDEBUG = 0;
 const SHOWHITBOXES = false;
+const DEFAULTPLAYERHEALTH = 10;
 
 class Entity {
   constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet, _animationSpeed, _scaleFactor){
@@ -325,7 +326,7 @@ class Enemy extends Entity {
 
 class Player extends Entity {
   constructor(_pos, _collisionMap){
-    super(_pos, 10, 5, 3.5, _collisionMap, textures.playerTileSet);
+    super(_pos, DEFAULTPLAYERHEALTH, 0, 3.5, _collisionMap, textures.playerTileSet);
     // TEMPORARY
     // let tmpWeapons = [new Dagger(this), new Sword(this), new Axe(this), new Spear(this), new ShortBow(this), new LongBow(this)];
     // this.weapons = [new Dagger(this), new Sword(this), new Axe(this), new Spear(this), new ShortBow(this), new LongBow(this)];
@@ -334,6 +335,8 @@ class Player extends Entity {
     this.movementDirection = [0, 0]; // Unrelated to texturing
     this.holdingIndex = 0;
     this.money = 0;
+    this.speedBonus = 0;
+    this.healthBonus = 0;
     this.inventory = new Inventory(this);
     this.inventory.storage[0].holding = new Dagger(this);
     // for(let i = 0; i < 6; i++) {
@@ -369,6 +372,26 @@ class Player extends Entity {
     this.holding = this.inventory.storage[this.holdingIndex].holding;
   }
 
+  updateArmor() {
+    this.defence = 0;
+    this.healthBonus = 0;
+    this.speedBonus = 0;
+    for(let cell of this.inventory.wearing) {
+      let piece = cell.holding;
+      if(piece === null) {
+        continue;
+      }
+      piece.updateStats();
+      this.healthBonus += piece.health;
+      this.defence += piece.defence;
+      this.speedBonus += piece.speed;
+    }
+    this.maxHealth = DEFAULTPLAYERHEALTH + this.healthBonus;
+    if(myDungeon.floorNumber === 0) {
+      this.health = this.maxHealth;
+    }
+  }
+
   move(direction, time, isRolling){
     if(this.timeLocked) {
       return;
@@ -382,6 +405,7 @@ class Player extends Entity {
     this.movementDirection = [0, 0];
     let [i, j] = direction;
     this.speed = isRolling && (j !== 0 || i !== 0) ? this.rollSpeed : this.defaultSpeed;
+    this.speed += this.speedBonus;
     
     //animation
     this.animationNum[1] = (i === -1)*1;

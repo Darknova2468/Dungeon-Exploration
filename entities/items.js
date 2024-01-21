@@ -28,6 +28,8 @@ class Item {
   accepts() {}
 
   updateTileNumber() {}
+
+  updateStats() {}
 }
 
 class DroppedItem extends Entity {

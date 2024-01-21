@@ -259,7 +259,7 @@ class SpecificArmorUpgradeMenu extends Menu {
           player.money -= this.costs;
         }
       }
-      player.updateHolding();
+      player.updateArmor();
       menuManager.menus.push(new SpecificArmorUpgradeMenu(this.index, this.armor));
     }
     
@@ -460,6 +460,7 @@ class Inventory {
     this.armorSize = 4;
     this.storage = [];
     this.hotbar = [];
+    this.wearing = [];
     this.pointer = -1;
     for(let i = 0; i < this.invHeight; i++) {
       for(let j = 0; j < this.hotbarSize; j++) {
@@ -473,7 +474,8 @@ class Inventory {
       }
     }
     for(let i = 0; i < this.armorSize; i++) {
-      this.storage.push(new InventoryCell(this.graphics, this, [this.graphics.width - this.padding - this.squareSize, 3/2 * this.padding + i * this.squareSize], this.squareSize, this.hotbarSize * this.invHeight + i, ARMORTYPES[i]));
+      this.wearing.push(new InventoryCell(this.graphics, this, [this.graphics.width - this.padding - this.squareSize, 3/2 * this.padding + i * this.squareSize], this.squareSize, this.hotbarSize * this.invHeight + i, ARMORTYPES[i]));
+      this.storage.push(this.wearing[i]);
     }
   }
 
@@ -510,6 +512,7 @@ class Inventory {
     cellI.holding = cellJ.holding;
     cellJ.holding = tmpSlot;
     this.player.updateHolding();
+    this.player.updateArmor();
   }
 
   display() {
