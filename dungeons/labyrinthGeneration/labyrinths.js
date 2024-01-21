@@ -1,9 +1,21 @@
 /* eslint-disable no-extra-parens */
 /* eslint-disable no-undef */
-
 // Eslint disabled for those because names are already defined in other files
 // and the parantheses are necessary
 
+/**
+ * Here, we generate the labyrinths. The many auxillary functions are needed to
+ *   ensure that multiple bounds are met. The core of the labyrinth generation
+ *   is Prim's algorithm, in the function runPrim.
+ */
+
+/**
+ * Finds the closest point on the edge of a given dungeon map to a cave node.
+ *   This will act as an effective boundary for the labyrinth.
+ * @param {Array.<Array.<number>>} grid The dungeon map grid.
+ * @param {Array.<number>} node The position vector of the cave node.
+ * @returns The closest point on an edge of the map.
+ */
 function getEffectiveEdgeNode(grid, node) {
   // Get candidate edge nodes
   let x = node[0]; let y = node[1];
