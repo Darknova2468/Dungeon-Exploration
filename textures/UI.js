@@ -299,7 +299,7 @@ class MenuManager {
 }
 
 class InventoryCell {
-  constructor(_graphics, _inventory, _pos, _size, _pointer, _accepts = "all") {
+  constructor(_graphics, _inventory, _pos, _size, _pointer, _accepts = "All") {
     this.graphics = _graphics;
     this.graphics.noSmooth();
     this.inventory = _inventory;
@@ -308,6 +308,13 @@ class InventoryCell {
     this.pointer = _pointer;
     this.accepts = _accepts;
     this.holding = null;
+  }
+
+  checkCompatibility(item) {
+    if(this.accepts === "All" || item === null) {
+      return true;
+    }
+    return item.name === this.accepts;
   }
 
   display(x, y, toggled = false, held = false) {
@@ -361,7 +368,7 @@ class InventoryCell {
   }
 }
 
-const ARMORTYPES = ["helmet", "chestplate", "leggings", "boots"];
+const ARMORTYPES = ["Helmet", "Chestplate", "Pants", "Boots"];
 
 class Inventory {
   constructor(_player) {
@@ -373,6 +380,7 @@ class Inventory {
     this.shown = false;
     this.hotbarSize = 5;
     this.invHeight = 4;
+    this.armorStart = this.hotbarSize * this.invHeight;
     this.armorSize = 4;
     this.storage = [];
     this.hotbar = [];
@@ -416,9 +424,15 @@ class Inventory {
   }
 
   swap(i, j) {
-    let tmpSlot = this.storage[i].holding;
-    this.storage[i].holding = this.storage[j].holding;
-    this.storage[j].holding = tmpSlot;
+    let cellI = this.storage[i];
+    let cellJ = this.storage[j];
+    if(!cellI.checkCompatibility(cellJ.holding)
+      || !cellJ.checkCompatibility(cellI.holding)) {
+      return;
+    }
+    let tmpSlot = cellI.holding;
+    cellI.holding = cellJ.holding;
+    cellJ.holding = tmpSlot;
     this.player.updateHolding();
   }
 
