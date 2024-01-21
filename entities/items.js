@@ -11,6 +11,8 @@ class Item {
     this.tileScaleFactor = 1;
     this.stackable = true;
     this.tileNumber = 0;
+    this.armorId = -1; // Necessary for denying armor slot access to most items
+    this.tileAngle = Math.PI / 4;
   }
 
   displayHeld(screenCenter, screenSize, pos) {}

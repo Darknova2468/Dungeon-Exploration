@@ -337,7 +337,7 @@ class InventoryCell {
 
     this.graphics.push();
     this.graphics.translate(this.pos[0] + this.size / 2, this.pos[1] + this.size / 2);
-    this.graphics.rotate(Math.PI / 4);
+    this.graphics.rotate(this.holding.tileAngle);
     try {
       // rotate(0);
       this.holding.updateTileNumber();
