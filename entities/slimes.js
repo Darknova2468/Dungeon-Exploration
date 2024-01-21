@@ -336,7 +336,7 @@ class SlimeBoss extends Slime {
 
 class SlimeTentacle extends Slime {
   constructor(_pos, _roomId, _boss, _collisionMap) {
-    super(_pos, _roomId, 100, _collisionMap, textures.slimeTentacleTileSet, 3, 1.5);
+    super(_pos, _roomId, 100, _collisionMap, textures.slimeTentacleTileSet, 3, 3);
     this.boss = _boss;
     this.radius = 1;
     this.suckers = [];
@@ -353,7 +353,7 @@ class SlimeTentacle extends Slime {
     this.targetSlamPos = [0, 0];
     this.slamCharge = 1500;
     this.slamDuration = 500;
-    this.slamWidth = 2;
+    this.slamWidth = 1.5;
     this.initSlamColour = color(0, 100, 100, 100);
     this.finalSlamColour = color(150, 50, 50, 225);
     this.slamColour = color(0, 150, 255, 255);
