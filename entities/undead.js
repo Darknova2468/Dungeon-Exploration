@@ -290,11 +290,12 @@ class NecromancerKing extends Phantom {
     this.circlePos = [0, 0];
 
     // Phantom teleportation
-    this.teleportBlindnessDuration = 4000;
-    this.teleportRadius = 3;
+    this.teleportBlindnessDuration = 500;
     this.teleportCooldown = 10000;
     this.teleportTimer = 0;
     this.teleportPos = [0, 0];
+    this.teleportCasting = false;
+    this.teleportChance = 0.2;
 
     // Darkness pulsation
     this.minDarknessPeriod = 500;
@@ -357,6 +358,13 @@ class NecromancerKing extends Phantom {
     }
   }
 
+  castTeleportationSpell(player, enemies) {
+    player.blindnessTimer = max(player.blindnessTimer, millis() + this.teleportBlindnessDuration);
+    let phantom = myDungeon.dungeon[this.lockedZone - 3].attemptEnemyPlacement(Phantom, Math.floor(random(150, 200)), 1);
+    this.pos = [phantom.pos[0], phantom.pos[1] + 0.05];
+    enemies.push(phantom);
+  }
+
   combat(player, enemies, time, distance, pursuitVector) {
     // Wave attacks
     if(millis() - this.waveTimer > this.waveCooldown) {
@@ -377,6 +385,11 @@ class NecromancerKing extends Phantom {
       this.circleCharging = false;
       this.castCircleSpell(player, enemies);
     }
+    if(this.teleportCasting) {
+      this.teleportCasting = false;
+      this.teleportTimer = millis() + this.teleportCooldown;
+      this.castTeleportationSpell(player, enemies);
+    }
     super.combat(player, enemies, time, distance, pursuitVector);
     for(let spell of this.spells) {
       spell.operate(player, time);
@@ -390,5 +403,15 @@ class NecromancerKing extends Phantom {
     });
     super.display(screenCenter, screenSize);
     this.displayPlayerDarknessPortion(player);
+  }
+
+  damage(amountDamage, damageType) {
+    super.damage(amountDamage, damageType);
+    if(millis() > this.teleportTimer && random() < this.teleportChance) {
+      this.teleportCasting = true;
+    }
+    if(!this.isAlive) {
+      player.visionPortion = 1;
+    }
   }
 }

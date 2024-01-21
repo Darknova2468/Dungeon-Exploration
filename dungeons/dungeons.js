@@ -470,7 +470,7 @@ class Room {
   }
 
   summonNecromancerKing() {
-    if(this.dungeonMap.floorNumber !== 15) {
+    if(!this.isBoss || this.dungeonMap.floorNumber !== 15) {
       return false;
     }
     this.enemies.push(new NecromancerKing(structuredClone(this.pos), this.id, this.dungeonMap.minimap));
