@@ -28,6 +28,7 @@ function enterDungeonMap(dungeonMap) {
   player.health = structuredClone(player.maxHealth);
   player.pos = structuredClone(dungeonMap.playerPos);
   player.collisionMap = dungeonMap.minimap;
+  player.visionPortion = 1;
   myBackground = new Scene(dungeonMap.minimap, [16, 8], textures.tileSet);
   player.updateVision(dungeonMap);
 }
@@ -35,6 +36,7 @@ function enterDungeonMap(dungeonMap) {
 function reEnterDungeonMap(dungeonMap){
   player.pos = structuredClone(dungeonMap.playerPos);
   player.collisionMap = dungeonMap.minimap;
+  player.visionPortion = 1;
   myBackground = new Scene(dungeonMap.minimap, [16, 8], textures.tileSet);
 }
 
@@ -379,6 +381,7 @@ class Room {
   }
 
   testSpawnEnemies() {
+    this.enemies.push(new NecromancerKing(structuredClone(this.pos), this.id, this.dungeonMap.minimap));
     // this.enemies.push(new Warlord(structuredClone(this.pos), this.id, this.dungeonMap.minimap));
     // for(let i = 0; i < 0; i++) {
     //   this.enemies.push(this.attemptEnemyPlacement(Slime));
@@ -414,7 +417,7 @@ class Room {
 
   spawnEnemies() {
     this.enemies = [];
-    // this.testSpawnEnemies();
+    this.testSpawnEnemies();
     if(!this.summonSlimeBoss() && !this.summonWarlord()) {
       let slimes = createSlimes(this.difficulties[0]);
       let goblins = createGoblins(this.difficulties[1]);

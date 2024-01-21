@@ -354,6 +354,7 @@ class Player extends Entity {
     // Lighting and exploration
     this.defaultVision = 15;
     this.visionModifier = 0;
+    this.visionPortion = 1; // Only used in Necromancer lord boss fight
     this.blindnessTimer = millis();
     this.updateVision(myDungeon);
   }
@@ -449,10 +450,10 @@ class Player extends Entity {
     }
     // Also used for some player updates
     if(millis() > this.blindnessTimer) {
-      this.vision = this.floorVision;
+      this.vision = Math.max(this.floorVision * this.visionPortion, 1);
     }
     else {
-      this.vision = 1;
+      this.vision = 1 * this.visionPortion;
     }
     if(this.holding !== null) {
       this.holding.display(screenCenter, screenSize);

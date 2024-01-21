@@ -242,3 +242,78 @@ function createUndead(undeadDifficulty) {
   }
   return undead;
 }
+
+/**
+ * The Necromancer King.
+ * 
+ * This boss has three attacks, all of which inflict blindness:
+ * - [Wave] Summons a large wave of zombies, not unlike the tentacle slam attack
+ *     (but not actually slamming this time)
+ * - [Circle] Summons a large skeleton circle around the player
+ * - [Teleport] 20% chance to summon a phantom at a random location and teleport nearby the phantom when hit
+ * 
+ * The boss also pulsates darkness; the frequency increases as the boss health gets lower.
+ */
+class NecromancerKing extends Phantom {
+  constructor(_pos, _roomId, _collisionMap) {
+    super(_pos, _roomId, 300, _collisionMap);
+    this.detectionRange = 200;
+
+    // All attacks (visuals)
+    this.castColour = color(0, 0, 0, 255);
+    this.fadeCastColour = color(93, 63, 211, 0);
+    this.castDuration = 1000;
+    this.spells = [];
+
+    // Zombie wave attack
+    this.initWaveColour = color(105, 131, 98, 0);
+    this.waveCharge = 1000;
+    this.waveWidth = 3;
+    this.waveLength = 8;
+    this.maxWaveSpawn = 20;
+    this.waveBlindnessDuration = 2000;
+    this.waveCooldown = 7000;
+    this.waveTimer = 0;
+    
+    // Skeleton circle attack
+    this.initCircleColour = color(255, 255, 255, 0);
+    this.circleRadius = 5;
+    this.circleCharge = 2000;
+    this.maxCircleSpawn = 5;
+    this.circleBlindnessDuration = 2000;
+    this.circleCooldown = 12000;
+    this.circleTimer = millis();
+
+    // Phantom teleportation
+    this.teleportBlindnessDuration = 4000;
+    this.teleportRadius = 3;
+    this.teleportCooldown = 10000;
+    this.teleportTimer = 0;
+
+    // Darkness pulsation
+    this.minDarknessPeriod = 500;
+    this.maxDarknessPeriod = 5000;
+    this.updateDarknessPeriod();
+  }
+
+  updateDarknessPeriod() {
+    let portion = this.health / this.maxHealth;
+    if(portion <= 0) {
+      return;
+    }
+    this.darknessPeriod = this.maxDarknessPeriod * portion;
+  }
+
+  displayPlayerDarknessPortion(player) {
+    player.visionPortion = (2 + Math.sin(2 * Math.PI * millis() / this.darknessPeriod)) / 3;
+  }
+
+  combat(player, enemies, time, distance, pursuitVector) {
+    super.combat(player, enemies, time, distance, pursuitVector);
+  }
+
+  display(screenCenter, screenSize) {
+    super.display(screenCenter, screenSize);
+    this.displayPlayerDarknessPortion(player);
+  }
+}
