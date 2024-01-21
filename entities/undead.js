@@ -268,27 +268,33 @@ class NecromancerKing extends Phantom {
     // Zombie wave attack
     this.initWaveColour = color(105, 131, 98, 0);
     this.waveCharge = 1000;
+    this.waveCharging = false;
     this.waveWidth = 3;
-    this.waveLength = 8;
+    this.waveLength = 20;
     this.maxWaveSpawn = 20;
     this.waveBlindnessDuration = 2000;
     this.waveCooldown = 7000;
     this.waveTimer = 0;
+    this.waveStart = [0, 0];
+    this.waveEnd = [0, 0];
     
     // Skeleton circle attack
     this.initCircleColour = color(255, 255, 255, 0);
     this.circleRadius = 5;
     this.circleCharge = 2000;
+    this.circleCharging = false;
     this.maxCircleSpawn = 5;
     this.circleBlindnessDuration = 2000;
     this.circleCooldown = 12000;
     this.circleTimer = millis();
+    this.circlePos = [0, 0];
 
     // Phantom teleportation
     this.teleportBlindnessDuration = 4000;
     this.teleportRadius = 3;
     this.teleportCooldown = 10000;
     this.teleportTimer = 0;
+    this.teleportPos = [0, 0];
 
     // Darkness pulsation
     this.minDarknessPeriod = 500;
@@ -308,11 +314,51 @@ class NecromancerKing extends Phantom {
     player.visionPortion = (2 + Math.sin(2 * Math.PI * millis() / this.darknessPeriod)) / 3;
   }
 
+  prepareWaveSpell(player) {
+    this.waveStart = structuredClone(this.pos);
+    let targetDisp = scaleVector(player.pos, this.waveLength, this.pos);
+    this.waveEnd = [this.pos[0] + targetDisp[0], this.pos[1] + targetDisp[1]];
+    this.spells.push(new LineWarnZone(this.waveStart, this.waveEnd, this.waveWidth, millis(), millis() + this.waveCharge, millis() + this.waveCharge + this.castDuration, this.initWaveColour, this.castColour, this.castColour, this.fadeCastColour, this.collisionMap));
+  }
+
+  castWaveSpell(player, enemies) {
+    let d = checkBounds(player.pos[0], player.pos[1],
+      this.waveStart[0], this.waveStart[1],
+      this.waveEnd[0], this.waveEnd[1]);
+    if(d !== -1 && d < this.waveWidth / 2) {
+      player.blindnessTimer = max(player.blindnessTimer, millis() + this.waveBlindnessDuration);
+    }
+    for(let i = 0; i < this.maxWaveSpawn; i++) {
+      let r = random();
+      let zombie = new Zombie([this.waveStart[0] * r + this.waveEnd[0] * (1-r), this.waveStart[1] * r + this.waveEnd[1] * (1-r)], this.lockedZone - 3, Math.floor(random(150, 200)), this.collisionMap);
+      if(verifyIndices(this.collisionMap, Math.floor(zombie.pos[1]), Math.floor(zombie.pos[0])) && zombie.canMoveTo(this.collisionMap[Math.floor(zombie.pos[1])][Math.floor(zombie.pos[0])])) {
+        enemies.push(zombie);
+      }
+    }
+  }
+
   combat(player, enemies, time, distance, pursuitVector) {
+    // Wave attacks
+    if(millis() - this.waveTimer > this.waveCooldown) {
+      this.waveTimer = this.waveCharge + millis();
+      this.waveCharging = true;
+      this.prepareWaveSpell(player);
+    }
+    else if(millis() > this.waveTimer && this.waveCharging) {
+      this.waveCharging = false;
+      this.castWaveSpell(player, enemies);
+    }
     super.combat(player, enemies, time, distance, pursuitVector);
+    for(let spell of this.spells) {
+      spell.operate(player, time);
+    }
+    this.spells = this.spells.filter((spell) => spell.isAlive);
   }
 
   display(screenCenter, screenSize) {
+    this.spells.forEach((spell) => {
+      spell.display(screenCenter, screenSize);
+    });
     super.display(screenCenter, screenSize);
     this.displayPlayerDarknessPortion(player);
   }
