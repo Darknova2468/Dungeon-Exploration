@@ -417,8 +417,8 @@ class Room {
 
   spawnEnemies() {
     this.enemies = [];
-    this.testSpawnEnemies();
-    if(!this.summonSlimeBoss() && !this.summonWarlord()) {
+    // this.testSpawnEnemies();
+    if(!this.summonSlimeBoss() && !this.summonWarlord() && !this.summonNecromancerKing()) {
       let slimes = createSlimes(this.difficulties[0]);
       let goblins = createGoblins(this.difficulties[1]);
       let undeads = createUndead(this.difficulties[2]);
@@ -466,6 +466,14 @@ class Room {
       return false;
     }
     this.enemies.push(new Warlord(structuredClone(this.pos), this.id, this.dungeonMap.minimap));
+    return true;
+  }
+
+  summonNecromancerKing() {
+    if(this.dungeonMap.floorNumber !== 15) {
+      return false;
+    }
+    this.enemies.push(new NecromancerKing(structuredClone(this.pos), this.id, this.dungeonMap.minimap));
     return true;
   }
 }

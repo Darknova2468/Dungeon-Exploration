@@ -283,7 +283,7 @@ class NecromancerKing extends Phantom {
     this.circleRadius = 5;
     this.circleCharge = 2000;
     this.circleCharging = false;
-    this.maxCircleSpawn = 5;
+    this.maxCircleSpawn = 10;
     this.circleBlindnessDuration = 2000;
     this.circleCooldown = 12000;
     this.circleTimer = millis();
@@ -337,6 +337,26 @@ class NecromancerKing extends Phantom {
     }
   }
 
+  prepareCircleSpell(player) {
+    this.circlePos = structuredClone(player.pos);
+    this.spells.push(new DiskWarnZone(this.circlePos, this.circleRadius, millis(), millis() + this.circleCharge, millis() + this.circleCharge + this.castDuration, this.initCircleColour, this.castColour, this.castColour, this.fadeCastColour, this.collisionMap));
+  }
+
+  castCircleSpell(player, enemies) {
+    let d = dist(player.pos[0], player.pos[1], this.circlePos[0], this.circlePos[1]);
+    if(d !== -1 && d < this.circleRadius) {
+      player.blindnessTimer = max(player.blindnessTimer, millis() + this.circleBlindnessDuration);
+    }
+    for(let i = 0; i < this.maxCircleSpawn; i++) {
+      let r = random(2 * Math.PI);
+      let skeleton = new Skeleton([this.circlePos[0] + this.circleRadius * Math.sin(r), this.circlePos[1] + this.circleRadius * Math.cos(r)], this.lockedZone - 3, Math.floor(random(150, 200)), this.collisionMap);
+      if(verifyIndices(this.collisionMap, Math.floor(skeleton.pos[1]), Math.floor(skeleton.pos[0])) && skeleton.canMoveTo(this.collisionMap[Math.floor(skeleton.pos[1])][Math.floor(skeleton.pos[0])])) {
+        enemies.push(skeleton);
+        skeleton.throwTimer = 0;
+      }
+    }
+  }
+
   combat(player, enemies, time, distance, pursuitVector) {
     // Wave attacks
     if(millis() - this.waveTimer > this.waveCooldown) {
@@ -347,6 +367,15 @@ class NecromancerKing extends Phantom {
     else if(millis() > this.waveTimer && this.waveCharging) {
       this.waveCharging = false;
       this.castWaveSpell(player, enemies);
+    }
+    if(millis() - this.circleTimer > this.circleCooldown) {
+      this.circleTimer = this.circleCharge + millis();
+      this.circleCharging = true;
+      this.prepareCircleSpell(player);
+    }
+    else if(millis() > this.circleTimer && this.circleCharging) {
+      this.circleCharging = false;
+      this.castCircleSpell(player, enemies);
     }
     super.combat(player, enemies, time, distance, pursuitVector);
     for(let spell of this.spells) {
