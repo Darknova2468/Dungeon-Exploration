@@ -1,3 +1,5 @@
+const ARMORTYPES = ["Helmet", "Chestplate", "Pants", "Boots"];
+
 const ARMORHEALTHBONUS = [
   [1, 2, 4, 8, 16],
   [1, 2, 3, 4, 5],
@@ -35,7 +37,7 @@ class ArmorPiece extends Item {
     this.defence = 0;
     this.speed = 0;
     this.stackable = false;
-    this.tier = 4; // 1
+    this.tier = 1;
     this.tileAngle = 0;
   }
 
@@ -74,3 +76,5 @@ class Boots extends ArmorPiece {
     super("Boots", 3, wielder, textures.bootiesTileSet, 1);
   }
 }
+
+const ARMORCLASSES = [Helmet, Chestplate, Pants, Boots];

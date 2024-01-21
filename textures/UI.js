@@ -201,6 +201,84 @@ class UpgradeMenu extends Menu {
   }
 }
 
+class SpecificArmorUpgradeMenu extends Menu {
+  constructor(_index, _armor) {
+    super("Armorer > Buy / Upgrade ".concat(_armor), "Querying ".concat(_armor.concat("...")), ["> Back to Upgrade Menu"], 95);
+    this.index = _index;
+    this.armor = _armor;
+    this.mode = 0;
+    this.costs = 0;
+    for(let cell of player.inventory.storage) {
+      if(cell.holding !== null && cell.holding.name === this.armor) {
+        this.mode = cell.holding.tier;
+      }
+    }
+
+    // See armor.js for specific costs
+    if(this.mode >= 5) {
+      this.text = "You've already reached tier 5, I don't have the power to upgrade it any further!";
+    }
+    else {
+      this.costs = ARMORCOSTS[this.index][this.mode];
+      if(this.mode === 0) {
+        let prefix = (this.index < 2) ? "Want a " : "Want some "
+        this.text = prefix.concat(_armor.concat(" for ".concat(this.costs.toString().concat(" coins?"))));
+        this.commands.push("> Buy armor piece");
+      }
+      else {
+        this.text = "Upgrade this ".concat(_armor.concat(" to tier ".concat((this.mode + 1).toString().concat(" for ".concat(this.costs.toString().concat(" coins!"))))));
+        this.commands.push("> Upgrade armor piece");
+      }
+    }
+  }
+
+  applyCommand(cmd) {
+    if(cmd === 0) {
+      menuManager.menus.push(new ArmorUpgradeMenu());
+    }
+    else {
+      if(player.money < this.costs) {
+        this.text = "You don't have enough coins!";
+        return;
+      }
+      else if(this.mode === 0) {
+        if(player.inventory.attemptCollect(new ARMORCLASSES[this.index](null))) {
+          player.money -= this.costs;
+        }
+      }
+      else {
+        let found = false;
+        for(let cell of player.inventory.storage) {
+          if(cell.holding !== null && cell.holding.name === this.armor) {
+            cell.holding.tier += 1;
+            found = true;
+            break;
+          }
+        }
+        if(found) {
+          player.money -= this.costs;
+        }
+      }
+      player.updateHolding();
+      menuManager.menus.push(new SpecificArmorUpgradeMenu(this.index, this.armor));
+    }
+    
+    super.applyCommand(cmd);
+  }
+}
+
+class ArmorUpgradeMenu extends Menu {
+  constructor() {
+    super("Armorer", "Buy and upgrade armor with me!", ["> Buy / Upgrade Helmet", 
+      "> Buy / Upgrade Chestplate", "> Buy / Upgrade Pants", "> Buy / Upgrade Boots"], 90);
+  }
+
+  applyCommand(cmd) {
+    menuManager.menus.push(new SpecificArmorUpgradeMenu(cmd, ARMORTYPES[cmd]));
+    super.applyCommand(cmd);
+  }
+}
+
 class PortalMenu extends Menu {
   constructor(_floorNum) {
     super("Portal", "Querying...", [], 50);
@@ -367,8 +445,6 @@ class InventoryCell {
       && this.pos[1] < y && y < this.pos[1] + this.size;
   }
 }
-
-const ARMORTYPES = ["Helmet", "Chestplate", "Pants", "Boots"];
 
 class Inventory {
   constructor(_player) {
