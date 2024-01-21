@@ -283,7 +283,7 @@ class SlimeBoss extends Slime {
     }
     this.endBoss = false;
     this.slimeBossHealthBar = true;
-    this.healthBar = new slimeBossHealthBar(this.health, this.tentacles.length);
+    this.healthBar = new SlimeBossHealthBar(this.health, this.tentacles.length);
   }
 
   move() {
@@ -336,7 +336,7 @@ class SlimeBoss extends Slime {
 
 class SlimeTentacle extends Slime {
   constructor(_pos, _roomId, _boss, _collisionMap) {
-    super(_pos, _roomId, 100, _collisionMap, textures.slimeTentacleTileSet);
+    super(_pos, _roomId, 100, _collisionMap, textures.slimeTentacleTileSet, 3, 1.5);
     this.boss = _boss;
     this.radius = 1;
     this.suckers = [];

@@ -180,6 +180,7 @@ class SpecificUpgradeMenu extends Menu {
           player.money -= this.costs;
         }
       }
+      player.updateHolding();
       menuManager.menus.push(new SpecificUpgradeMenu(this.index, this.weapon));
     }
     
@@ -682,7 +683,7 @@ class EnemyHealthBar{
   }
 }
 
-class slimeBossHealthBar{
+class SlimeBossHealthBar{
   constructor(_maxHealth, _maxTentacles){
     this.maxHealth = _maxHealth;
     this.maxTentacles = _maxTentacles;
@@ -693,7 +694,7 @@ class slimeBossHealthBar{
     stroke("white");
     strokeWeight(2);
     fill("black");
-    text("Slime King", width/2, height/20);
+    text("Gargantuan Slime", width/2, height/20);
     stroke(20);
     strokeWeight(height/16);
     line(width/8, height/6, width*7/8, height/6);
@@ -720,6 +721,45 @@ class slimeBossHealthBar{
       }
       line(x, height/6, x+(offset-space)*(health/this.maxHealth), height/6);
     }
+    noStroke();
+  }
+}
+
+class WarlordHealthBar {
+  constructor(_maxHealth){
+    this.maxHealth = _maxHealth;
+    this.stages = 4;
+  }
+
+  display(health) {
+    let stagesRemaining = Math.floor(4 * health / this.maxHealth);
+    let stagePortionRemaining = 4 * health / this.maxHealth - stagesRemaining;
+    console.log(stagePortionRemaining);
+    textAlign(CENTER);
+    textSize(height/12);
+    stroke("white");
+    strokeWeight(2);
+    fill("black");
+    text("Hobgoblin Warlord", width/2, height/20);
+    stroke(20);
+    strokeWeight(height/16);
+    line(width/8, height/6, width*7/8, height/6);
+    strokeWeight(height/24);
+    stroke("red");
+    let x = width/8;
+    const space = height/16;
+    const offset = width*3/4/this.stages+space/this.stages;
+    for(let i=0; i<this.stages; i++){
+      line(x, height/6, x+offset-space, height/6);
+      x += offset;
+    }
+    stroke("green");
+    x = width/8;
+    for(let i=0; i<stagesRemaining; i++){
+      line(x, height/6, x+offset-space, height/6);
+      x += offset;
+    }
+    line(x, height/6, x+(offset-space)*stagePortionRemaining, height/6);
     noStroke();
   }
 }

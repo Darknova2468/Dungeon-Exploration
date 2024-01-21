@@ -378,6 +378,7 @@ class Room {
   }
 
   testSpawnEnemies() {
+    // this.enemies.push(new Warlord(structuredClone(this.pos), this.id, this.dungeonMap.minimap));
     // for(let i = 0; i < 0; i++) {
     //   this.enemies.push(this.attemptEnemyPlacement(Slime));
     // }
@@ -412,8 +413,8 @@ class Room {
 
   spawnEnemies() {
     this.enemies = [];
-    this.testSpawnEnemies();
-    if(!this.summonSlimeBoss()) {
+    // this.testSpawnEnemies();
+    if(!this.summonSlimeBoss() && !this.summonWarlord()) {
       let slimes = createSlimes(this.difficulties[0]);
       let goblins = createGoblins(this.difficulties[1]);
       let undeads = createUndead(this.difficulties[2]);
@@ -452,7 +453,15 @@ class Room {
     if(!this.isBoss || this.dungeonMap.floorNumber !== 5) {
       return false;
     }
-    this.enemies.push(new SlimeBoss(this.pos, this.id, this.dungeonMap.minimap, this.enemies));
+    this.enemies.push(new SlimeBoss(structuredClone(this.pos), this.id, this.dungeonMap.minimap, this.enemies));
+    return true;
+  }
+
+  summonWarlord() {
+    if(!this.isBoss || this.dungeonMap.floorNumber !== 10) {
+      return false;
+    }
+    this.enemies.push(new Warlord(structuredClone(this.pos), this.id, this.dungeonMap.minimap));
     return true;
   }
 }

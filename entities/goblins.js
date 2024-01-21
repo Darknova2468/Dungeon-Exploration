@@ -2,7 +2,7 @@
 class Goblin extends Enemy {
   constructor(_pos, _roomId, _level, _collisionMap, _textureSet = textures.goblinTileSet) {
     // super(_pos, _level + 4, 0, 4.5, _collisionMap, _textureSet);
-    super(_pos, "Goblin", _roomId, _level, 4 + Math.floor(Math.pow(_level, 0.5)), 0, 3.5, 12, 2, 1 + Math.floor(Math.log(1 + _level / 3)), "Slashing", 1, 700, _collisionMap, _textureSet);
+    super(_pos, "Goblin", _roomId, _level, 4 + Math.floor(Math.pow(_level, 0.6)), 0, 3.5, 12, 2, 1 + Math.floor(_level / 30), "Slashing", 1, 700, _collisionMap, _textureSet);
 
     // Goblin bully tactics
     this.thrustRadius = 3;
@@ -71,13 +71,15 @@ class Goblin extends Enemy {
       this.knockback = true;
     }
     if(!this.isAlive) {
-      let netWorth = Math.floor(random(this.level) / Math.max(0.05, random(2)));
+      let netWorth = Math.floor(random(this.level) / Math.max(0.1, Math.sqrt(random(2))));
       while(netWorth > 0) {
         let amt = min(5, netWorth);
         myDungeon.otherEntities.push(new Coin(structuredClone(this.pos), amt, this.collisionMap));
         netWorth -= amt;
       }
     }
+    this.thrusting = false;
+    this.backing = true;
   }
 }
 
@@ -91,7 +93,7 @@ class Booyahg extends Goblin {
     // Booyahgs are trickster spellcasters
     this.spellSpeed = 1;
     this.spellRange = 20;
-    this.spellDamage = this.attackDamage * 4;
+    this.spellDamage = this.attackDamage;
   }
 
   combat(player, enemies, time, distance, pursuitVector) {
@@ -111,6 +113,8 @@ class AnnoyingSpark extends EnemyProjectile {
     this.sparkSpeed = 10;
     this.remainChance = 0.5;
     this.radius = 0.1;
+    this.scaleFactor = 0.5;
+    this.passive = true;
   }
 
   operate(target, enemies, time) {
@@ -180,17 +184,72 @@ function createGoblins(goblinDifficulty) {
       goblinType = 2;
     }
     let reductionFactor = (goblinType === 1) ? 1 : 2;
-    let chosenLevel = Math.ceil(Math.pow(random(0.1, Math.sqrt(maxLevel)), reductionFactor));
+    let chosenLevel = Math.ceil(Math.pow(random(1, Math.pow(maxLevel, 1/reductionFactor)), reductionFactor));
     if(goblinType !== 1) {
       chosenLevel = Math.min(20, chosenLevel);
     }
     goblins.push([goblinVariants[goblinType], chosenLevel, 1]);
     if(goblinType) {
-      goblinDifficulty -= 2 * chosenLevel;
+      goblinDifficulty -= 1.5 * chosenLevel;
     }
     else {
       goblinDifficulty -= chosenLevel;
     }
   }
   return goblins;
+}
+
+class Warlord extends Goblin {
+  constructor(_pos, _roomId, _collisionMap) {
+    super(_pos, _roomId, 300, _collisionMap, textures.hobgoblinTileSet); // Temporary textures
+    this.combatBalanceRadius = 5;
+    this.thrustRadius = 7;
+    this.maxHealth *= 4;
+    this.health *= 4;
+    this.healthBar.maxHealth = this.maxHealth;
+    this.bossHealthBar = new WarlordHealthBar(this.maxHealth);
+    this.healthStage = 0;
+  }
+
+  combat(player, enemies, time, distance, pursuitVector) {
+    super.combat(player, enemies, time, distance, pursuitVector);
+    if(this.backing) {
+      this.defence = 0;
+      this.attackRange = 1;
+      // enemies.push(new AnnoyingSpark(this.pos, this.lockedZone, scaleVector(pursuitVector, this.spellSpeed), this.spellRange, this.spellDamage, this.collisionMap));
+    }
+    else if(this.thrusting){
+      this.defence = 5;
+      this.attackRange = 2;
+    }
+    else {
+      this.defence = 30;
+      this.attackRange = 1;
+    }
+    if(this.health / this.maxHealth < 1 - this.healthStage / 4) {
+      this.healthStage += 1;
+      switch(this.healthStage) {
+        case 2:
+          for(let i = 0; i < 5; i++) {
+            enemies.push(myDungeon.dungeon[this.lockedZone - 3].attemptEnemyPlacement(Goblin, 20, 0.5));
+          }
+          break;
+        case 3:
+          for(let i = 0; i < 5; i++) {
+            enemies.push(myDungeon.dungeon[this.lockedZone - 3].attemptEnemyPlacement(Booyahg, 20, 0.5));
+          }
+          break;
+        case 4:
+          for(let i = 0; i < 5; i++) {
+            enemies.push(myDungeon.dungeon[this.lockedZone - 3].attemptEnemyPlacement(Hobgoblin, 100, 0.5));
+          }
+          break;
+      }
+    }
+  }
+
+  display(screenCenter, screenSize) {
+    super.display(screenCenter, screenSize);
+    this.bossHealthBar.display(this.health);
+  }
 }

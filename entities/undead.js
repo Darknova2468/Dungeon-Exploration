@@ -2,7 +2,7 @@
 class Zombie extends Enemy {
   constructor(_pos, _roomId, _level, _collisionMap) {
     // super(_pos, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, _collisionMap, _textureSet);
-    super(_pos, "Zombie", _roomId, _level, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, 10, 1, 2, "Bludgeoning", 1.2, 700, _collisionMap, textures.zombieTileSet);
+    super(_pos, "Zombie", _roomId, _level, Math.floor(10 + Math.pow(_level, 0.7)), Math.floor(Math.log(_level+1)), 1.2, 10, 1, 2, "Bludgeoning", 1.2, 700, _collisionMap, textures.zombieTileSet);
     this.radius = 0.4;
 
     // Zombies stop when attacking and bite if close; also quite heavy
@@ -45,7 +45,7 @@ class Zombie extends Enemy {
 class Skeleton extends Enemy {
   constructor(_pos, _roomId, _level, _collisionMap) {
     // super(_pos, Math.floor(_level + 4), 2, 2.5, _collisionMap, _textureSet);
-    super(_pos, "Skeleton", _roomId, _level, Math.floor(_level + 4), 2, 2.5, 10, 6, 1, "Slashing", 1, 1000, _collisionMap, textures.skeletonTileSet);
+    super(_pos, "Skeleton", _roomId, _level, Math.floor(10 + Math.pow(_level, 0.7)), 2, 2.5, 10, 6, 1, "Slashing", 1, 1000, _collisionMap, textures.skeletonTileSet);
 
     // I am Skeletor.
     this.retreatMidpoint = 4;
@@ -54,7 +54,7 @@ class Skeleton extends Enemy {
     this.throwCooldown = 5000;
     this.throwStunTime = 1000;
     this.throwSpeed = 10;
-    this.throwDamage = 10;
+    this.throwDamage = 10 + Math.floor(Math.sqrt(_level));
   }
   operate(player, enemies, time) {
     if(millis() - this.throwTimer < this.throwStunTime) {
@@ -124,7 +124,7 @@ class Skeleton extends Enemy {
 
 class Phantom extends Enemy {
   constructor(_pos, _roomId, _level, _collisionMap) {
-    super(_pos, "Phantom", _roomId, _level, Math.floor(_level + 4), 0, 2, 15, 8, 3, "Necrotic", 1.5, 1000, _collisionMap, textures.phantomTileSet);
+    super(_pos, "Phantom", _roomId, _level, Math.floor(5 + Math.pow(_level, 0.8)), 0, 2, 15, 8, 3, "Necrotic", 1.5, 1000, _collisionMap, textures.phantomTileSet);
 
     // Necrotic spellcaster
     this.retreatMidpoint = 6;
@@ -132,7 +132,7 @@ class Phantom extends Enemy {
     this.spellTimer = millis();
     this.spellCooldown = 7000;
     this.spellSpeed = 5;
-    this.spellDamage = 7;
+    this.spellDamage = Math.floor(Math.pow(this.level, 0.4));
   }
 
   combat(player, enemies, time, distance, pursuitVector) {
