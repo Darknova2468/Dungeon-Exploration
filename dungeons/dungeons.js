@@ -188,6 +188,7 @@ class DungeonMap {
       }
     }
     this.otherEntities.push(new Blacksmith([6, 2], this.minimap));
+    this.otherEntities.push(new Armorer([6, this.height - 2], this.minimap));
 
     // Empty shop (add something here)
     for(let i = this.height - this.wallDepth; i < this.height - 1; i++) {

@@ -63,6 +63,7 @@ function preload() {
     numbers: new TileSet("textures/numbers.png", [6, 7]),  
     coinTileSet: new TileSet("textures/coin.png", [11, 11]),
     blacksmithTileSet: "black",
+    armorerTileSet: "lightgray",
   };
   music = new Music("music/theme.mp3");
   sfx = {

@@ -23,3 +23,13 @@ class Blacksmith extends NPC {
     menuManager.menus.push(new UpgradeMenu());
   }
 }
+
+class Armorer extends NPC {
+  constructor(_pos, _collisionMap) {
+    super(_pos, "Armorer", 2.2, _collisionMap, textures.armorerTileSet, 1, 1);
+  }
+
+  execute(player) {
+    menuManager.menus.push(new ArmorUpgradeMenu());
+  }
+}
