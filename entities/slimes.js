@@ -328,7 +328,9 @@ class SlimeBoss extends Slime {
         this.health = 20;
         let stunnedTentacle = random(this.tentacles);
         stunnedTentacle.stun(5000);
-        console.log("Stunned!");
+        if(ENEMYDEBUG) {
+          console.log("[Gargantuan Slime] Stunned!");
+        }
       }
     }
   }
