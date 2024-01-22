@@ -43,6 +43,7 @@ function preload() {
     frozenPuddleTileSet: new AnimateSet("textures/frostSlimePuddle.png", [31,31]),
     blueDraconianTileSet: "blue",
     redDraconianTileSet: "red",
+    fireBallTileSet: new AnimateSet("textures/fireBall.png", [12, 14]),
     blackDraconianTileSet: "black",
     deathBallTextureSet: "black",
     daggerAnimationSet: new AnimateSet("textures/dagger.png", [9, 47]),

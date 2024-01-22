@@ -196,7 +196,7 @@ class BlackDraconian extends Draconian {
 
 class FireBall extends EnemyProjectile {
   constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _collisionMap) {
-    super(_pos, _zone, _dir, _maxDist, _hitDmg, "Fire", 0.3, false, 0, 0, null, _collisionMap, textures.lavaSlimeBallTileSet);
+    super(_pos, _zone, _dir, _maxDist, _hitDmg, "Fire", 0.3, false, 0, 0, null, _collisionMap, textures.fireBallTileSet);
   }
 
   operate(target, enemies, time) {
