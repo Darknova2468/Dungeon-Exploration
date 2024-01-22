@@ -8,6 +8,7 @@ In order to determine the placment of the rooms is quiet simple and paramaterize
 - empty 
 - path
 - labyrinth 
+
 All of the aformentioned options have their own range of lengths associated with them as well. As room 0 connects to 1 and 2 and 1 connects to 2 and 3 and so on and so forth, it creates a network of triangles with known lengths. 
 
 Then we use a propegation algorithm I developed similar to how CAD softwares solve geometry. The first step is initializing an angle which uses cosine law to find the angle at room 0. then subdivides that angle and takes the sin and cosine of that angle multiplies by the length of the leg plus the radius of the two rooms its connecting to solve for the x, and y coordinate of the room. the does the same with the negative half angle to solve for the position of room 2.
