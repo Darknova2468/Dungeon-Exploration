@@ -6,7 +6,8 @@
 /**
  * Here, we generate the labyrinths. The many auxillary functions are needed to
  *   ensure that multiple bounds are met. The core of the labyrinth generation
- *   is Prim's algorithm, in the function runPrim.
+ *   is Prim's algorithm, in the function runPrim. More details can be found in
+ *   reflection_Robert.md.
  */
 
 /**
@@ -21,18 +22,40 @@ function getEffectiveEdgeNode(grid, node) {
   let x = node[0]; let y = node[1];
   let candidates = [[x, 0], [x, grid.length-1], [0, y], [grid[0].length-1, y]];
   return candidates.reduce((prev, curr) => {
-    return dist(prev[0], prev[1], x, y) < dist(curr[0], curr[1], x, y) ? prev : curr;
+    return dist(prev[0], prev[1], x, y)
+      < dist(curr[0], curr[1], x, y) ? prev : curr;
   });
 }
 
+/**
+ * Gets the midpoint of two given vectors
+ */
 function getMidpoint(p1, p2) {
   return [Math.floor((p1[0]+p2[0])/2), Math.floor((p1[1]+p2[1])/2)];
 }
 
+/**
+ * Finds the index of an array givne the object.
+ * @param {Array.<any>} l The list to search.
+ * @param {any} target The target value.
+ * @param {function} getAttribute Required attribute getter.
+ * @returns The index.
+ */
 function getIndex(l, target, getAttribute = (x) => x) {
-  return parseInt(Object.keys(l).find((key) => getAttribute(l[key]) === target));
+  return parseInt(Object.keys(l)
+    .find((key) => getAttribute(l[key]) === target));
 }
 
+/**
+ * Bounds a labyrinth edge by the adjacent edges of the source node, or the
+ *   median if the adjacent edge is also a labyrinth edge.
+ * @param {Array.<Array.<number>>} nodes The position of each labyrinth node.
+ * @param {Array.<Array.<Array<number, boolean>>>} adj The adjacency list of
+ *   the nodes.
+ * @param {number} i The first room of a labyrinth edge.
+ * @param {number} j The second room of a labyrinth edge.
+ * @returns The bounds given by the first room and its adjacent edges.
+ */
 function getAdjacentBounds(nodes, adj, i, j) {
   // Note that edge nodes should not be part of this
   pivot = nodes[i]; // Defined in convexHull
@@ -57,16 +80,26 @@ function getAdjacentBounds(nodes, adj, i, j) {
   return [[pivot, lowerEdge, true], [pivot, upperEdge, false]];
 }
 
+/**
+ * Creates a list of random edge weights connecting every pair of adjacent
+ *   nodes.
+ * @param {Array.<Array.<number>>} nodes The position of each labyrinth node.
+ * @param {number} i The first room of a labyrinth edge.
+ * @param {number} j The second room of a labyrinth edge.
+ * @returns The random edges.
+ */
 function getEdges(nodes, i, j) {
   let l = [];
   for(let iDisp of [-1, 0, 1]) {
     for(let jDisp of [-1, 0, 1]) {
+      // Verify orthognal directionality
       if((iDisp === 0) ^ (jDisp !== 0)) {
         continue;
       }
       let newI = i + iDisp;
       let newJ = j + jDisp;
       if(verifyIndices(nodes, newI, newJ) && nodes[newI][newJ] === 1) {
+        // Push a random edge
         l.push([random(), [i, j], [newI, newJ]]);
       }
     }
@@ -74,9 +107,13 @@ function getEdges(nodes, i, j) {
   return l;
 }
 
+/**
+ * Given a point in a grid, check if the orthogonal spaces around it are filled
+ */
 function checkOrthogonalAdjacents(grid, i, j, iNode = 0, jNode = 0) {
   for(let iDisp of [-1, 0, 1]) {
     for(let jDisp of [-1, 0, 1]) {
+      // Verify orthognal directionality
       if((iDisp !== 0) && (jDisp !== 0)) {
         continue;
       }
@@ -94,13 +131,29 @@ function checkOrthogonalAdjacents(grid, i, j, iNode = 0, jNode = 0) {
   return false;
 }
 
+/**
+ * Generates a single labyrinth edge by using Prim's algorithm to fill in the
+ *   labyrinth.
+ * @param {Array.<Array.<number>>} grid The grid.
+ * @param {Array.<Array.<number>>} nodes The position of each labyrinth node.
+ * @param {number} i The i-index of starting coordinate.
+ * @param {number} j The j-index of starting coordinate.
+ * @param {Array.<number>} p1 The position of the first node.
+ * @param {Array.<number>} p2 The position of the second node.
+ * @param {number} r1 The radius of the first node.
+ * @param {number} r2 The radius of the second node.
+ * @returns Whether or not the generation succeeded.
+ */
 function runPrim(grid, nodes, i, j, p1, p2, r1, r2) {
   let sourceHit = false; let targetHit = false;
   let pq = new Heap(getEdges(nodes, i, j), (a, b) => a[0] - b[0]);
   nodes[i][j] = 2;
+  // Cancels the generation if starting point is exposed
   if(checkOrthogonalAdjacents(grid, 2*i, 2*j)) {
     return false;
   }
+
+  // Starts Prim's
   grid[2*i][2*j] = 2;
   while(pq.heap.length > 1) {
     let edge = pq.pop();
@@ -113,6 +166,7 @@ function runPrim(grid, nodes, i, j, p1, p2, r1, r2) {
       || checkOrthogonalAdjacents(grid, i0 + i1, j0 + j1, i1 - i0, j1 - j0);
 
     if(alreadyClear) {
+      // Check to see if certain exits were / need to be made
       if(dist(p1[0], p1[1], 2*j1, 2*i1) < r1 + 3) {
         if(sourceHit) {
           continue;
@@ -131,8 +185,8 @@ function runPrim(grid, nodes, i, j, p1, p2, r1, r2) {
     }
     // Finalize the edge
     nodes[i1][j1] = 2;
-    grid[2*i1][2*j1] = 2;// + debugSpecial;
-    grid[i0+i1][j0+j1] = 2;// + debugSpecial;
+    grid[2*i1][2*j1] = 2;
+    grid[i0+i1][j0+j1] = 2;
     if(!alreadyClear) {
       for(let t of getEdges(nodes, i1, j1)) {
         pq.push(t);
@@ -143,8 +197,9 @@ function runPrim(grid, nodes, i, j, p1, p2, r1, r2) {
 }
 
 /**
- * Generates labyrinth edges in a grid.
+ * Generates labyrinth edges in a grid by specifying lots of bounds.
  * @param {Room} dungeonMap The dungeon map to operate on.
+ * @returns Whether or not at least one labyrinth is corrupted.
  */
 function generateLabyrinthEdges(dungeonMap) {
   let grid = dungeonMap.minimap;
@@ -152,7 +207,7 @@ function generateLabyrinthEdges(dungeonMap) {
   let n = nodes.length;
   let labyrinthEdges = [];
 
-  // Create two-way adjacency list
+  // Create two-way adjacency list for all labyrinth nodes
   let adj = generateEmptyGrid(0, n);
   for(let i = 0; i < n; i++) {
     for(let connection of dungeonMap.dungeon[i].connections) {
@@ -228,6 +283,7 @@ function generateLabyrinthEdges(dungeonMap) {
       }
     }
 
+    // Spams Prim until the two rooms are connected
     let foundSpanning = false;
     for(let i = 0; (i < labyGrid.length) && !foundSpanning; i++) {
       for(let j = 0; (j < labyGrid.length) && !foundSpanning; j++) {
