@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 class Draconian extends Enemy {
   constructor(_pos, _roomId, _level, _collisionMap, _textureSet = "purple") {
-    super(_pos, "Draconian", _roomId, _level, _level + 10, 20, 3, 20, 5, _level, "Slashing", 1.2, 700, _collisionMap, _textureSet);
+    super(_pos, "Draconian", _roomId, _level, _level + 10, 5, 3, 20, 5, Math.floor(Math.sqrt(_level) + 10), "Slashing", 1.2, 700, _collisionMap, _textureSet);
 
     // Proficient fighters with periodic breath attacks
     this.breathCooldown = 8000;
@@ -11,19 +11,19 @@ class Draconian extends Enemy {
     this.breathEntities = [];
   }
 
-  updateBreathAttack(player) {
+  updateBreathAttack(player, enemies) {
     return this.firing;
   }
 
-  initiateBreathAttack(player) {
+  initiateBreathAttack(player, enemies) {
     this.breathTimer = millis();
     this.firing = true;
   }
 
   combat(player, enemies, time, distance, pursuitVector) {
-    this.updateBreathAttack(player);
+    this.updateBreathAttack(player, enemies);
     if(millis() - this.breathTimer > this.breathCooldown) {
-      this.initiateBreathAttack(player);
+      this.initiateBreathAttack(player, enemies);
     }
     else if(millis() - this.breathTimer < this.breathStall || this.firing) {
       return;
@@ -56,7 +56,7 @@ class Draconian extends Enemy {
 
 class BlueDraconian extends Draconian {
   constructor(_pos, _roomId, _level, _collisionMap) {
-    super(_pos, _roomId, _level, _collisionMap, "blue");
+    super(_pos, _roomId, _level, _collisionMap, textures.blueDraconianTileSet);
 
     // Lightning bolts
     this.boltCount = 3;
@@ -67,7 +67,7 @@ class BlueDraconian extends Draconian {
     this.boltTargetPos = [0, 0];
     this.boltRange = 20;
     this.boltWidth = 0.1;
-    this.boltDamage = 20;
+    this.boltDamage = 4 * this.attackDamage;
     this.boltDamageType = "Lightning";
     this.initLightningColour = color(150, 150, 255, 0);
     this.finalLightningColour = color(150, 150, 255, 100);
@@ -98,14 +98,14 @@ class BlueDraconian extends Draconian {
     }
   }
 
-  initiateBreathAttack(player) {
-    super.initiateBreathAttack(player);
+  initiateBreathAttack(player, enemies) {
+    super.initiateBreathAttack(player, enemies);
     this.boltCountRemaining = this.boltCount;
     this.initiateLightning(player);
   }
 
-  updateBreathAttack(player) {
-    if(!super.updateBreathAttack(player)) {
+  updateBreathAttack(player, enemies) {
+    if(!super.updateBreathAttack(player, enemies)) {
       return false;
     }
     if(millis() - this.boltTimer > this.boltCooldown) {
@@ -128,16 +128,44 @@ class BlueDraconian extends Draconian {
 
 class RedDraconian extends Draconian {
   constructor(_pos, _roomId, _level, _collisionMap) {
-    super(_pos, _roomId, _level, _collisionMap, "red");
+    super(_pos, _roomId, _level, _collisionMap, textures.redDraconianTileSet);
 
     // Fireball spam
-    this.fireBallCooldown = 150;
-    this.firingAngle = Math.PI / 4;
-    this.fireBallDamage = 10;
-    this.fireBallQueue = 0;
+    this.firingAngle = Math.PI / 2;
+    this.fireBallDamage = this.attackDamage;
+    this.maxFireBalls = 10;
+    this.fireBallsFired = this.maxFireBalls;
+    this.fireBallCooldown = this.breathStall / this.maxFireBalls;
+    this.initFireSpeed = 2;
+    this.fireBallRange = 20;
   }
 
+  fireFireBall(player, enemies) {
+    let playerDisplacement = scaleVector(player.pos, 1, this.pos);
+    let playerDirection = getAngle(playerDisplacement[1], playerDisplacement[0]);
+    playerDirection += random(-this.firingAngle / 2, this.firingAngle / 2);
+    let firingDisplacement = scaleVector([Math.cos(playerDirection), Math.sin(playerDirection)], this.initFireSpeed);
+    enemies.push(new FireBall(this.pos, this.lockedZone, firingDisplacement, this.fireBallRange, this.fireBallDamage, this.collisionMap));
+    this.fireBallsFired += 1;
+    if(this.fireBallsFired >= this.maxFireBalls) {
+      this.firing = false;
+    }
+  }
 
+  initiateBreathAttack(player, enemies) {
+    super.initiateBreathAttack(player, enemies);
+    this.fireBallsFired = 0;
+  }
+
+  updateBreathAttack(player, enemies) {
+    while(this.firing && millis() - this.breathTimer > this.fireBallCooldown * this.fireBallsFired) {
+      this.fireFireBall(player, enemies);
+    }
+    if(!super.updateBreathAttack(player, enemies)) {
+      return false;
+    }
+    return true;
+  }
 }
 
 class FireBall extends EnemyProjectile {
@@ -146,7 +174,7 @@ class FireBall extends EnemyProjectile {
   }
 
   operate(target, enemies, time) {
-    this.speed += time;
+    this.speed *= Math.pow(8, time);
     super.operate(target, enemies, time);
   }
 }

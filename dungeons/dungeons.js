@@ -381,7 +381,7 @@ class Room {
   }
 
   testSpawnEnemies() {
-    this.enemies.push(new NecromancerKing(structuredClone(this.pos), this.id, this.dungeonMap.minimap));
+    // this.enemies.push(new NecromancerKing(structuredClone(this.pos), this.id, this.dungeonMap.minimap));
     // this.enemies.push(new Warlord(structuredClone(this.pos), this.id, this.dungeonMap.minimap));
     // for(let i = 0; i < 0; i++) {
     //   this.enemies.push(this.attemptEnemyPlacement(Slime));
@@ -408,7 +408,7 @@ class Room {
     //   this.enemies.push(this.attemptEnemyPlacement(Phantom));
     // }
     // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(BlueDraconian));
+    //   this.enemies.push(this.attemptEnemyPlacement(RedDraconian));
     // }
     // this.summonSlimeBoss();
     // this.enemies.push(new SlimeTentacle(this.pos, this.id, this.dungeonMap.minimap));
@@ -417,7 +417,7 @@ class Room {
 
   spawnEnemies() {
     this.enemies = [];
-    // this.testSpawnEnemies();
+    this.testSpawnEnemies();
     if(!this.summonSlimeBoss() && !this.summonWarlord() && !this.summonNecromancerKing()) {
       let slimes = createSlimes(this.difficulties[0]);
       let goblins = createGoblins(this.difficulties[1]);
