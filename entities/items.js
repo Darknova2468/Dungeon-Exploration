@@ -86,6 +86,8 @@ class LightingObject extends Item {
     super(_name, _wielder, _animationSet, _tileSet, _scaleFactor);
     this.lightValue = _lightValue;
     this.stackable = false;
+    this.tileScaleFactor = 2.5;
+    this.tileAngle = 0;
   }
 }
 
@@ -123,3 +125,7 @@ class Coin extends DroppedItem {
     }
   }
 }
+
+const LIGHTINGTYPES = ["Candle", "Torch"];
+const LIGHTINGCLASSES = [Candle, Torch];
+const LIGHTINGCOSTS = [100, 1000];

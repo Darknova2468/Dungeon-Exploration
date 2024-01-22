@@ -40,3 +40,13 @@ class Armorer extends NPC {
     menuManager.menus.push(new ArmorUpgradeMenu());
   }
 }
+
+class Explorer extends NPC {
+  constructor(_pos, _collisionMap) {
+    super(_pos, "Explorer", 2.2, _collisionMap, textures.explorerTileSet, 1, 1);
+  }
+
+  execute(player) {
+    menuManager.menus.push(new ExplorerMenu());
+  }
+}

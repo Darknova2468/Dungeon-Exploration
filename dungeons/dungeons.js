@@ -194,7 +194,6 @@ class DungeonMap {
       }
     }
     this.otherEntities.push(new Blacksmith([6, 2], this.minimap));
-    this.otherEntities.push(new Armorer([6, this.height - 2], this.minimap));
 
     // Armorer
     for(let i = this.height - this.wallDepth; i < this.height - 1; i++) {
@@ -202,6 +201,10 @@ class DungeonMap {
         this.minimap[i][j] = 1;
       }
     }
+    this.otherEntities.push(new Armorer([6, this.height - 2], this.minimap));
+
+    // Explorer
+    this.otherEntities.push(new Explorer([2, this.height / 2], this.minimap));
   }
 
   constructEndOfTime() {
