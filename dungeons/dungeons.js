@@ -468,12 +468,12 @@ class Room {
     // for(let i = 0; i < 0; i++) {
     //   this.enemies.push(this.attemptEnemyPlacement(Phantom));
     // }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(RedDraconian));
-    }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(BlueDraconian));
-    }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(RedDraconian));
+    // }
+    // for(let i = 0; i < 1; i++) {
+    //   this.enemies.push(this.attemptEnemyPlacement(BlueDraconian));
+    // }
     for(let i = 0; i < 1; i++) {
       this.enemies.push(this.attemptEnemyPlacement(BlackDraconian));
     }
@@ -484,7 +484,7 @@ class Room {
 
   spawnEnemies() {
     this.enemies = [];
-    // this.testSpawnEnemies();
+    //this.testSpawnEnemies();
     if(!this.summonSlimeBoss() && !this.summonWarlord()
       && !this.summonNecromancerKing() && !this.summonDragon()) {
       let slimes = createSlimes(this.difficulties[0]);

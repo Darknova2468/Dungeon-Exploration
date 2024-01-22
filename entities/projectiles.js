@@ -13,8 +13,8 @@ function checkBounds(x, y, x1, y1, x2, y2) {
 // (i1 * di + j1 * dj < a * di + b * dj && a * di + b * dj < i2 * di + j2 * dj)
 
 class Projectile extends Entity {
-  constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet) {
-    super(structuredClone(_pos), 0, 0, 0, _collisionMap, _textureSet);
+  constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet,  _animationSpeed, _scaleFactor) {
+    super(structuredClone(_pos), 0, 0, 0, _collisionMap, _textureSet, _animationSpeed, _scaleFactor);
     this.initPos = structuredClone(this.pos);
     this.dir = _dir;
     this.hitDamage = _hitDmg;
@@ -108,8 +108,8 @@ class Projectile extends Entity {
  * (the player)
  */
 class EnemyProjectile extends Projectile {
-  constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet) {
-    super(_pos, _zone, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet);
+  constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet, _animationSpeed, _scaleFactor) {
+    super(_pos, _zone, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet, _animationSpeed, _scaleFactor);
   }
 
   operate(target, enemies, time) {
