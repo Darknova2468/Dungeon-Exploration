@@ -407,9 +407,12 @@ class Room {
     // for(let i = 0; i < 0; i++) {
     //   this.enemies.push(this.attemptEnemyPlacement(Phantom));
     // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(RedDraconian));
-    // }
+    for(let i = 0; i < 1; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(RedDraconian));
+    }
+    for(let i = 0; i < 1; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(BlueDraconian));
+    }
     // this.summonSlimeBoss();
     // this.enemies.push(new SlimeTentacle(this.pos, this.id, this.dungeonMap.minimap));
     // this.dungeonMap.otherEntities.push(new Coin(structuredClone(this.pos), 1, this.dungeonMap.minimap));
