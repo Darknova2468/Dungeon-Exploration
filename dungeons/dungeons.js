@@ -580,9 +580,9 @@ class Room {
     // for(let i = 0; i < 1; i++) {
     //   this.enemies.push(this.attemptEnemyPlacement(BlueDraconian));
     // }
-    for(let i = 0; i < 1; i++) {
-      this.enemies.push(this.attemptEnemyPlacement(BlackDraconian));
-    }
+    //for(let i = 0; i < 1; i++) {
+    //  this.enemies.push(this.attemptEnemyPlacement(BlackDraconian));
+    //}
     // this.summonSlimeBoss();
   }
 
@@ -592,6 +592,7 @@ class Room {
   spawnEnemies() {
     this.enemies = [];
     // Check if the fight is a boss one
+    // this.testSpawnEnemies();
     if(!this.summonSlimeBoss() && !this.summonWarlord()
       && !this.summonNecromancerKing() && !this.summonDragon()) {
       // Summons each enemy
