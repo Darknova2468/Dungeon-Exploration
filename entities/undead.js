@@ -1,4 +1,15 @@
 /* eslint-disable no-undef */
+
+/**
+ * The undead. There are a few types, most of which are uniquely different:
+ * - Zombies: slow but tanky enemies which don't strafe.
+ * - Skeletons: the main damage dealers who shoot highly dangerous bones.
+ * - Phantoms: blinds the player with magical explosive projectiles.
+ * - Necromancer King: phantom boss. Summons a swarm of undead to fight you.
+ *   Also pulsates darkness and has three unique attacks.
+ * Spawning behaviour: somewhat biased towards swarming.
+ */
+
 class Zombie extends Enemy {
   constructor(_pos, _roomId, _level, _collisionMap) {
     // super(_pos, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, _collisionMap, _textureSet);

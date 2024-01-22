@@ -1,4 +1,17 @@
 /* eslint-disable no-undef */
+
+/**
+ * The slimes. These enemies approach the player and come as close as they want
+ *   while still strafing.
+ * Variants:
+ * - Lava slimes: shoot projectiles
+ * - Frost slimes: immobile except when jumping, creating a frozen puddle
+ * - Slime boss: giant slime on floor 5
+ * - Slime tentacle: part of slime boss that rejuvenates the boss and slams down
+ *   to spawn more slimes
+ * Spawning behaviour is heavily biased towards swarming.
+ */
+
 class Slime extends Enemy {
   constructor(_pos, _roomId, _level, _collisionMap, _textureSet = textures.slimeTileSet, _animationSpeed, _scaleFactor, _hasHealthBar) {
     super(_pos, "Slime", _roomId, _level, Math.floor(4*Math.log10(_level+1)), 0, 1.5, 8, 0.5, Math.floor(4*Math.log10(_level+1)), "Bludgeoning", 0.5, 600, _collisionMap, _textureSet, _animationSpeed, _scaleFactor, _hasHealthBar);
