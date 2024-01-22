@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 class Draconian extends Enemy {
   constructor(_pos, _roomId, _level, _collisionMap, _textureSet = "purple") {
-    super(_pos, "Draconian", _roomId, _level, _level + 10, 5, 3, 20, 5, Math.floor(Math.sqrt(_level) + 10), "Slashing", 1.2, 700, _collisionMap, _textureSet);
+    super(_pos, "Draconian", _roomId, _level, Math.floor(Math.pow(_level + 10, 0.8) / 3), 5, 3, 20, 5, Math.floor(Math.sqrt(_level) + 10), "Slashing", 1.2, 700, _collisionMap, _textureSet);
 
     // Proficient fighters with periodic breath attacks
     this.breathCooldown = 8000;
@@ -233,7 +233,6 @@ class DeathBall extends EnemyProjectile {
     let theta = random(2 * Math.PI);
     this.targetPos = [target.pos[0] + dispMag * Math.cos(theta),
       target.pos[1] + dispMag * Math.cos(theta)];
-    console.log("Set next pos!");
   }
 
   /**
@@ -257,7 +256,6 @@ class DeathBall extends EnemyProjectile {
       let w2 = 1 - w1;
       this.pos = [this.initPos[0] * w1 + this.targetPos[0] * w2,
         this.initPos[1] * w1 + this.targetPos[1] * w2];
-      console.log(this.pos);
     }
   }
 
@@ -278,4 +276,35 @@ class DeathBall extends EnemyProjectile {
     }
     myDungeon.dungeon[this.lockedZone - 3].enemies.push(new DiskWarnZone(this.pos, this.explosionRadius, 0, millis(), millis() + 1000, color(0,0,0,0), color(0,0,0,0), color(0,0,0,255), color(0,0,0,0), this.collisionMap));
   }
+}
+
+const DRACONIANVARIANTS = [BlueDraconian, RedDraconian, BlackDraconian];
+
+function createDraconians(draconianDifficulty) {
+  let draconians = [];
+  let redVariantChance = 0;
+  let blackVariantChance = 0;
+  if(draconianDifficulty > 150) {
+    redVariantChance = 1;
+  }
+  if(draconianDifficulty > 250) {
+    redVariantChance = 0.5;
+  }
+  if(draconianDifficulty > 400) {
+    blackVariantChance = 0.3;
+  }
+  while(draconianDifficulty > 0) {
+    let draconianType = 0;
+    let maxLevel = draconianDifficulty;
+    if(random() < blackVariantChance) {
+      draconianType = 2;
+    }
+    else if(random() < redVariantChance) {
+      draconianType = 1;
+    }
+    let chosenLevel = Math.ceil(Math.max(50, random(1, maxLevel)));
+    draconians.push([DRACONIANVARIANTS[draconianType], chosenLevel, 0.2]);
+    draconianDifficulty -= chosenLevel;
+  }
+  return draconians;
 }

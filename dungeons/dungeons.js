@@ -428,6 +428,7 @@ class Room {
       let slimes = createSlimes(this.difficulties[0]);
       let goblins = createGoblins(this.difficulties[1]);
       let undeads = createUndead(this.difficulties[2]);
+      let draconians = createDraconians(this.difficulties[3]);
       for(let [slimeClass, level, radiusPortion] of slimes) {
         this.enemies.push(this.attemptEnemyPlacement(slimeClass, level, radiusPortion));
       }
@@ -436,6 +437,9 @@ class Room {
       }
       for(let [undeadClass, level, radiusPortion] of undeads) {
         this.enemies.push(this.attemptEnemyPlacement(undeadClass, level, radiusPortion));
+      }
+      for(let [draconianClass, level, radiusPortion] of draconians) {
+        this.enemies.push(this.attemptEnemyPlacement(draconianClass, level, radiusPortion));
       }
     }
     // this.testSpawnEnemies();

@@ -221,7 +221,7 @@ class FrozenPuddle extends Entity {
   }
 }
 
-const slimeVariants = [Slime, LavaSlime, FrostSlime];
+const SLIMEVARIANTS = [Slime, LavaSlime, FrostSlime];
 
 function createSlimes(slimeDifficulty) {
   let lavaSlimeVariantChance = 0;
@@ -252,7 +252,7 @@ function createSlimes(slimeDifficulty) {
       maxLevel = slimeDifficulty / 2;
     }
     let chosenLevel = Math.ceil(Math.pow(random(0.1, Math.sqrt(maxLevel)), 2));
-    slimes.push([slimeVariants[slimeType], chosenLevel, 1]);
+    slimes.push([SLIMEVARIANTS[slimeType], chosenLevel, 1]);
     if(slimeType) {
       slimeDifficulty -= 2 * chosenLevel;
     }
