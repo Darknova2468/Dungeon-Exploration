@@ -363,7 +363,7 @@ class Room {
     }
     else if(this.entranceStage === 3) {
       this.entranceStage = 4;
-      if(this.floorNumber === 21) {
+      if(this.dungeonMap.floorNumber === 21) {
         myBackground.changeDimensions([32, 16], player.pos, 500, false);
       }
       else {
@@ -478,7 +478,8 @@ class Room {
   spawnEnemies() {
     this.enemies = [];
     // this.testSpawnEnemies();
-    if(!this.summonSlimeBoss() && !this.summonWarlord() && !this.summonNecromancerKing()) {
+    if(!this.summonSlimeBoss() && !this.summonWarlord()
+      && !this.summonNecromancerKing() && !this.summonDragon()) {
       let slimes = createSlimes(this.difficulties[0]);
       let goblins = createGoblins(this.difficulties[1]);
       let undeads = createUndead(this.difficulties[2]);
@@ -538,6 +539,14 @@ class Room {
       return false;
     }
     this.enemies.push(new NecromancerKing(structuredClone(this.pos), this.id, this.dungeonMap.minimap));
+    return true;
+  }
+
+  summonDragon() {
+    if(!this.isBoss || this.dungeonMap.floorNumber !== 21) {
+      return false;
+    }
+    this.enemies.push(this.attemptEnemyPlacement(FrostSlime));
     return true;
   }
 }
