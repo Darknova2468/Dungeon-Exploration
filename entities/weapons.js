@@ -1,5 +1,15 @@
 /* eslint-disable no-undef */
 
+/**
+ * All weapons:
+ * - Daggers: high rate of attack
+ * - Swords: high DPS and clearing ability
+ * - Axes: high damage
+ * - Spears: long range
+ * - Shortbows: rapid fire
+ * - Longbows: normal bows
+ */
+
 const WEAPONDEBUG = 0;
 const WEAPONS = ["Dagger", "Sword", "Axe", "Spear", "Shortbow", "Longbow"];
 const WEAPONCOSTS = [
@@ -9,14 +19,6 @@ const WEAPONCOSTS = [
   [80, 150, 500, 1000, 2500],
   [80, 150, 500, 1200, 2500],
   [80, 200, 700, 1000, 2800]];
-
-// const WEAPONCOSTS = [
-//   [0, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 0]];
 
 const WEAPONDAMAGE = [
   [1, 3, 7, 15, 21],
@@ -48,6 +50,9 @@ class Weapon extends Item {
   }
 }
 
+/**
+ * Weapons which attack by sweeping. Checks a sector.
+ */
 class SweepWeapon extends Weapon {
   constructor(name, id, wielder, minRange, range, cooldown, semiSweepAngle, swingTime, cleaveFactor, animationSet, tileSet, scaleFactor) {
     super(name, id, wielder, range, cooldown, animationSet, tileSet, scaleFactor);
@@ -200,6 +205,9 @@ class Axe extends SweepWeapon {
   }
 }
 
+/**
+ * Weapons which thrust in a rectangle region.
+ */
 class ThrustWeapon extends Weapon {
   constructor(name, id, wielder, minRange, maxRange, cooldown, thrustTime, pierceFactor, animationSet, tileSet, scaleFactor) {
     super(name, id, wielder, minRange, cooldown, animationSet, tileSet, scaleFactor);
@@ -331,6 +339,9 @@ class Spear extends ThrustWeapon {
   }
 }
 
+/**
+ * Funny sword thingy
+ */
 class Hyperion extends SweepWeapon {
   constructor(wielder) {
     super("Hyperion", 6, wielder, 0, 5, 150, Math.PI - 0.01, 100, 1, "");
@@ -344,6 +355,9 @@ class Hyperion extends SweepWeapon {
   }
 }
 
+/**
+ * Weapons which shoot arrows.
+ */
 class ChargedRangedWeapon extends Weapon {
   constructor(name, id, wielder, range, cooldown, minChargeTime, chargeTime, projectileSpeed, animationSet, tileSet, scaleFactor) {
     super(name, id, wielder, range, cooldown, animationSet, tileSet, scaleFactor);

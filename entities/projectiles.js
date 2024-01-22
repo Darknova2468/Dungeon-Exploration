@@ -1,5 +1,13 @@
 /* eslint-disable no-undef */
 
+/**
+ * Projectile classes and functions. These are involved in both enemy
+ * projectiles and player projectiles like arrows.
+ */
+
+/**
+ * Linear algebra bound checking.
+ */
 function checkBounds(x, y, x1, y1, x2, y2) {
   let dx = x2 - x1;
   let dy = y2 - y1;
@@ -10,8 +18,9 @@ function checkBounds(x, y, x1, y1, x2, y2) {
   return -1;
 }
 
-// (i1 * di + j1 * dj < a * di + b * dj && a * di + b * dj < i2 * di + j2 * dj)
-
+/**
+ * Projectile class.
+ */
 class Projectile extends Entity {
   constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _dmgType, _hitRange, _canPierce, _explosionRadius, _explosionDamage, _explosionDamageType, _collisionMap, _textureSet,  _animationSpeed, _scaleFactor) {
     super(structuredClone(_pos), 0, 0, 0, _collisionMap, _textureSet, _animationSpeed, _scaleFactor);
@@ -36,12 +45,17 @@ class Projectile extends Entity {
     this.lockedZone = _zone;
   }
 
+  /**
+   * Updates the projectile.
+   */
   operate(targets, time) {
     if(!this.isAlive) {
       return;
     }
     this.prevPos = structuredClone(this.pos);
     this.move(this.dir, time);
+    // For each target, check the rectangle of movement to determine if the
+    // target is hit or not
     for(let target of targets) {
       let distance = checkBounds(target.pos[0], target.pos[1], this.prevPos[0], this.prevPos[1], this.pos[0], this.pos[1]);
       if(distance === -1) {
@@ -54,11 +68,6 @@ class Projectile extends Entity {
         this.hit(target, time);
         this.hitTimer = millis();
       }
-      // let distance = dist(target.pos[0], target.pos[1], this.pos[0], this.pos[1]);
-      // if(distance < this.hitRange && millis() - this.hitTimer > this.hitCooldown) {
-      //   this.hit(target, time);
-      //   this.hitTimer = millis();
-      // }
     }
     if(dist(this.pos[0], this.pos[1], this.initPos[0], this.initPos[1]) > this.maxDist) {
       this.isAlive = false;
@@ -68,6 +77,9 @@ class Projectile extends Entity {
     }
   }
 
+  /**
+   * Called after hitting a target is confirmed.
+   */
   hit(target, time) {
     target.damage(this.hitDamage, this.damageType);
     if(!this.canPierce) {
@@ -75,6 +87,9 @@ class Projectile extends Entity {
     }
   }
 
+  /**
+   * Explosion.
+   */
   explode(targets, time) {
     if(this.explosionRadius === 0) {
       return;
@@ -90,6 +105,9 @@ class Projectile extends Entity {
     }
   }
 
+  /**
+   * Move function while also checking whether it hits something.
+   */
   move(pos, time){
     let [dx, dy] = scaleVector(pos, this.speed * time);
     if(this.canMoveTo(this.collisionMap[floor(this.pos[1])][floor(this.pos[0]+dx)])

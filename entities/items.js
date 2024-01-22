@@ -1,5 +1,10 @@
 /* eslint-disable no-undef */
 
+/**
+ * Item classes, including the item itself, dropped item entities such as coins,
+ * and lighting objects.
+ */
+
 class Item {
   constructor(_name, _wielder, _animationSet, _tileSet, _scaleFactor) {
     this.name = _name;
@@ -39,6 +44,8 @@ class DroppedItem extends Entity {
     this.tileSet = _tileSet;
     this.invincible = true;
     this.radius = 0.2;
+
+    // Start moving in a random direction
     this.direction = [random(-1,1), random(-1,1)];
     this.speed = random(7);
     this.locked = false;
@@ -81,10 +88,13 @@ class TestItem extends Item {
   }
 }
 
+/**
+ * Generic lighting object.
+ */
 class LightingObject extends Item {
   constructor(_name, _wielder, _lightValue, _animationSet, _tileSet, _scaleFactor) {
     super(_name, _wielder, _animationSet, _tileSet, _scaleFactor);
-    this.lightValue = _lightValue;
+    this.lightValue = _lightValue; // Glows
     this.stackable = false;
     this.tileScaleFactor = 2.5;
     this.tileAngle = 0;
@@ -110,6 +120,9 @@ class TestDroppedItem extends DroppedItem {
   }
 }
 
+/**
+ * Coin object which can be picked up and added to the player's wallet.
+ */
 class Coin extends DroppedItem {
   constructor(pos, value, collisionMap) {
     super(pos, textures.coinTileSet, collisionMap);

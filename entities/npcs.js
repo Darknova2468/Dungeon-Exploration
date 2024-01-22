@@ -1,5 +1,12 @@
 /* eslint-disable no-undef */
 
+/**
+ * NPC entities:
+ * - Blacksmith: sells weapons.
+ * - Armorer: sells armor.
+ * - Explorer: sells lighting equipment.
+ */
+
 class NPC extends Entity {
   constructor(_pos, _name, _interactDistance, _collisionMap, _textureSet, _animationSpeed, _scaleFactor) {
     super(_pos, 10, 0, 0, _collisionMap, _textureSet, _animationSpeed, _scaleFactor);

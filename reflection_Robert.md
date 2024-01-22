@@ -1,5 +1,15 @@
 # Robert Yang - Project Reflection
 
+## Advice
+
+There's lots of advice that I would definitely give myself, but the most important ones are:
+- Not putting as much on the needs to have list
+- Doing documentation much earlier (seriously, this is painful last-minute)
+
+## Completion of Needs to Have List
+
+
+
 ## The Hardest Part
 
 The most difficult part was definitely the dungeon generation. Although other major objectives such as entities and UIs took plenty of time, the generation was particularly challenging in the algorithms required to get it to work, the specifics of placement, and the creative application of such algorithms in a proper way. For this project, we wished to find a way to combine randomly generated rooms, staircases, and twisting labyrinths, while also having both a sense of progression and an overall compactness to the dungeon. Some of the framework came from a previous project; specifically, in a game I made earlier, called Cave Dungeons, I used Prim's algorithm to simulate labyrinths and celluar automata to simulate caves. However, these were somewhat randomly combined through Perlin noise and the ability for the player to mine through walls; this was undesirable for the current project since we didn't want the player to mine through walls and potentially miss or cheese certain stages.
