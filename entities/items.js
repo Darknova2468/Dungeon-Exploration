@@ -13,6 +13,7 @@ class Item {
     this.tileNumber = 0;
     this.armorId = -1; // Necessary for denying armor slot access to most items
     this.tileAngle = Math.PI / 4;
+    this.lightValue = 0;
   }
 
   displayHeld(screenCenter, screenSize, pos) {}
@@ -77,6 +78,26 @@ class DroppedItem extends Entity {
 class TestItem extends Item {
   constructor() {
     super("test", null, "white", "black");
+  }
+}
+
+class LightingObject extends Item {
+  constructor(_name, _wielder, _lightValue, _animationSet, _tileSet, _scaleFactor) {
+    super(_name, _wielder, _animationSet, _tileSet, _scaleFactor);
+    this.lightValue = _lightValue;
+    this.stackable = false;
+  }
+}
+
+class Candle extends LightingObject {
+  constructor(_wielder) {
+    super("Candle", _wielder, 1, textures.candleAnimationSet, textures.candleTileSet);
+  }
+}
+
+class Torch extends LightingObject {
+  constructor(_wielder) {
+    super("Torch", _wielder, 3, textures.torchAnimationSet, textures.torchTileSet);
   }
 }
 

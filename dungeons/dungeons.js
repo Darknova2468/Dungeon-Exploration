@@ -207,9 +207,10 @@ class DungeonMap {
   constructEndOfTime() {
     this.width = 150;
     this.height = 100;
-    this.ambience = color(0, 0, 0, 0);
+    this.ambience = color(0, 0, 0, 255);
     this.playerPos = [12, this.height / 2];
     this.minimap = generateEmptyGrid(this.width, this.height);
+    player.visionPortion = 0.5;
 
     // Replicate guild hall
     for(let i = 48; i < 52; i++) {
@@ -360,6 +361,9 @@ class Room {
       });
       myBackground.displayOnly = this.id+3;
       myBackground.changeDimensions([this.radius * 4, this.radius * 2], this.pos, 1500, true);
+      if(this.dungeonMap.floorNumber === 21) {
+        this.dungeonMap.ambience = color(0, 0, 100, 150);
+      }
     }
     else if(this.entranceStage === 3) {
       this.entranceStage = 4;

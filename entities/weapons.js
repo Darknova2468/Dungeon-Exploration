@@ -25,7 +25,7 @@ const WEAPONDAMAGE = [
   [2, 6, 12, 21, 29],
   [1, 2, 4, 7, 14],
   [2, 6, 12, 21, 29],
-  [10000000]];
+  [10]];
 
 class Weapon extends Item {
   constructor(name, id, wielder, range, cooldown, animationSet, tileSet, scaleFactor) {
@@ -334,6 +334,7 @@ class Spear extends ThrustWeapon {
 class Hyperion extends SweepWeapon {
   constructor(wielder) {
     super("Hyperion", 6, wielder, 0, 5, 150, Math.PI - 0.01, 100, 1, "");
+    this.lightValue = 20;
   }
 
   attack(enemies, direction, time, isRolling) {

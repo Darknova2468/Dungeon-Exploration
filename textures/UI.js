@@ -521,6 +521,7 @@ class Inventory {
     cellJ.holding = tmpSlot;
     this.player.updateHolding();
     this.player.updateArmor();
+    this.player.updateVision(myDungeon);
   }
 
   display() {

@@ -68,6 +68,10 @@ function preload() {
     coinTileSet: new TileSet("textures/coin.png", [11, 11]),
     blacksmithTileSet: new AnimateSet("textures/blacksmith.png", [42, 23]),
     armorerTileSet: new AnimateSet("textures/armourSmith.png", [42, 23]),
+    candleAnimationSet: "red",
+    torchAnimationSet: "orange",
+    candleTileSet: "red",
+    torchTileSet: "orange",
   };
   music = new Music("music/theme.mp3");
   sfx = {

@@ -310,7 +310,7 @@ class NecromancerKing extends Phantom {
     this.updateDarknessPeriod();
 
     // Prevent the boss from activating its attacks after certain enemy limit
-    this.maxEnemyLimit = 30;
+    this.maxEnemyLimit = 15;
   }
 
   updateDarknessPeriod() {
@@ -421,6 +421,7 @@ class NecromancerKing extends Phantom {
 
   damage(amountDamage, damageType) {
     super.damage(amountDamage, damageType);
+    this.updateDarknessPeriod();
     if(millis() > this.teleportTimer && random() < this.teleportChance) {
       this.teleportCasting = true;
     }

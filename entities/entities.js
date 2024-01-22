@@ -330,9 +330,6 @@ class Enemy extends Entity {
 class Player extends Entity {
   constructor(_pos, _collisionMap){
     super(_pos, DEFAULTPLAYERHEALTH, 0, 3.5, _collisionMap, textures.playerTileSet);
-    // TEMPORARY
-    // let tmpWeapons = [new Dagger(this), new Sword(this), new Axe(this), new Spear(this), new ShortBow(this), new LongBow(this)];
-    // this.weapons = [new Dagger(this), new Sword(this), new Axe(this), new Spear(this), new ShortBow(this), new LongBow(this)];
     this.rollSpeed = 5;
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
@@ -342,9 +339,7 @@ class Player extends Entity {
     this.healthBonus = 0;
     this.inventory = new Inventory(this);
     this.inventory.storage[0].holding = new Dagger(this);
-    // for(let i = 0; i < 6; i++) {
-    //   this.inventory.storage[i].holding = tmpWeapons[i];
-    // }
+    this.inventory.storage[1].holding = new Candle(this);
     this.updateHolding();
     
     // Attack/use cooldowns
@@ -355,7 +350,7 @@ class Player extends Entity {
     this.timeLocked = false;
 
     // Lighting and exploration
-    this.defaultVision = 15;
+    this.defaultVision = 1;
     this.visionModifier = 0;
     this.visionPortion = 1; // Only used in Necromancer lord boss fight
     this.blindnessTimer = millis();
@@ -363,17 +358,30 @@ class Player extends Entity {
   }
 
   updateVision(dungeonMap) {
+    this.visionModifier = 0;
+    for(let cell of this.inventory.hotbar) {
+      let item = cell.holding;
+      if(item === null) {
+        continue;
+      }
+      this.visionModifier += item.lightValue;
+      if(this.holding === item) {
+        this.visionModifier += item.lightValue;
+      }
+    }
+    this.visionModifier = Math.pow(this.visionModifier, 0.7);
     if(dungeonMap.floorNumber === 0) {
       this.floorVision = 255;
     }
     else {
-      this.floorVision = Math.max(this.visionModifier + this.defaultVision - dungeonMap.floorNumber *3/5, 1); // Remove the "*3/5" if torches are implemented
+      this.floorVision = Math.max(this.visionModifier + this.defaultVision, 1);
     }
     this.vision = this.floorVision;
   }
 
   updateHolding() {
     this.holding = this.inventory.storage[this.holdingIndex].holding;
+    this.updateVision(myDungeon);
   }
 
   updateArmor() {
@@ -402,8 +410,8 @@ class Player extends Entity {
     }
     for(let i = 0; i < this.inventory.hotbarSize; i++) {
       if(keyIsDown(49 + i)){
-        this.holding = this.inventory.storage[i].holding;
         this.holdingIndex = i;
+        this.updateHolding();
       }
     }
     this.movementDirection = [0, 0];
