@@ -207,8 +207,7 @@ class DungeonMap {
   constructEndOfTime() {
     this.width = 150;
     this.height = 100;
-    this.dungeon = [];
-    this.ambience = color(0, 0, 0, 255);
+    this.ambience = color(0, 0, 0, 0);
     this.playerPos = [12, this.height / 2];
     this.minimap = generateEmptyGrid(this.width, this.height);
 
@@ -230,8 +229,8 @@ class DungeonMap {
     }
 
     // Replicate inactive portal
-    let portal = new Portal([12, 50], 1.5, this.floorNumber, this.minimap, textures.portalTileSet);
-    this.otherEntities.push(portal);
+    this.portal = new Portal([12, 50], 1.5, this.floorNumber, this.minimap, textures.portalTileSet);
+    this.otherEntities.push(this.portal);
 
     // Create a tunnel
     for(let i = 54; i < 62; i++) {
@@ -242,6 +241,12 @@ class DungeonMap {
     }
 
     // Creates the actual boss room
+    this.bossRoom = new Room(0, 20, this, [0,0,0,0], 0, 0, true);
+    this.bossRoom.portal = this.portal;
+    this.dungeon = [this.bossRoom];
+    this.bossRoom.pos = [60, 50];
+    let raster = generatePrecursorDungeonRoom(this.bossRoom.radius, this.bossRoom.id + 3);
+    this.minimap = integrateRaster(this.minimap, raster, this.bossRoom.pos, this.offset);
   }
 
   update(player, time){
@@ -330,7 +335,7 @@ class Room {
       return;
     }
     if(!this.entranceStage) {
-      if(this.id >= 1) {
+      if(this.id >= 1 || this.dungeonMap.floorNumber === 21) {
         this.locked = true;
         player.locked = true;
         player.timeLocked = true;
@@ -358,7 +363,12 @@ class Room {
     }
     else if(this.entranceStage === 3) {
       this.entranceStage = 4;
-      myBackground.changeDimensions([16, 8], player.pos, 500, false);
+      if(this.floorNumber === 21) {
+        myBackground.changeDimensions([32, 16], player.pos, 500, false);
+      }
+      else {
+        myBackground.changeDimensions([16, 8], player.pos, 500, false);
+      }
     }
     else if(this.entranceStage === 4) {
       this.entranceStage = 5;
@@ -493,7 +503,7 @@ class Room {
   }
 
   spawnPortal() {
-    if(!this.isBoss) {
+    if(!this.isBoss || this.dungeonMap.floorNumber === 21) {
       return;
     }
     this.portal = new Portal(this.pos, 1.5, this.dungeonMap.floorNumber, this.dungeonMap.minimap, textures.portalTileSet);
