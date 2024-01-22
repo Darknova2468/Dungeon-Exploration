@@ -229,10 +229,13 @@ class DeathBall extends EnemyProjectile {
     this.moveTimer = millis();
     this.initPos = structuredClone(this.pos);
     let [i, j] = target.movementDirection;
-    let dispMag = this.timeInterval * dist(i, j, 0, 0) / 1000;
+    let dispMag = 0;
+    if(dist(i, j, 0, 0) !== 0) {
+      dispMag = this.timeInterval * target.speed / 1000;
+    }
     let theta = random(2 * Math.PI);
     this.targetPos = [target.pos[0] + dispMag * Math.cos(theta),
-      target.pos[1] + dispMag * Math.cos(theta)];
+      target.pos[1] + dispMag * Math.sin(theta)];
   }
 
   /**
