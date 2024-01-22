@@ -211,7 +211,7 @@ class FireBall extends EnemyProjectile {
  */
 class DeathBall extends EnemyProjectile {
   constructor(_pos, _zone, _player, _hitDmg, _dt, _counts, _collisionMap) {
-    super(_pos, _zone, [1, 1], 255, 0, "Force", 0.1, true, 2, _hitDmg, "Neocrotic", _collisionMap, textures.deathBallTextureSet);
+    super(_pos, _zone, [1, 1], 255, 0, "Force", 0.1, true, 2, _hitDmg, "Neocrotic", _collisionMap, textures.deathBallTextureSet, 3, 0.3);
     this.initPos = structuredClone(this.pos);
     this.targetPos = structuredClone(_player.pos);
     this.moveTimer = millis();
