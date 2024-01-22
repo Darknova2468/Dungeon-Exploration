@@ -1,6 +1,5 @@
 /*
   Temporary file containing the data for floors.
-  May be made into text file and importer function, or kept if low on time.
  */
 
 /**
