@@ -68,7 +68,7 @@ function preload() {
     coinTileSet: new TileSet("textures/coin.png", [11, 11]),
     blacksmithTileSet: new AnimateSet("textures/blacksmith.png", [42, 23]),
     armorerTileSet: new AnimateSet("textures/armourSmith.png", [42, 23]),
-    explorerTileSet: "yellow",
+    explorerTileSet: new AnimateSet("textures/explorer.png", [42, 23]),
     candleAnimationSet: new AnimateSet("textures/candle.png", [5, 29]),
     torchAnimationSet: new AnimateSet("textures/torch.png", [11, 37]),
     candleTileSet: new TileSet("textures/candle.png", [5, 17]),
