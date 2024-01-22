@@ -18,3 +18,69 @@ Once the initialization is complete is runs a loop using the positions of room(n
 Lastly we use a min max function and the positions of the rooms to create a bounding box for an array that will hold the map data. Then the rasterization generation of labyrinths and everything beyond that although I came up with the theory, the implementation is all voodo magic too me and 100% Roberts domain. But for me this propigation algorithm was the most difficult task.
 
 P.S. (I never wanna make textures again... It was terrible)
+
+## Did we meet our "Need's To Have" List
+
+NOPE!
+
+We absolutley did not, we shot way to high and over estimated our own abilities and short commings
+
+However we did sucesfully fully complete without compromise
+- Proceduraly Generated Dungeons
+- Multiple Enemy Types
+- Dynamic Lighting and Exploration
+- Weapons and Armour Upgrades
+- Textures
+
+With compromise we completed
+- Bosses
+- Materials and Mob Drop System
+- Textures
+- SFX and Music
+
+What we completly ommited was
+- Guild Hall
+- Save Files
+
+However we completed some of our "Nice To Have" list
+- Charectoristic AI's for different enemy types
+
+## What Problems Couldn't we Solve
+
+- the forth and final boss
+- mob drops and materials
+- Textures
+- sfx and music
+
+## Past Reflections
+
+This project taught me a lot of useful skills including
+- GitHub
+- Cooperation
+- Communication
+- OOP
+- Texturing
+
+Too my future self their are a couple things I would give as advice.
+- Think small, and make your project expandable.
+    - I felt past projects such as [Escape The Island] had a very low celining and I quickly ran out of things to develop.
+    - Which led me to set the minimal viable product lower in hopes of not hitting said ceiling
+    - this however was a very foolish desicion.
+
+- Fun Factor First
+    - In my eyes this game lacks a fun factor that really grabs the players attention
+    - I feel before expanding you must make your game fun then you can add new
+        - Enemies
+        - Bosses
+        - Content
+
+- Add a Time Multiplier
+    - If you think something will take a month it will take 2
+        - A good friend of mine once said that to me.
+        - Always think things will take longer than expected.
+        - If you think you can get something done in 1 hour multiply it by 2 and its a bit more realistic
+            -If we had done this to our initial timeline I feel we would have been on schedule and would not have had to make compromises
+
+- Lastly, To-Do list
+    - Throughout the project we were often unorganised and lost track of what were working on or what needed to be done
+    - However when we created a Google docs with a to-do list by priority, everything ran more efficent and what needed to be done got done.
