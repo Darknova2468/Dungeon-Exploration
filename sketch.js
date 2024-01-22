@@ -44,6 +44,7 @@ function preload() {
     blueDraconianTileSet: "blue",
     redDraconianTileSet: "red",
     blackDraconianTileSet: "black",
+    deathBallTextureSet: "black",
     daggerAnimationSet: new AnimateSet("textures/dagger.png", [9, 47]),
     swordAnimationSet: new AnimateSet("textures/sword.png", [11, 72]),
     spearAnimationSet: new AnimateSet("textures/spear.png", [7, 72]), 

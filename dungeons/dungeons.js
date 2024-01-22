@@ -413,6 +413,9 @@ class Room {
     for(let i = 0; i < 1; i++) {
       this.enemies.push(this.attemptEnemyPlacement(BlueDraconian));
     }
+    for(let i = 0; i < 1; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(BlackDraconian));
+    }
     // this.summonSlimeBoss();
     // this.enemies.push(new SlimeTentacle(this.pos, this.id, this.dungeonMap.minimap));
     // this.dungeonMap.otherEntities.push(new Coin(structuredClone(this.pos), 1, this.dungeonMap.minimap));
@@ -420,7 +423,7 @@ class Room {
 
   spawnEnemies() {
     this.enemies = [];
-    this.testSpawnEnemies();
+    // this.testSpawnEnemies();
     if(!this.summonSlimeBoss() && !this.summonWarlord() && !this.summonNecromancerKing()) {
       let slimes = createSlimes(this.difficulties[0]);
       let goblins = createGoblins(this.difficulties[1]);

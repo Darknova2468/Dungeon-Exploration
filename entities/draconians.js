@@ -168,6 +168,32 @@ class RedDraconian extends Draconian {
   }
 }
 
+class BlackDraconian extends Draconian {
+  constructor(_pos, _roomId, _level, _collisionMap) {
+    super(_pos, _roomId, _level, _collisionMap, textures.blackDraconianTileSet);
+
+    // Assassinates the player with malicious balls of death
+    this.attackDamage *= 2;
+    this.speed *= 1.2;
+    this.deathBallCharge = this.breathStall / 2;
+    this.deathBallDamage = 3 * this.attackDamage;
+    this.deathBallCount = 3;
+    this.deathBallWaitTime = 1000;
+  }
+
+  updateBreathAttack(player, enemies) {
+    if(this.firing && millis() - this.deathBallCharge > 0) {
+      enemies.push(new DeathBall(this.pos, this.lockedZone, player,
+        this.deathBallDamage, this.deathBallWaitTime, this.deathBallCount,
+        this.collisionMap));
+      this.firing = false;
+    }
+    if(!super.updateBreathAttack(player, enemies)) {
+      return false;
+    }
+  }
+}
+
 class FireBall extends EnemyProjectile {
   constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _collisionMap) {
     super(_pos, _zone, _dir, _maxDist, _hitDmg, "Fire", 0.3, false, 0, 0, null, _collisionMap, textures.lavaSlimeBallTileSet);
@@ -176,5 +202,80 @@ class FireBall extends EnemyProjectile {
   operate(target, enemies, time) {
     this.speed *= Math.pow(8, time);
     super.operate(target, enemies, time);
+  }
+}
+
+/**
+ * Assassin projectile used by the black draconian. It extends EnemyProjectile
+ *   solely for consistency, but many functionalities are changed.
+ */
+class DeathBall extends EnemyProjectile {
+  constructor(_pos, _zone, _player, _hitDmg, _dt, _counts, _collisionMap) {
+    super(_pos, _zone, [1, 1], 255, 0, "Force", 0.1, true, 2, _hitDmg, "Neocrotic", _collisionMap, textures.deathBallTextureSet);
+    this.initPos = structuredClone(this.pos);
+    this.targetPos = structuredClone(_player.pos);
+    this.moveTimer = millis();
+    this.timeInterval = _dt;
+    this.countsRemaining = _counts - 1;
+    this.movementHalfLive = 300;
+  }
+
+  /**
+   * Calculates next positions based on target speed.
+   * @param {Player} target The target player.
+   */
+  setNextPos(target) {
+    this.countsRemaining -= 1;
+    this.moveTimer = millis();
+    this.initPos = structuredClone(this.pos);
+    let [i, j] = target.movementDirection;
+    let dispMag = this.timeInterval * dist(i, j, 0, 0) / 1000;
+    let theta = random(2 * Math.PI);
+    this.targetPos = [target.pos[0] + dispMag * Math.cos(theta),
+      target.pos[1] + dispMag * Math.cos(theta)];
+    console.log("Set next pos!");
+  }
+
+  /**
+   * Complete overhaul of inherited operate function.
+   */
+  operate(target, enemies, time) {
+    if(!this.isAlive) {
+      return;
+    }
+    if(millis() - this.moveTimer >= this.timeInterval) {
+      this.explode([target], time);
+      if(this.countsRemaining <= 0) {
+        this.isAlive = false;
+        return;
+      }
+      this.setNextPos(target);
+    }
+    else {
+      // Weights of initial and final pos, respectively
+      let w1 = Math.pow(1/2, (millis() - this.moveTimer) / this.movementHalfLive);
+      let w2 = 1 - w1;
+      this.pos = [this.initPos[0] * w1 + this.targetPos[0] * w2,
+        this.initPos[1] * w1 + this.targetPos[1] * w2];
+      console.log(this.pos);
+    }
+  }
+
+  /**
+   * Totally not copy pasted and slightly modified from phantom dark spells
+   */
+  explode(targets, time) {
+    for(let target of targets) {
+      let distance = dist(target.pos[0], target.pos[1], this.pos[0], this.pos[1]);
+      if(distance < this.explosionRadius) {
+        target.damage(this.explosionDamage, this.explosionDamageType);
+        player.blindnessTimer = max(player.blindnessTimer, millis() + 2000);
+      }
+      else if(distance < this.explosionRadius + target.radius) {
+        target.damage(this.explosionDamage / 2, this.explosionDamageType);
+        player.blindnessTimer = max(player.blindnessTimer, millis() + 1000);
+      }
+    }
+    myDungeon.dungeon[this.lockedZone - 3].enemies.push(new DiskWarnZone(this.pos, this.explosionRadius, 0, millis(), millis() + 1000, color(0,0,0,0), color(0,0,0,0), color(0,0,0,255), color(0,0,0,0), this.collisionMap));
   }
 }
