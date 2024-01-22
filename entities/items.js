@@ -134,6 +134,8 @@ class Coin extends DroppedItem {
     this.speed *= 0.9;
     if(this.isAlive && dist(this.pos[0], this.pos[1], player.pos[0], player.pos[1]) < 1) {
       player.money += this.value;
+      player.totalMoney += this.value;
+      storeItem("totalMoney", player.totalMoney);
       this.isAlive = false;
     }
   }

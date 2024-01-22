@@ -102,6 +102,10 @@ function setup() {
   noSmooth();
 
   // Start in the guild hall
+  floorBitmask = getItem("floorBitmask");
+  if(floorBitmask === null) {
+    floorBitmask = 1;
+  }
   myDungeon = createDungeonMap(0);
   player = new Player(structuredClone(myDungeon.playerPos), myDungeon.minimap);
   healthBar = new HealthBar(player.health, textures.healthBarTileSet, [50, 50], 2.5);
