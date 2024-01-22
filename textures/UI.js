@@ -308,6 +308,14 @@ class PortalMenu extends Menu {
         this.commands.push("> Go to floor ".concat(n));
       }
     }
+    else if(this.floorNum === 20) {
+      this.text = "Congratulations, you have reached the end...";
+      this.commands = ["> Stay on floor 20", "> Return to guild hall"];
+    }
+    else if(this.floorNum === 21) {
+      this.text = "You have reached the end... of space... and time...";
+      this.commands = ["> Stay at the end of time", "> Return to guild hall"];
+    }
     else {
       this.text = "Where do you wish to go?";
       this.commands = ["> Stay on floor ".concat(this.floorNum),
@@ -329,7 +337,7 @@ class PortalMenu extends Menu {
       if(cmd === 0) {
         return;
       }
-      else if(cmd === 1) {
+      else if(cmd === 1 && this.floorNum !== 21) {
         myDungeon = createDungeonMap(this.floorNum + 1);
         enterDungeonMap(myDungeon);
       }

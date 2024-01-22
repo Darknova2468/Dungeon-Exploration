@@ -58,6 +58,10 @@ class DungeonMap {
       this.constructGuildHall();
       return;
     }
+    else if(this.floorNumber === 21) {
+      this.constructEndOfTime();
+      return;
+    }
     this.floor = floors[this.floorNumber];
     this.numberOfRooms = this.floor[0];
     this.enemyDifficulties = this.floor[1];
@@ -192,12 +196,52 @@ class DungeonMap {
     this.otherEntities.push(new Blacksmith([6, 2], this.minimap));
     this.otherEntities.push(new Armorer([6, this.height - 2], this.minimap));
 
-    // Empty shop (add something here)
+    // Armorer
     for(let i = this.height - this.wallDepth; i < this.height - 1; i++) {
       for(let j = 4; j < 8; j++) {
         this.minimap[i][j] = 1;
       }
     }
+  }
+
+  constructEndOfTime() {
+    this.width = 150;
+    this.height = 100;
+    this.dungeon = [];
+    this.ambience = color(0, 0, 0, 255);
+    this.playerPos = [12, this.height / 2];
+    this.minimap = generateEmptyGrid(this.width, this.height);
+
+    // Replicate guild hall
+    for(let i = 48; i < 52; i++) {
+      for(let j = 1; j < 14; j++) {
+        this.minimap[i][j] = 1;
+      }
+    }
+    for(let i = 45; i < 48; i++) {
+      for(let j = 4; j < 8; j++) {
+        this.minimap[i][j] = 1;
+      }
+    }
+    for(let i = 52; i < 55; i++) {
+      for(let j = 4; j < 8; j++) {
+        this.minimap[i][j] = 1;
+      }
+    }
+
+    // Replicate inactive portal
+    let portal = new Portal([12, 50], 1.5, this.floorNumber, this.minimap, textures.portalTileSet);
+    this.otherEntities.push(portal);
+
+    // Create a tunnel
+    for(let i = 54; i < 62; i++) {
+      this.minimap[i][4] = 2;
+    }
+    for(let j = 4; j < 75; j++) {
+      this.minimap[62][j] = 2;
+    }
+
+    // Creates the actual boss room
   }
 
   update(player, time){
