@@ -45,7 +45,7 @@ function preload() {
     redDraconianTileSet: "red",
     fireBallTileSet: new AnimateSet("textures/fireBall.png", [12, 14]),
     blackDraconianTileSet: "black",
-    deathBallTextureSet: "black",
+    deathBallTextureSet: new AnimateSet("textures/darkBall.png", [17, 17]),
     daggerAnimationSet: new AnimateSet("textures/dagger.png", [9, 47]),
     swordAnimationSet: new AnimateSet("textures/sword.png", [11, 72]),
     spearAnimationSet: new AnimateSet("textures/spear.png", [7, 72]), 
@@ -68,10 +68,10 @@ function preload() {
     coinTileSet: new TileSet("textures/coin.png", [11, 11]),
     blacksmithTileSet: new AnimateSet("textures/blacksmith.png", [42, 23]),
     armorerTileSet: new AnimateSet("textures/armourSmith.png", [42, 23]),
-    candleAnimationSet: "red",
-    torchAnimationSet: "orange",
-    candleTileSet: "red",
-    torchTileSet: "orange",
+    candleAnimationSet: new AnimateSet("textures/candle.png", [5, 29]),
+    torchAnimationSet: new AnimateSet("textures/torch.png", [11, 37]),
+    candleTileSet: new TileSet("textures/candle.png", [5, 29]),
+    torchTileSet: new TileSet("textures/torch.png", [11, 37]), 
   };
   music = new Music("music/theme.mp3");
   sfx = {
