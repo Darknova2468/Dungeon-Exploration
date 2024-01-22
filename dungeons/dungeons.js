@@ -533,9 +533,9 @@ class Room {
     }
     let enemy = new EnemyType([this.pos[0]+ random(
       -this.radius * radiusPortion / 2, this.radius * radiusPortion / 2),
-      this.pos[1] + random(-this.radius * radiusPortion / 2,
+    this.pos[1] + random(-this.radius * radiusPortion / 2,
       this.radius * radiusPortion / 2)], this.id, level,
-      this.dungeonMap.minimap);
+    this.dungeonMap.minimap);
     if(enemy.canMoveTo(this.dungeonMap.minimap[
       Math.floor(enemy.pos[1])][Math.floor(enemy.pos[0])])) {
       return enemy;
