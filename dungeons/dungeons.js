@@ -346,6 +346,9 @@ class Room {
         player.lockedZone = this.id + 3;
         myBackground.changeDimensions([this.radius * 4, this.radius * 2], this.pos, 700, false);
         this.entranceStage = 1;
+        if(this.dungeonMap.floorNumber === 21) {
+          menuManager.menus.push(new DragonDialogue());
+        }
       }
     }
     if(myBackground.transitioning || !this.locked) {
@@ -553,7 +556,15 @@ class Room {
     if(!this.isBoss || this.dungeonMap.floorNumber !== 21) {
       return false;
     }
-    this.enemies.push(this.attemptEnemyPlacement(FrostSlime));
+    for(let i = 0; i < 5; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(RedDraconian, 500, 0.5));
+    }
+    for(let i = 0; i < 5; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(BlueDraconian, 500, 0.2));
+    }
+    for(let i = 0; i < 5; i++) {
+      this.enemies.push(this.attemptEnemyPlacement(BlackDraconian, 500, 1));
+    }
     return true;
   }
 }

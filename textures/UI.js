@@ -348,6 +348,42 @@ class ExplorerMenu extends Menu {
   }
 }
 
+/**
+ * Simple dialogue menu
+ */
+class Dialogue extends Menu {
+  constructor(_name, _remainingText) {
+    super(_name, _remainingText.shift(), ["> ..."], 200);
+    this.remainingText = _remainingText;
+  }
+
+  applyCommand(cmd) {
+    if(this.remainingText.length) {
+      menuManager.menus.push(new Dialogue(this.name, this.remainingText));
+    }
+    super.applyCommand(cmd);
+  }
+}
+
+const DRAGONDIALOGUE = ["So...", "Here you are.", "Finally.",
+  "I've seen prophecies of your coming.",
+  "I've heard the violent clashes from your earlier journey.",
+  "But only now... Do I feel your presence.", "...",
+  "Here we stand, at the edge of space and time.",
+  "Here lies the ruins of humanity, torn apart by its own doings.",
+  "I, Emporer of Destruction, was there...", "I saw it all, first-hand.",
+  "But it doesn't matter anymore.", "There is nothing worth fighting for.",
+  "Because there is nothing left.", "...", "And yet I must stop you.",
+  "I must stop you with my loyal servants.", "Because, if you go back...",
+  "Back to your time...", "Destiny may be altered."
+  ];
+
+class DragonDialogue extends Dialogue {
+  constructor() {
+    super("Dragon", structuredClone(DRAGONDIALOGUE));
+  }
+}
+
 class PortalMenu extends Menu {
   constructor(_floorNum) {
     super("Portal", "Querying...", [], 50);
