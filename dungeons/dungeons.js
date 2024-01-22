@@ -1,12 +1,25 @@
 /* eslint-disable no-undef */
 
-const allDungeons = new Map();
+/**
+ * This file primarily concerns dungeon maps, which are at the heart of Dungeon
+ *   Exploration gameplay. Dungeon maps are the settings in which the dungeons
+ *   take place, which each floor corresponding to one dungeon map. These also
+ *   control most of the environment, such as enemies, ambience, and other
+ *   entities like coins, NPCs, and portals.
+ */
+
+const PERSISTENTDUNGEONS = false;
+const allDungeons = new Map(); // May store floor data
 let floorBitmask = 1; // Stores the available floors as a bitmask
-let persistentDungeons = false;
 const GENERATIONDEBUG = false;
 
+/**
+ * Creates a dungeon map.
+ * @param {number} floor The floor number.
+ * @returns The dungeon map.
+ */
 function createDungeonMap(floor) {
-  if(persistentDungeons && allDungeons.has(floor)) {
+  if(PERSISTENTDUNGEONS && allDungeons.has(floor)) {
     return allDungeons.get(floor);
   }
   let dungeonMap = new DungeonMap(floor);
@@ -23,8 +36,16 @@ function createDungeonMap(floor) {
   return dungeonMap;
 }
 
+/**
+ * Enters a dungeon map.
+ * @param {DungeonMap} dungeonMap The dungeon map.
+ */
 function enterDungeonMap(dungeonMap) {
-  minimap = new Maps(30, dungeonMap.minimap, [width-height*3/20, height*3/20], [height/5, height/5]);
+  // Creates a new minimap
+  minimap = new Maps(30, dungeonMap.minimap, [width-height*3/20, height*3/20],
+    [height/5, height/5]);
+  
+  // Resets various things
   player.health = structuredClone(player.maxHealth);
   player.pos = structuredClone(dungeonMap.playerPos);
   player.collisionMap = dungeonMap.minimap;
@@ -33,6 +54,10 @@ function enterDungeonMap(dungeonMap) {
   player.updateVision(dungeonMap);
 }
 
+/**
+ * Re-enters a dungeon map after dying to it.
+ * @param {DungeonMap} dungeonMap The dungeon map.
+ */
 function reEnterDungeonMap(dungeonMap){
   player.pos = structuredClone(dungeonMap.playerPos);
   player.collisionMap = dungeonMap.minimap;
@@ -40,6 +65,10 @@ function reEnterDungeonMap(dungeonMap){
   myBackground = new Scene(dungeonMap.minimap, [16, 8], textures.tileSet);
 }
 
+/**
+ * Restores the player to default status.
+ * @param {Player} player The player.
+ */
 function restorePlayer(player) {
   player.health = player.maxHealth;
   player.activeZone = -1;
@@ -49,6 +78,9 @@ function restorePlayer(player) {
   player.isAlive = true;
 }
 
+/**
+ * The dungeon map.
+ */
 class DungeonMap {
   constructor(_floor){
     this.enemies = [];
@@ -62,15 +94,20 @@ class DungeonMap {
       this.constructEndOfTime();
       return;
     }
-    this.floor = floors[this.floorNumber];
-    this.numberOfRooms = this.floor[0];
-    this.enemyDifficulties = this.floor[1];
-    this.twoPathChance = this.floor[2];
-    this.caveEdgeChance = this.floor[3];
-    this.denseCaveEdgeChance = this.floor[4];
+
+    // Read data from floors.js
+    this.floor = floors[this.floorNumber]; // Floor-specific data
+    this.numberOfRooms = this.floor[0]; // The number of rooms
+    this.enemyDifficulties = this.floor[1]; // The enemy difficulty ranges
+    this.twoPathChance = this.floor[2]; // Probability of two forward paths
+    this.caveEdgeChance = this.floor[3]; // Probability of cave edge
+    this.denseCaveEdgeChance = this.floor[4]; // Conditional probability of a
+    // second cave edge given that the first one is a cave edge
+
+    // Sets ambience
     this.ambience = color(0, 0, 50, Math.min(255, this.floorNumber * 20));
 
-    // Determines difficulties of initial and boss rooms
+    // Determines difficulties of starting and boss rooms
     this.difficulties = [[], [0,0,0,0]];
     this.enemyDifficulties.forEach((bounds) => {
       this.difficulties[0].push(bounds[1]);
@@ -87,16 +124,22 @@ class DungeonMap {
     // Sorts difficulties to fix everything
     this.difficulties.sort((a, b) => getArraySum(a)-getArraySum(b));
 
-    // Builds room nodes;
-    this.dungeon = [new Room(0, 6, this, this.difficulties[0], this.caveEdgeChance, this.denseCaveEdgeChance)];
+    // Builds room nodes
+    this.dungeon = [new Room(0, 6, this, this.difficulties[0],
+      this.caveEdgeChance, this.denseCaveEdgeChance)];
     for(let i=1; i<this.numberOfRooms-1; i++){
-      this.dungeon.push(new Room(i, floor(random(7, 9)), this, this.difficulties[i], this.caveEdgeChance, this.denseCaveEdgeChance));
+      this.dungeon.push(new Room(i, floor(random(7, 9)), this,
+        this.difficulties[i], this.caveEdgeChance, this.denseCaveEdgeChance));
     }
-    this.dungeon.push(new Room(this.numberOfRooms - 1, 10, this, this.difficulties[this.numberOfRooms - 1], this.caveEdgeChance, this.denseCaveEdgeChance, true));
+    this.dungeon.push(new Room(this.numberOfRooms - 1, 10, this,
+      this.difficulties[this.numberOfRooms - 1], this.caveEdgeChance,
+      this.denseCaveEdgeChance, true));
 
     // Adds procedural distances
     for(let i=1; i<this.numberOfRooms; i++){
-      this.dungeon[i-1].addConnection(1+(random() < this.twoPathChance || i+2 > this.numberOfRooms), i, this.numberOfRooms, this.dungeon, i === this.numberOfRooms-1);
+      this.dungeon[i-1].addConnection(
+        1+(random() < this.twoPathChance || i+2 > this.numberOfRooms), i,
+        this.numberOfRooms, this.dungeon, i === this.numberOfRooms-1);
     }
 
     // Defines starting triangle
@@ -122,7 +165,8 @@ class DungeonMap {
       }
       let beta = cosineLaw(dist1, dist3, dist2);
       let theta = alpha - beta * Math.pow(-1, i);
-      let point = [point1[0] + dist1 * cos(theta), point1[1] + dist1 * sin(theta)];
+      let point = [point1[0] + dist1 * cos(theta),
+        point1[1] + dist1 * sin(theta)];
       this.dungeon[i].pos = point;
     }
 
@@ -138,12 +182,13 @@ class DungeonMap {
     // Adjust the position
     this.offset = [-minX+1, -minY+1];
     this.dungeon.forEach(room => {
-      room.pos = [Math.floor(room.pos[0] + this.offset[0]), Math.floor(room.pos[1] + this.offset[1])];
+      room.pos = [Math.floor(room.pos[0] + this.offset[0]),
+        Math.floor(room.pos[1] + this.offset[1])];
     });
 
-    // Creates Map
-    this.minimap = generateEmptyGrid(Math.floor(maxX-minX)+2, Math.floor(maxY-minY)+2);
-
+    // Creates the actual dungeon map and sets player pos
+    this.minimap = generateEmptyGrid(Math.floor(maxX-minX)+2,
+      Math.floor(maxY-minY)+2);
     this.playerPos = this.offset;
     
     // Generate edges
@@ -162,13 +207,17 @@ class DungeonMap {
     // Generate cave nodes
     this.dungeon.forEach(room => {
       let raster = generatePrecursorDungeonRoom(room.radius, room.id + 3);
-      this.minimap = integrateRaster(this.minimap, raster, room.pos, this.offset);
+      this.minimap = integrateRaster(this.minimap, raster,
+        room.pos, this.offset);
     });
 
     // Generate labyrinths
     this.corrupted = !generateLabyrinthEdges(this);
   }
 
+  /**
+   * Constructs and populates floor 0, the guild hall.
+   */
   constructGuildHall() {
     this.width = 15;
     this.height = 12;
@@ -183,7 +232,8 @@ class DungeonMap {
         this.minimap[i][j] = 1;
       }
     }
-    let portal = new Portal([this.width - 3, this.height / 2], 1.5, this.floorNumber, this.minimap, textures.portalTileSet);
+    let portal = new Portal([this.width - 3, this.height / 2], 1.5,
+      this.floorNumber, this.minimap, textures.portalTileSet);
     portal.activate();
     this.otherEntities.push(portal);
 
@@ -207,6 +257,9 @@ class DungeonMap {
     this.otherEntities.push(new Explorer([2, this.height / 2], this.minimap));
   }
 
+  /**
+   * Enter the portal on floor 20 to find out what this means...
+   */
   constructEndOfTime() {
     this.width = 150;
     this.height = 100;
@@ -233,7 +286,8 @@ class DungeonMap {
     }
 
     // Replicate inactive portal
-    this.portal = new Portal([12, 50], 1.5, this.floorNumber, this.minimap, textures.portalTileSet);
+    this.portal = new Portal([12, 50], 1.5, this.floorNumber, this.minimap,
+      textures.portalTileSet);
     this.otherEntities.push(this.portal);
 
     // Create a tunnel
@@ -244,15 +298,22 @@ class DungeonMap {
       this.minimap[62][j] = 2;
     }
 
-    // Creates the actual boss room
+    // Create the actual boss room
     this.bossRoom = new Room(0, 20, this, [0,0,0,0], 0, 0, true);
     this.bossRoom.portal = this.portal;
     this.dungeon = [this.bossRoom];
     this.bossRoom.pos = [60, 50];
-    let raster = generatePrecursorDungeonRoom(this.bossRoom.radius, this.bossRoom.id + 3);
-    this.minimap = integrateRaster(this.minimap, raster, this.bossRoom.pos, this.offset);
+    let raster = generatePrecursorDungeonRoom(this.bossRoom.radius,
+      this.bossRoom.id + 3);
+    this.minimap = integrateRaster(this.minimap, raster, this.bossRoom.pos,
+      this.offset);
   }
 
+  /**
+   * Updates the dungeon map.
+   * @param {Player} player The player.
+   * @param {number} time The time since last update.
+   */
   update(player, time){
     this.enemies = this.enemies.filter(enemy => enemy.isAlive);
     this.otherEntities = this.otherEntities.filter(entity => {
@@ -263,6 +324,13 @@ class DungeonMap {
       room.operate(player, time);
     });
   }
+
+  /**
+   * Displays everything in the dungeon map.
+   * @param {Array.<number>} screenCenter The centre of the screen in-game.
+   * @param {Array.<number>} screenSize The dimensions of the screen in-game.
+   * @param {*} scale Unused variable...
+   */
   display(screenCenter, screenSize, scale){
     this.otherEntities.forEach(entity => {
       entity.display(screenCenter, screenSize, scale);
@@ -272,6 +340,10 @@ class DungeonMap {
     });
   }
 
+  /**
+   * Prepares a dungeon map for player respawn.
+   * @param {number} playerActiveZone The active zone of the player.
+   */
   cleanUp(playerActiveZone) {
     if(playerActiveZone >= 3) {
       let room = this.dungeon[playerActiveZone - 3];
@@ -283,68 +355,85 @@ class DungeonMap {
   }
 }
 
-// class GuildHall extends DungeonMap {
-//   constructor() {
-//     this.otherEntities = [];
-//     this.floorNumber = 0;
-//   }
-// }
-
+/**
+ * Each dungeon room in the dungeon map, vital for generation and gameplay.
+ */
 class Room {
-  constructor(_id, _radius, _dungeonMap, _difficulties, _caveEdgeChance, _denseCaveEdgeChance, _isBoss = false){
+  constructor(_id, _radius, _dungeonMap, _difficulties, _caveEdgeChance,
+    _denseCaveEdgeChance, _isBoss = false){
     this.dungeonMap = _dungeonMap;
-    this.id = _id;
+    this.id = _id; // Zone id in the grid
     this.radius = _radius;
-    this.connections = [];
-    this.pos = [0, 0];
+    this.connections = []; // Connections to other rooms
+    this.pos = [0, 0]; // xy coordinates
     this.enemies = [];
     this.locked = true;
-    this.entranceStage = 0;
+    this.entranceStage = 0; // State variable for room progression
     this.entranceTimer = 0;
     this.entranceTime = 700;
-    this.difficulties = _difficulties; // [S, G, U, D]
+    this.difficulties = _difficulties; // Array: slime, goblin, undead, and
+    // draconian difficulties, respectively
+
+    // Customization variables, see dungeon map documentation
     this.caveEdgeChance = _caveEdgeChance;
     this.denseCaveEdgeChance = _denseCaveEdgeChance;
     this.isBoss = _isBoss;
     this.portal = null;
     this.healed = false;
   }
+
+  /**
+   * Randomly specifies connection outlines (e.g. type of connection, distance)
+   */
   addConnection(numberOfConnections, index, numberOfRooms, dungeon, check){
     // Pushes connections to node
     let distance = random() < this.caveEdgeChance ? 3:Math.floor(random(8, 12));
     if(check){
-      this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>3)]);
+      this.connections.push([index, dungeon[index].radius+this.radius+distance,
+        1+(distance>3)]);
     }
     else {
       if(numberOfConnections === 1){      
         if(random() < 0.5 && index+1 < numberOfRooms){
-          this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>3)]);
-          this.connections.push([index+1, dungeon[index+1].radius+this.radius+3, 0]);
+          this.connections.push([index,
+            dungeon[index].radius+this.radius+distance, 1+(distance>3)]);
+          this.connections.push([index+1,
+            dungeon[index+1].radius+this.radius+3, 0]);
         }
         else {
-          this.connections.push([index, dungeon[index].radius+this.radius+3, 0]);
-          this.connections.push([index+1, dungeon[index+1].radius+this.radius+distance, 1+(distance>3)]);
+          this.connections.push([index,
+            dungeon[index].radius+this.radius+3, 0]);
+          this.connections.push([index+1,
+            dungeon[index+1].radius+this.radius+distance, 1+(distance>3)]);
         }
       }
       else {
-        this.connections.push([index, dungeon[index].radius+this.radius+distance, 1+(distance>3)]);
+        this.connections.push([index,
+          dungeon[index].radius+this.radius+distance, 1+(distance>3)]);
         distance = random() < this.denseCaveEdgeChance ? 3:Math.floor(random(8, 12));
-        this.connections.push([index+1, dungeon[index+1].radius+this.radius+distance, 1+(distance>3)]);
+        this.connections.push([index+1,
+          dungeon[index+1].radius+this.radius+distance, 1+(distance>3)]);
       }
     }
   }
 
+  /**
+   * Operates a room. This includes major aspects such as controlling
+   *   entranceStage for room progression.
+   */
   operate(player, time) {
     if(player.activeZone !== this.id + 3) {
       return;
     }
     if(!this.entranceStage) {
       if(this.id >= 1 || this.dungeonMap.floorNumber === 21) {
+        // Lock the room and initiate zooming
         this.locked = true;
         player.locked = true;
         player.timeLocked = true;
         player.lockedZone = this.id + 3;
-        myBackground.changeDimensions([this.radius * 4, this.radius * 2], this.pos, 700, false);
+        myBackground.changeDimensions([this.radius * 4, this.radius * 2],
+          this.pos, 700, false);
         this.entranceStage = 1;
         if(this.dungeonMap.floorNumber === 21) {
           menuManager.menus.push(new DragonDialogue());
@@ -355,10 +444,13 @@ class Room {
       return;
     }
     else if(this.entranceStage === 1) {
+      // Zoom again, if it wasn't obvious enough the first time
       this.entranceStage = 2;
-      myBackground.changeDimensions([this.radius * 4, this.radius * 2], this.pos, 700, false);
+      myBackground.changeDimensions([this.radius * 4, this.radius * 2],
+        this.pos, 700, false);
     }
     else if(this.entranceStage === 2) {
+      // Summon the enemies and hide everything else
       this.entranceStage = 3;
       this.spawnEnemies();
       this.spawnPortal();
@@ -366,12 +458,14 @@ class Room {
         enemy.invincible = true;
       });
       myBackground.displayOnly = this.id+3;
-      myBackground.changeDimensions([this.radius * 4, this.radius * 2], this.pos, 1500, true);
+      myBackground.changeDimensions([this.radius * 4, this.radius * 2],
+        this.pos, 1500, true);
       if(this.dungeonMap.floorNumber === 21) {
         this.dungeonMap.ambience = color(0, 0, 100, 150);
       }
     }
     else if(this.entranceStage === 3) {
+      // Zoom back to an acceptable scale for combat
       this.entranceStage = 4;
       if(this.dungeonMap.floorNumber === 21) {
         myBackground.changeDimensions([32, 16], player.pos, 500, false);
@@ -381,6 +475,7 @@ class Room {
       }
     }
     else if(this.entranceStage === 4) {
+      // Ends timelock and starts the fight!
       this.entranceStage = 5;
       this.enemies.forEach(enemy => {
         enemy.invincible = false;
@@ -388,18 +483,20 @@ class Room {
       player.timeLocked = false;
     }
     else {
+      // Normal combat operations
       this.enemies = this.enemies.filter(enemy => enemy.isAlive);
       this.enemies.forEach(enemy => {
-        // console.log(player, this.enemies, time);
         enemy.operate(player, this.enemies, time);
       });
       if(this.enemies.length === 0) {
+        // End the fight
         this.locked = false;
         player.locked = false;
         this.activatePortal();
         myBackground.displayOnly = null;
         myBackground.changeDimensions([12, 6], player.pos, 1000, true);
         if(this.isBoss) {
+          // Mark next room as available
           floorBitmask |= 1 << this.dungeonMap.floorNumber;
         }
       }
@@ -434,8 +531,13 @@ class Room {
     if(ENEMYDEBUG) {
       console.log(EnemyType);
     }
-    let enemy = new EnemyType([this.pos[0]+ random(-this.radius * radiusPortion / 2, this.radius * radiusPortion / 2), this.pos[1] + random(-this.radius * radiusPortion / 2, this.radius * radiusPortion / 2)], this.id, level, this.dungeonMap.minimap);
-    if(enemy.canMoveTo(this.dungeonMap.minimap[Math.floor(enemy.pos[1])][Math.floor(enemy.pos[0])])) {
+    let enemy = new EnemyType([this.pos[0]+ random(
+      -this.radius * radiusPortion / 2, this.radius * radiusPortion / 2),
+      this.pos[1] + random(-this.radius * radiusPortion / 2,
+      this.radius * radiusPortion / 2)], this.id, level,
+      this.dungeonMap.minimap);
+    if(enemy.canMoveTo(this.dungeonMap.minimap[
+      Math.floor(enemy.pos[1])][Math.floor(enemy.pos[0])])) {
       return enemy;
     }
     if(ENEMYDEBUG) {
@@ -444,9 +546,10 @@ class Room {
     return this.attemptEnemyPlacement(EnemyType);
   }
 
+  /**
+   * Used during testing phase to spawn certain enemies in each room.
+   */
   testSpawnEnemies() {
-    // this.enemies.push(new NecromancerKing(structuredClone(this.pos), this.id, this.dungeonMap.minimap));
-    // this.enemies.push(new Warlord(structuredClone(this.pos), this.id, this.dungeonMap.minimap));
     // for(let i = 0; i < 0; i++) {
     //   this.enemies.push(this.attemptEnemyPlacement(Slime));
     // }
@@ -481,46 +584,55 @@ class Room {
       this.enemies.push(this.attemptEnemyPlacement(BlackDraconian));
     }
     // this.summonSlimeBoss();
-    // this.enemies.push(new SlimeTentacle(this.pos, this.id, this.dungeonMap.minimap));
-    // this.dungeonMap.otherEntities.push(new Coin(structuredClone(this.pos), 1, this.dungeonMap.minimap));
   }
 
+  /**
+   * Summons the enemies.
+   */
   spawnEnemies() {
     this.enemies = [];
-    //this.testSpawnEnemies();
+    // Check if the fight is a boss one
     if(!this.summonSlimeBoss() && !this.summonWarlord()
       && !this.summonNecromancerKing() && !this.summonDragon()) {
+      // Summons each enemy
       let slimes = createSlimes(this.difficulties[0]);
       let goblins = createGoblins(this.difficulties[1]);
       let undeads = createUndead(this.difficulties[2]);
       let draconians = createDraconians(this.difficulties[3]);
       for(let [slimeClass, level, radiusPortion] of slimes) {
-        this.enemies.push(this.attemptEnemyPlacement(slimeClass, level, radiusPortion));
+        this.enemies.push(this.attemptEnemyPlacement(slimeClass, level,
+          radiusPortion));
       }
       for(let [goblinClass, level, radiusPortion] of goblins) {
-        this.enemies.push(this.attemptEnemyPlacement(goblinClass, level, radiusPortion));
+        this.enemies.push(this.attemptEnemyPlacement(goblinClass, level,
+          radiusPortion));
       }
       for(let [undeadClass, level, radiusPortion] of undeads) {
-        this.enemies.push(this.attemptEnemyPlacement(undeadClass, level, radiusPortion));
+        this.enemies.push(this.attemptEnemyPlacement(undeadClass, level,
+          radiusPortion));
       }
       for(let [draconianClass, level, radiusPortion] of draconians) {
-        this.enemies.push(this.attemptEnemyPlacement(draconianClass, level, radiusPortion));
+        this.enemies.push(this.attemptEnemyPlacement(draconianClass, level,
+          radiusPortion));
       }
     }
-    // this.testSpawnEnemies();
-    this.enemies.forEach((enemy) => {
-      this.dungeonMap.enemies.push(enemy);
-    });
   }
 
+  /**
+   * Summons a portal.
+   */
   spawnPortal() {
     if(!this.isBoss || this.dungeonMap.floorNumber === 21) {
       return;
     }
-    this.portal = new Portal(this.pos, 1.5, this.dungeonMap.floorNumber, this.dungeonMap.minimap, textures.portalTileSet);
+    this.portal = new Portal(this.pos, 1.5, this.dungeonMap.floorNumber,
+      this.dungeonMap.minimap, textures.portalTileSet);
     this.dungeonMap.otherEntities.push(this.portal);
   }
 
+  /**
+   * Activates the portal if done.
+   */
   activatePortal() {
     if(!this.isBoss) {
       return;
@@ -528,11 +640,14 @@ class Room {
     this.portal.activate();
   }
 
+  // The next few commands all check if a major boss must be spawned
+
   summonSlimeBoss() {
     if(!this.isBoss || this.dungeonMap.floorNumber !== 5) {
       return false;
     }
-    this.enemies.push(new SlimeBoss(structuredClone(this.pos), this.id, this.dungeonMap.minimap, this.enemies));
+    this.enemies.push(new SlimeBoss(structuredClone(this.pos), this.id,
+      this.dungeonMap.minimap, this.enemies));
     return true;
   }
 
@@ -540,7 +655,8 @@ class Room {
     if(!this.isBoss || this.dungeonMap.floorNumber !== 10) {
       return false;
     }
-    this.enemies.push(new Warlord(structuredClone(this.pos), this.id, this.dungeonMap.minimap));
+    this.enemies.push(new Warlord(structuredClone(this.pos), this.id,
+      this.dungeonMap.minimap));
     return true;
   }
 
@@ -548,7 +664,8 @@ class Room {
     if(!this.isBoss || this.dungeonMap.floorNumber !== 15) {
       return false;
     }
-    this.enemies.push(new NecromancerKing(structuredClone(this.pos), this.id, this.dungeonMap.minimap));
+    this.enemies.push(new NecromancerKing(structuredClone(this.pos), this.id,
+      this.dungeonMap.minimap));
     return true;
   }
 
@@ -641,6 +758,9 @@ function generateEmptyGrid(x = xSize, y = ySize, toFill = 0) {
   return emptyGrid;
 }
 
+/**
+ * Gets the sum of an array.
+ */
 function getArraySum(arr) {
   acc = 0;
   arr.forEach((x) => {
