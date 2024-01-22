@@ -1,10 +1,21 @@
 /* eslint-disable no-undef */
-// Project Title
-// Your Name
-// Date
+// Dungeon Exploration
+// Alex Ha and Robert Yang
+// January 22, 2024
+//
+// This project revolves around someone who explores floors of dungeons, racing
+// to the 20th floor.
 //
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// - Celluar automata
+// - Flood fill
+// - Heap algorithm
+// - Linear algebra for edge rasterization, projectiles, and weapons
+// - Graham Scan convex hull
+// - Labyrinths with Prim
+// - Trigonometry for room placement
+// - More linear algebra for weighing enemy movement
+// - Imported sounds and textures
 
 let myDungeon;
 let anotherDungeon;
@@ -89,6 +100,12 @@ function setup() {
   frameRate(30);
   noStroke();
   noSmooth();
+
+  // Start in the guild hall
+  floorBitmask = getItem("floorBitmask");
+  if(floorBitmask === null) {
+    floorBitmask = 1;
+  }
   myDungeon = createDungeonMap(0);
   player = new Player(structuredClone(myDungeon.playerPos), myDungeon.minimap);
   healthBar = new HealthBar(player.health, textures.healthBarTileSet, [50, 50], 2.5);
@@ -106,11 +123,13 @@ let menuManager;
 function draw() {
   music.play();
   if(!gameActive) {
+    // Slowly reddening death screen
     background(100, 0, 0, 10);
     fill("white");
     textAlign(CENTER, CENTER);
     text(thisDeathMessage, width/2, height/2);
     if(millis() - deathTimer > deathTime) {
+      // Respawn player
       reEnterDungeonMap(myDungeon);
       myDungeon.cleanUp(player.activeZone);
       restorePlayer(player);
@@ -120,6 +139,7 @@ function draw() {
     return;
   }
   else if(!player.isAlive) {
+    // The you died message
     background(100, 0, 0, 100);
     fill("white");
     textAlign(CENTER, CENTER);
@@ -131,11 +151,13 @@ function draw() {
     return;
   }
   else {
+    // Normal displaying
     let dt = 1 / frameRate();
     if(dt > 0.2) {
       dt = 0.2;
     }
     if(!menuManager.paused) {
+      // Update player and dungeon map if menu is not active
       player.move([keyIsDown(68)-keyIsDown(65) ,keyIsDown(83)-keyIsDown(87)], dt, keyIsDown(16));
       player.attack(myDungeon, dt, keyIsDown(16));
       myDungeon.update(player, dt);
@@ -175,14 +197,13 @@ function draw() {
   menuManager.operate();
 }
 
+// Scroll to select weapon
 function mouseWheel(event) { 
   if(frameCount % 2 === 0){
     if(event.delta > 1){
-      // player.holding = player.weapons[player.holdingIndex+1];
       player.holdingIndex += 1;
     } 
     else if(event.delta < 1){
-      // player.holding = player.weapons[player.holdingIndex-1];
       player.holdingIndex -= 1;
     }
   }
@@ -191,6 +212,7 @@ function mouseWheel(event) {
   player.updateHolding();
 }
 
+// Map, inventory, and escape menus
 function keyPressed() {
   if(keyCode === 77) {
     showMap = !showMap;
@@ -211,7 +233,7 @@ function keyPressed() {
   }
 }
 
-
+// Updates menus and/or inventories
 function mousePressed() {
   if(menuManager.paused) {
     menuManager.triggerUpdate();

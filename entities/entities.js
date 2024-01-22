@@ -434,7 +434,11 @@ class Player extends Entity {
     this.defaultSpeed = 3.5;
     this.movementDirection = [0, 0]; // Unrelated to texturing
     this.holdingIndex = 0;
-    this.money = 0;
+    this.totalMoney = getItem("totalMoney");
+    if(this.totalMoney === null) {
+      this.totalMoney = 0;
+    }
+    this.money = this.totalMoney;
     this.speedBonus = 0;
     this.healthBonus = 0;
 

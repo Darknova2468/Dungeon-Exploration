@@ -10,7 +10,7 @@
 
 const PERSISTENTDUNGEONS = false;
 const allDungeons = new Map(); // May store floor data
-let floorBitmask = 1; // Stores the available floors as a bitmask
+let floorBitmask; // Stores the available floors as a bitmask
 const GENERATIONDEBUG = false;
 
 /**
@@ -498,6 +498,7 @@ class Room {
         if(this.isBoss) {
           // Mark next room as available
           floorBitmask |= 1 << this.dungeonMap.floorNumber;
+          storeItem("floorBitmask", floorBitmask);
         }
       }
 
