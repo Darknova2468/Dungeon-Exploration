@@ -8,7 +8,7 @@ There's lots of advice that I would definitely give myself, but the most importa
 
 ## Completion of Needs to Have List
 
-
+We didn't get to a few things in our needs to have list, such as mining or save files. However, these were not really important in the grand scale of the project (since mining is unimportant and the game isn't too big to need save files), so we can safely say that we don't need them.
 
 ## The Hardest Part
 
@@ -29,3 +29,7 @@ Then, we needed to deal with labyrinths. To do so, we first had to specify zones
 These were not so easy to implement. In particular, the restriction of labyrinths only touching each node once cost lots of pain and effort in figuring out why the algorithm occasionally failed to do so. Furthermore, one restriction required the use of convex hulls, which also took some time to implement. However, these conditions were eventually completed.
 
 Finally, there were many bugs along the way that needed to be fixed. Many of them where fundamental but obscure, such as rooms not placing where they should, or the game suddenly crashing when the player goes too far up. Those required lots of time to fix, and we also had to resort to corrupted dungeon regeneration in cases where the dungeon does not generate correctly. However, we haven't noticed any glitch in dungeon generation for at least a month now, so we've likely patched most, if not all, problems regarding generation.
+
+## Were there any problems that weren't solved?
+
+Not many that we didn't spend time on. Most such problems involved worldbuilding, such as the practicallity of ores or a dragon.
