@@ -262,6 +262,9 @@ class NecromancerKing extends Phantom {
   constructor(_pos, _roomId, _collisionMap) {
     super(_pos, _roomId, 300, _collisionMap);
     this.detectionRange = 200;
+    this.animationSet = textures.necromancerTileSet;
+    this.scaleFactor = 1.25;
+    this.radius = 0.5;
 
     // Boss dies to fast. Time to change that!
     this.defence = 10;

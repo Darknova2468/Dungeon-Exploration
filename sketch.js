@@ -34,6 +34,7 @@ function preload() {
     zombieTileSet: new AnimateSet("textures/zombie.png", [19, 21]),
     boneTileSet: new AnimateSet("textures/bone.png", [15, 15]),
     phantomTileSet: new AnimateSet("textures/phantom.png", [18, 18]),
+    necromancerTileSet: new AnimateSet("textures/necromancer.png", [25, 26]),
     darkSpellTileSet: new AnimateSet("textures/darkSpell.png", [16, 16]),
     goblinTileSet: new AnimateSet("textures/goblin.png", [18, 18]),
     booyahgTileSet: new AnimateSet("textures/booyahg.png", [18, 18]),
