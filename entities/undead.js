@@ -2,14 +2,14 @@
 class Zombie extends Enemy {
   constructor(_pos, _roomId, _level, _collisionMap) {
     // super(_pos, Math.floor(10 + Math.pow(_level, 0.5)/5), Math.floor(4*Math.log10(_level+1)), 1.2, _collisionMap, _textureSet);
-    super(_pos, "Zombie", _roomId, _level, Math.floor(10 + Math.pow(_level, 0.7)), Math.floor(Math.log(_level+1)), 1.2, 10, 1, 2, "Bludgeoning", 1.2, 700, _collisionMap, textures.zombieTileSet);
+    super(_pos, "Zombie", _roomId, _level, Math.floor(10 + Math.pow(_level, 0.8)), Math.floor(Math.log(_level+1)), 1.2, 10, 1, 2, "Bludgeoning", 1.2, 700, _collisionMap, textures.zombieTileSet);
     this.radius = 0.4;
 
     // Zombies stop when attacking and bite if close; also quite heavy
     this.isMoving = 0;
     this.strafeMultiplier = -1;
     this.biteRadius = 0.7;
-    this.biteDamage = 2;
+    this.biteDamage = Math.floor(Math.sqrt(_level));
     this.biteDamageType = "Piercing";
     this.shoveTime = 200;
   }
@@ -214,14 +214,17 @@ function createUndead(undeadDifficulty) {
   let skeletonChance = 0;
   let phantomChance = 0;
   let undead = [];
-  undeadDifficulty *= 2;
-  if(undeadDifficulty > 50) {
+  undeadDifficulty *= 5;
+  if(undeadDifficulty > 125) {
     skeletonChance = 0.4;
   }
-  if(undeadDifficulty > 100) {
+  if(undeadDifficulty === 250) {
+    skeletonChance = 1;
+  }
+  if(undeadDifficulty > 250) {
     phantomChance = 0.1;
   }
-  if(undeadDifficulty === 150) {
+  if(undeadDifficulty === 375) {
     phantomChance = 0.3;
   }
   while(undeadDifficulty > 0) {
@@ -236,7 +239,8 @@ function createUndead(undeadDifficulty) {
     if(undeadType) {
       maxLevel = undeadDifficulty / 2;
     }
-    let chosenLevel = Math.ceil(Math.pow(random(1, Math.sqrt(maxLevel)), 1.5));
+    let reductionFactor = 1.5;
+    let chosenLevel = Math.ceil(Math.pow(random(1, Math.pow(maxLevel, 1/reductionFactor)), reductionFactor));
     undead.push([undeadVariants[undeadType], chosenLevel, 1]);
     undeadDifficulty -= (1 + undeadType) * chosenLevel;
   }
@@ -258,6 +262,9 @@ class NecromancerKing extends Phantom {
   constructor(_pos, _roomId, _collisionMap) {
     super(_pos, _roomId, 300, _collisionMap);
     this.detectionRange = 200;
+
+    // Boss dies to fast. Time to change that!
+    this.defence = 10;
 
     // All attacks (visuals)
     this.castColour = color(0, 0, 0, 255);
@@ -285,7 +292,7 @@ class NecromancerKing extends Phantom {
     this.circleCharging = false;
     this.maxCircleSpawn = 10;
     this.circleBlindnessDuration = 2000;
-    this.circleCooldown = 12000;
+    this.circleCooldown = 10000;
     this.circleTimer = millis();
     this.circlePos = [0, 0];
 
@@ -301,6 +308,9 @@ class NecromancerKing extends Phantom {
     this.minDarknessPeriod = 500;
     this.maxDarknessPeriod = 5000;
     this.updateDarknessPeriod();
+
+    // Prevent the boss from activating its attacks after certain enemy limit
+    this.maxEnemyLimit = 30;
   }
 
   updateDarknessPeriod() {
@@ -367,7 +377,8 @@ class NecromancerKing extends Phantom {
 
   combat(player, enemies, time, distance, pursuitVector) {
     // Wave attacks
-    if(millis() - this.waveTimer > this.waveCooldown) {
+    if(enemies.length <= this.maxEnemyLimit
+      && millis() - this.waveTimer > this.waveCooldown) {
       this.waveTimer = this.waveCharge + millis();
       this.waveCharging = true;
       this.prepareWaveSpell(player);
@@ -376,7 +387,10 @@ class NecromancerKing extends Phantom {
       this.waveCharging = false;
       this.castWaveSpell(player, enemies);
     }
-    if(millis() - this.circleTimer > this.circleCooldown) {
+
+    // Circle attacks
+    if(enemies.length <= this.maxEnemyLimit
+      && millis() - this.circleTimer > this.circleCooldown) {
       this.circleTimer = this.circleCharge + millis();
       this.circleCharging = true;
       this.prepareCircleSpell(player);
