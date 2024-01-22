@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 class NPC extends Entity {
   constructor(_pos, _name, _interactDistance, _collisionMap, _textureSet, _animationSpeed, _scaleFactor) {
     super(_pos, 10, 0, 0, _collisionMap, _textureSet, _animationSpeed, _scaleFactor);

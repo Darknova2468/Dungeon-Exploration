@@ -336,7 +336,7 @@ class Room {
         myBackground.displayOnly = null;
         myBackground.changeDimensions([12, 6], player.pos, 1000, true);
         if(this.isBoss) {
-          floorBitmask |= (1 << this.dungeonMap.floorNumber);
+          floorBitmask |= 1 << this.dungeonMap.floorNumber;
         }
       }
 

@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 /**
  * Min-heap implementation, based on Durr and Vie (2021)
  * Copied from cave-dungeons

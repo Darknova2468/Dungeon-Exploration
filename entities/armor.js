@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 const ARMORTYPES = ["Helmet", "Chestplate", "Pants", "Boots"];
 
 const ARMORHEALTHBONUS = [
@@ -26,7 +28,7 @@ const ARMORCOSTS = [
   [80, 150, 400, 800, 1600],
   [80, 150, 400, 800, 1600],
   [80, 100, 300, 700, 1500]
-]
+];
 
 class ArmorPiece extends Item {
   constructor(name, id, wielder, tileSet, scaleFactor) {

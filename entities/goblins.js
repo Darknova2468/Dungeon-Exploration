@@ -183,7 +183,7 @@ function createGoblins(goblinDifficulty) {
     else if(random() < booyahgVariantChance) {
       goblinType = 2;
     }
-    let reductionFactor = (goblinType === 1) ? 1 : 2;
+    let reductionFactor = goblinType === 1 ? 1 : 2;
     let chosenLevel = Math.ceil(Math.pow(random(1, Math.pow(maxLevel, 1/reductionFactor)), reductionFactor));
     if(goblinType !== 1) {
       chosenLevel = Math.min(20, chosenLevel);
@@ -231,21 +231,21 @@ class Warlord extends Goblin {
     if(this.health / this.maxHealth < 1 - this.healthStage / 4) {
       this.healthStage += 1;
       switch(this.healthStage) {
-        case 2:
-          for(let i = 0; i < 5; i++) {
-            enemies.push(myDungeon.dungeon[this.lockedZone - 3].attemptEnemyPlacement(Goblin, 20, 0.5));
-          }
-          break;
-        case 3:
-          for(let i = 0; i < 5; i++) {
-            enemies.push(myDungeon.dungeon[this.lockedZone - 3].attemptEnemyPlacement(Booyahg, 20, 0.5));
-          }
-          break;
-        case 4:
-          for(let i = 0; i < 5; i++) {
-            enemies.push(myDungeon.dungeon[this.lockedZone - 3].attemptEnemyPlacement(Hobgoblin, 100, 0.5));
-          }
-          break;
+      case 2:
+        for(let i = 0; i < 5; i++) {
+          enemies.push(myDungeon.dungeon[this.lockedZone - 3].attemptEnemyPlacement(Goblin, 20, 0.5));
+        }
+        break;
+      case 3:
+        for(let i = 0; i < 5; i++) {
+          enemies.push(myDungeon.dungeon[this.lockedZone - 3].attemptEnemyPlacement(Booyahg, 20, 0.5));
+        }
+        break;
+      case 4:
+        for(let i = 0; i < 5; i++) {
+          enemies.push(myDungeon.dungeon[this.lockedZone - 3].attemptEnemyPlacement(Hobgoblin, 100, 0.5));
+        }
+        break;
       }
     }
   }

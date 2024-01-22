@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 class Music{
   constructor(_path){
     loadSound(_path, (myMusic) => {

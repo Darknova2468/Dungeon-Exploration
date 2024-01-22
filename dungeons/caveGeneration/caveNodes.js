@@ -208,7 +208,7 @@ function floodFillExclude(grid, i, j, toFill = 1) {
  * @returns The grid that was drawn on.
  */
 function generateCaveNode(grid, i, j,
-    hr = caveNodeHardBound, sr = caveNodeSoftBound, toFill) {
+  hr = caveNodeHardBound, sr = caveNodeSoftBound, toFill) {
   let y = grid.length;
   let x = grid[0].length;
   

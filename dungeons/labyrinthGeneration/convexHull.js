@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 /**
  * Convex hull implementation: Graham's Scan algorithm
  * Modified from Competitive Programming 3 by From Halim et al.
@@ -83,7 +85,7 @@ function compareAngles(a, b) {
   let d2y = b[1] - pivot[1];
   let angleDiff = getAngle(d2y, d2x) - getAngle(d1y, d1x);
   if(Math.abs(angleDiff) < 1e-8) {
-    return (dist(pivot[0], pivot[1], b[0], b[1])
+    return dist(pivot[0], pivot[1], b[0], b[1]
       - dist(pivot[0], pivot[1], a[0], a[1])); // Extra parens for safety
   }
   return angleDiff;
