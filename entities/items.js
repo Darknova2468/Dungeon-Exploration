@@ -123,3 +123,7 @@ class Coin extends DroppedItem {
     }
   }
 }
+
+const LIGHTINGTYPES = ["Candle", "Torch"];
+const LIGHTINGCLASSES = [Candle, Torch];
+const LIGHTINGCOSTS = [100, 1000];

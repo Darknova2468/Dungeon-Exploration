@@ -279,6 +279,75 @@ class ArmorUpgradeMenu extends Menu {
   }
 }
 
+const EXPLORERTEXT = `As one progresses through these ancient dungeons,
+the amount of natural light rapidly decays.
+
+Without any lighting gear, death comes swiftly and unexpectedly.
+
+I met someone like you a while back, who felt like they didn't need more lighting.
+They ventured into the undead floors... and never came back.
+
+To light up your surroundings, all you have to do is hold a candle or torch in your hotbar or hand. Your surroundings get better and your map fills in more effectively!
+
+Now, how do you buy them? That's where I come in!`;
+
+class LightingMenu extends Menu {
+  constructor(_index, _lighting) {
+    super("Explorer > Buy ".concat(_lighting), "Querying ".concat(_lighting.concat("...")), ["> Back to Explorer Menu"], 155);
+    this.index = _index;
+    this.lighting = _lighting;
+    this.count = 0;
+    this.costs = 0;
+    for(let cell of player.inventory.storage) {
+      if(cell.holding !== null && cell.holding.name === this.lighting) {
+        this.count += 1;
+      }
+    }
+    // See items.js for specific costs
+    if(this.count >= 5) {
+      this.text = "You already have enough lighting, don't be so greedy!"
+    }
+    else {
+      this.costs = LIGHTINGCOSTS[this.index];
+      this.text = "Buy a ".concat(_lighting.concat(" for ".concat(this.costs.toString().concat(" coins!"))));
+      this.commands.push("> Buy lighting");
+    }
+  }
+
+  applyCommand(cmd) {
+    if(cmd === 0) {
+      menuManager.menus.push(new ExplorerMenu());
+    }
+    else {
+      if(player.money < this.costs) {
+        this.text = "You don't have enough coins!";
+        return;
+      }
+      else {
+        if(player.inventory.attemptCollect(new LIGHTINGCLASSES[this.index](null))) {
+          player.money -= this.costs;
+        }
+      }
+      player.updateHolding();
+      menuManager.menus.push(new LightingMenu(this.index, this.lighting));
+    }
+    
+    super.applyCommand(cmd);
+  }
+}
+
+class ExplorerMenu extends Menu {
+  constructor() {
+    super("Explorer", EXPLORERTEXT, ["> Buy Candles", "> Buy Torches"], 150);
+    this.commandStartHeight = 0.8;
+  }
+
+  applyCommand(cmd) {
+    menuManager.menus.push(new LightingMenu(cmd, LIGHTINGTYPES[cmd]));
+    super.applyCommand(cmd);
+  }
+}
+
 class PortalMenu extends Menu {
   constructor(_floorNum) {
     super("Portal", "Querying...", [], 50);
