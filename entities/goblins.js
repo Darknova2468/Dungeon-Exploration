@@ -1,8 +1,7 @@
 /* eslint-disable no-undef */
 class Goblin extends Enemy {
-  constructor(_pos, _roomId, _level, _collisionMap, _textureSet = textures.goblinTileSet) {
-    // super(_pos, _level + 4, 0, 4.5, _collisionMap, _textureSet);
-    super(_pos, "Goblin", _roomId, _level, 4 + Math.floor(Math.pow(_level, 0.6)), 0, 3.5, 12, 2, 1 + Math.floor(_level / 30), "Slashing", 1, 700, _collisionMap, _textureSet);
+  constructor(_pos, _roomId, _level, _collisionMap, _textureSet = textures.goblinTileSet, _animationSpeed, scaleFactor) {
+    super(_pos, "Goblin", _roomId, _level, 4 + Math.floor(Math.pow(_level, 0.6)), 0, 3.5, 12, 2, 1 + Math.floor(_level / 30), "Slashing", 1, 700, _collisionMap, _textureSet, _animationSpeed, scaleFactor);
 
     // Goblin bully tactics
     this.thrustRadius = 3;
@@ -201,15 +200,15 @@ function createGoblins(goblinDifficulty) {
 
 class Warlord extends Goblin {
   constructor(_pos, _roomId, _collisionMap) {
-    super(_pos, _roomId, 300, _collisionMap, textures.hobgoblinTileSet); // Temporary textures
-    this.combatBalanceRadius = 5;
-    this.thrustRadius = 7;
+    super(_pos, _roomId, 300, _collisionMap, textures.warLordTileSet, 4, 1.25);
+    this.combatBalanceRadius = 4;
+    this.thrustRadius = 5;
+    this.radius = 0.9;
     this.maxHealth *= 4;
     this.health *= 4;
     this.healthBar.maxHealth = this.maxHealth;
     this.bossHealthBar = new WarlordHealthBar(this.maxHealth);
     this.healthStage = 0;
-    this.hasHealthBar = false;
     this.warlordBossHealthBar = true;
   }
 
@@ -218,7 +217,6 @@ class Warlord extends Goblin {
     if(this.backing) {
       this.defence = 0;
       this.attackRange = 1;
-      // enemies.push(new AnnoyingSpark(this.pos, this.lockedZone, scaleVector(pursuitVector, this.spellSpeed), this.spellRange, this.spellDamage, this.collisionMap));
     }
     else if(this.thrusting){
       this.defence = 5;
