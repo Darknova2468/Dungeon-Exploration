@@ -3,11 +3,16 @@ class NPC extends Entity {
     super(_pos, 10, 0, 0, _collisionMap, _textureSet, _animationSpeed, _scaleFactor);
     this.name = _name;
     this.interactDistance = _interactDistance;
+    this.animationNum = [0, 0, 0];
   }
 
   operate(player, time) {
-    if(dist(this.pos[0], this.pos[1], player.pos[0], player.pos[1]) < this.interactDistance && keyIsDown(32)) {
-      this.execute(player);
+    this.animationNum[0] = 0;
+    if(dist(this.pos[0], this.pos[1], player.pos[0], player.pos[1]) < this.interactDistance) {
+      this.animationNum = [1];
+      if(keyIsDown(32)){
+        this.execute(player);
+      }
     }
   }
 

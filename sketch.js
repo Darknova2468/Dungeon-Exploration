@@ -64,8 +64,8 @@ function preload() {
     portalTileSet: new AnimateSet("textures/portal.png", [40, 40]),
     numbers: new TileSet("textures/numbers.png", [6, 7]),  
     coinTileSet: new TileSet("textures/coin.png", [11, 11]),
-    blacksmithTileSet: "black",
-    armorerTileSet: "lightgray",
+    blacksmithTileSet: new AnimateSet("textures/blacksmith.png", [42, 23]),
+    armorerTileSet: new AnimateSet("textures/armourSmith.png", [42, 23]),
   };
   music = new Music("music/theme.mp3");
   sfx = {
