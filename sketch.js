@@ -39,6 +39,7 @@ function preload() {
     booyahgTileSet: new AnimateSet("textures/booyahg.png", [18, 18]),
     annoyingSparkTileSet: new AnimateSet("textures/spark.png", [11, 11]),
     hobgoblinTileSet: new AnimateSet("textures/hobGoblin.png", [23, 19]),
+    warLordTileSet: new AnimateSet("textures/warLord.png", [26, 26]),
     skeletonTileSet: new AnimateSet("textures/skeleton.png", [18, 18]),
     frozenPuddleTileSet: new AnimateSet("textures/frostSlimePuddle.png", [31,31]),
     blueDraconianTileSet: "blue",
