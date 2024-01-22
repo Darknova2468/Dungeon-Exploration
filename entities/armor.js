@@ -1,5 +1,10 @@
 /* eslint-disable no-undef */
 
+/**
+ * File for armor types: helmet, chestplate, pants, and boots.
+ * Not much else to say here.
+ */
+
 const ARMORTYPES = ["Helmet", "Chestplate", "Pants", "Boots"];
 
 const ARMORHEALTHBONUS = [

@@ -1,4 +1,16 @@
 /* eslint-disable no-undef */
+
+/**
+ * The goblins. They run around quickly, copy player movements, and thrust when
+ *   they feel like it.
+ * Variants:
+ * - Booyahgs: spellcasters with a chance at shredding the player
+ * - Hobgoblins: warriors who are stronger, more cautious, and overall stronger
+ * - Warlord: summons other goblin peons at certain health percentages
+ * Spawning behaviour is biased towards swarming unless the monster being
+ *   spawned is a hobgoblin.
+ */
+
 class Goblin extends Enemy {
   constructor(_pos, _roomId, _level, _collisionMap, _textureSet = textures.goblinTileSet, _animationSpeed, scaleFactor) {
     super(_pos, "Goblin", _roomId, _level, 4 + Math.floor(Math.pow(_level, 0.6)), 0, 3.5, 12, 2, 1 + Math.floor(_level / 30), "Slashing", 1, 700, _collisionMap, _textureSet, _animationSpeed, scaleFactor);

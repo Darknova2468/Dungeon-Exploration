@@ -1,4 +1,20 @@
 /* eslint-disable no-undef */
+
+/**
+ * The draconians. They have absurdly powerful breath attacks and damage, so
+ *   you'd either want to take them down fast before they fire their breath
+ *   attacks or spend lots of effort and time trying to dodge their attacks.
+ * Variants:
+ * - Blue draconians: snipe with thin but powerful beams of lightning.
+ * - Red draconians: spews accelerating fireballs.
+ * - Black draconians: attacks with a ball of death, a malicious shard of its
+ *   victims which sneaks near you, calculates your potential next positions,
+ *   and explodes at them.
+ * - The Emporer of Destruction : ??? ??? ??? ??? ??? ??? ??? ??? ???
+ *   (but dormant and not fought in-game)
+ * Spawning behaviour: predictable, linear, and biased against swarming.
+ */
+
 class Draconian extends Enemy {
   constructor(_pos, _roomId, _level, _collisionMap, _textureSet = "purple") {
     super(_pos, "Draconian", _roomId, _level, Math.floor(Math.pow(_level + 10, 0.8) / 3), 5, 3, 20, 5, Math.floor(Math.sqrt(_level) + 10), "Slashing", 1.2, 700, _collisionMap, _textureSet);
