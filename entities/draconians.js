@@ -67,7 +67,7 @@ class BlueDraconian extends Draconian {
     this.boltTargetPos = [0, 0];
     this.boltRange = 20;
     this.boltWidth = 0.1;
-    this.boltDamage = 10;
+    this.boltDamage = 20;
     this.boltDamageType = "Lightning";
     this.initLightningColour = color(150, 150, 255, 0);
     this.finalLightningColour = color(150, 150, 255, 100);
@@ -131,6 +131,22 @@ class RedDraconian extends Draconian {
     super(_pos, _roomId, _level, _collisionMap, "red");
 
     // Fireball spam
-    this.fireBallCooldown = 200;
+    this.fireBallCooldown = 150;
+    this.firingAngle = Math.PI / 4;
+    this.fireBallDamage = 10;
+    this.fireBallQueue = 0;
+  }
+
+
+}
+
+class FireBall extends EnemyProjectile {
+  constructor(_pos, _zone, _dir, _maxDist, _hitDmg, _collisionMap) {
+    super(_pos, _zone, _dir, _maxDist, _hitDmg, "Fire", 0.3, false, 0, 0, null, _collisionMap, textures.lavaSlimeBallTileSet);
+  }
+
+  operate(target, enemies, time) {
+    this.speed += time;
+    super.operate(target, enemies, time);
   }
 }
