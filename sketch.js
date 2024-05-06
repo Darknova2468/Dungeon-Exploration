@@ -112,6 +112,9 @@ function setup() {
   lighting = new Lighting();
   menuManager = new MenuManager();
   enterDungeonMap(myDungeon);
+  if(WITHERMODE) {
+    WitherLord = new WitherDisplay();
+  }
 }
 
 let gameActive = true;
@@ -121,6 +124,10 @@ let thisDeathMessage;
 let menuManager;
 
 function draw() {
+  if(WITHERMODE) {
+    WitherLord.update();
+    return;
+  }
   music.play();
   if(!gameActive) {
     // Slowly reddening death screen
@@ -214,31 +221,41 @@ function mouseWheel(event) {
 
 // Map, inventory, and escape menus
 function keyPressed() {
-  if(keyCode === 77) {
-    showMap = !showMap;
+  if(WITHERMODE) {
+    WitherLord.handleKeyPress();
   }
-  if(keyCode === 69) {
-    player.inventory.shown = !player.inventory.shown;
-  }
-  if(keyCode === 27) {
-    if(player.inventory.shown) {
-      player.inventory.shown = false;
+  else {
+    if(keyCode === 77) {
+      showMap = !showMap;
     }
-    else if(menuManager.paused) {
-      menuManager.menus = new Heap([], (a, b) => a.priority - b.priority > 0);
+    if(keyCode === 69) {
+      player.inventory.shown = !player.inventory.shown;
     }
-    else {
-      menuManager.menus.push(new PauseMenu());
+    if(keyCode === 27) {
+      if(player.inventory.shown) {
+        player.inventory.shown = false;
+      }
+      else if(menuManager.paused) {
+        menuManager.menus = new Heap([], (a, b) => a.priority - b.priority > 0);
+      }
+      else {
+        menuManager.menus.push(new PauseMenu());
+      }
     }
   }
 }
 
 // Updates menus and/or inventories
 function mousePressed() {
-  if(menuManager.paused) {
-    menuManager.triggerUpdate();
+  if(WITHERMODE) {
+    //
   }
-  if(player.inventory.shown) {
-    player.inventory.update();
+  else {
+    if(menuManager.paused) {
+      menuManager.triggerUpdate();
+    }
+    if(player.inventory.shown) {
+      player.inventory.update();
+    }
   }
 }
