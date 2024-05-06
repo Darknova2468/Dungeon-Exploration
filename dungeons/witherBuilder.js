@@ -42,7 +42,7 @@ class WitherDisplay {
           fill(207, 159, 255);
         }
         else {
-          fill(255, 204, 203);
+          fill(200, max(0, 250 - 10 * cell_type), max(0, 200 - 8 * cell_type));
         }
         let xCoord = this.startX + j * this.squareSize;
         let yCoord = this.startY + i * this.squareSize;

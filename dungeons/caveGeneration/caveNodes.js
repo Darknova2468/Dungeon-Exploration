@@ -28,8 +28,8 @@ const DEBUG = false;
 // Default variables for cave node radius and cave edge width specifications
 let caveNodeHardBound = 2;
 let caveNodeSoftBound = 4;
-let caveEdgeHardBound = 2;
-let caveEdgeSoftBound = -1; // No soft bound
+let caveEdgeHardBound = 1.5;
+let caveEdgeSoftBound = 3; // No soft bound
 
 const FILLPORTION = 0.6; // Portion of solid rock for cave generation
 const NUMGENERATIONS = 3;

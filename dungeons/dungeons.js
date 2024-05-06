@@ -203,6 +203,7 @@ class DungeonMap {
         }
       });
     });
+    this.minimap = evaluateNext(this.minimap);
     
     // Generate cave nodes
     this.dungeon.forEach(room => {
