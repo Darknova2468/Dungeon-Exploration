@@ -147,9 +147,10 @@ class DungeonMap {
     let dist2 = this.dungeon[0].connections[1][1];
     let dist3 = this.dungeon[1].connections[0][1];
     
-    let theta = 0.5*cosineLaw(dist1, dist2, dist3);
-    this.dungeon[1].pos = [Math.abs(cos(theta)*dist1), sin(theta)*dist1];
-    this.dungeon[2].pos = [Math.abs(cos(theta)*dist2), -sin(theta)*dist2];
+    let theta = cosineLaw(dist1, dist2, dist3); // Angle between rooms
+    let phi = Math.random()*2*Math.PI; // Starting angle
+    this.dungeon[1].pos = [cos(phi+theta)*dist1, sin(phi+theta)*dist1];
+    this.dungeon[2].pos = [cos(phi)*dist2,       sin(phi)*dist2];
 
     // Generates the rest of the tree
     for(let i=3; i<this.dungeon.length; i++){
