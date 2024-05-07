@@ -182,9 +182,6 @@ function draw() {
     myDungeon.display(myBackground.pos, myBackground.scale, [16, 16]);
     player.display(myBackground.pos, myBackground.scale, [16, 16]);
     lighting.update(player.vision, myDungeon.ambience, myBackground.pos, myBackground.scale, player);
-    if(keyIsDown(20) || showMap){
-      minimap.displayMap(player.pos);
-    }
     minimap.displayMinimap(player.pos);
     healthBar.display(player.health);
     textAlign(CENTER, CENTER);
@@ -200,6 +197,9 @@ function draw() {
     text("On Floor " + floorNum, height*1/20, height*8.5/10);
     text("Money in wallet: " + player.money, height*1/20, height*9/10);
     player.inventory.display();
+    if(keyIsDown(20) || showMap){
+      minimap.displayMap(player.pos);
+    }
   }
   menuManager.operate();
 }

@@ -8,7 +8,7 @@
  * main function is used instead for generation.
  */
 
-const WITHERMODE = true;
+const WITHERMODE = false;
 let WitherLord;
 
 class WitherDisplay {

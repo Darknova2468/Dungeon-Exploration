@@ -349,6 +349,15 @@ class ExplorerMenu extends Menu {
 }
 
 /**
+ * Better large map
+ */
+class LargeMap extends Menu {
+  constructor() {
+    super("", "", [], 10);
+  }
+}
+
+/**
  * Simple dialogue menu
  */
 class Dialogue extends Menu {
@@ -761,6 +770,7 @@ class Maps {
     }
     this.pos = _pos;
     this.scale = _scale;
+    this.padding = 20;
   }
   updateDiscovered(pos) {
     for(let i = 0; i < this.map.length; i++) {
@@ -810,11 +820,22 @@ class Maps {
     let i=0;
     for(let u = 0; u < this.map.length; u++){
       for(let v = 0; v < this.map[0].length; v++) {
-        if(this.map[u][v] > 0) {
+        let cellType = this.map[u][v];
+        img.pixels[i+3] = 255;
+        if(cellType === 1) {
           img.pixels[i] = 255;
           img.pixels[i+1] = 255;
           img.pixels[i+2] = 255;
-          img.pixels[i+3] = 255;
+        }
+        else if(cellType === 2) {
+          img.pixels[i] = 200;
+          img.pixels[i+1] = 200;
+          img.pixels[i+2] = 200;
+        }
+        else if(cellType > 2) {
+          img.pixels[i] = 200;
+          img.pixels[i+1] = max(0, 250 - 10 * cellType);
+          img.pixels[i+2] = max(0, 200 - 8 * cellType);
         }
         else{
           img.pixels[i+3] = 127;
@@ -826,8 +847,12 @@ class Maps {
     img.pixels[i+1] = 0;
     img.pixels[i+2] = 0;
     img.updatePixels();
-    let scaleX = this.map.length/(width-16*padding) > this.map[0].length/(height-4*padding) ? this.map.length*(height-4*padding)/this.map[0].length:width-16*padding;
-    let scaleY = this.map.length*scaleX/this.map[0].length;
+    let scale = min((height - this.padding) / this.map.length,
+      (width - this.padding) / this.map[0].length);
+    // let scaleX = this.map.length/(width-16*padding) > this.map[0].length/(height-4*padding) ? this.map.length*(height-4*padding)/this.map[0].length:width-16*padding;
+    // let scaleY = this.map.length*scaleX/this.map[0].length;
+    let scaleX = scale * this.map[0].length;
+    let scaleY = scale * this.map.length;
     image(img, width/2, height/2, scaleX, scaleY);
   }
 }
