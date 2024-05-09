@@ -103,6 +103,11 @@ class DungeonMap {
     this.caveEdgeChance = this.floor[3]; // Probability of cave edge
     this.denseCaveEdgeChance = this.floor[4]; // Conditional probability of a
     // second cave edge given that the first one is a cave edge
+    this.sizes = this.floor[5]; // Data for room sizes
+    this.startingSize = this.sizes[0];
+    this.emptySize = this.sizes[1];
+    this.enemySize = this.sizes[2];
+    this.bossSize = this.sizes[3];
 
     // Sets ambience
     this.ambience = color(0, 0, 50, Math.min(255, this.floorNumber * 20));
@@ -125,13 +130,16 @@ class DungeonMap {
     this.difficulties.sort((a, b) => getArraySum(a)-getArraySum(b));
 
     // Builds room nodes
-    this.dungeon = [new Room(0, 6, this,
-      this.caveEdgeChance, this.denseCaveEdgeChance)];
+    this.dungeon = [new Room(0, this.startingSize[0], this.startingSize[1],
+      this.startingSize[2], this, this.caveEdgeChance,
+      this.denseCaveEdgeChance)];
     for(let i=1; i<this.numberOfRooms-1; i++){
-      this.dungeon.push(new EnemyRoom(i, floor(random(7, 9)), this,
-        this.difficulties[i], this.caveEdgeChance, this.denseCaveEdgeChance));
+      this.dungeon.push(new EnemyRoom(i, this.enemySize[0], this.enemySize[1],
+        this.enemySize[2], this, this.difficulties[i], this.caveEdgeChance,
+        this.denseCaveEdgeChance));
     }
-    this.dungeon.push(new BossRoom(this.numberOfRooms - 1, 10, this,
+    this.dungeon.push(new BossRoom(this.numberOfRooms - 1, this.bossSize[0],
+      this.bossSize[1], this.bossSize[2], this,
       this.difficulties[this.numberOfRooms - 1], this.caveEdgeChance,
       this.denseCaveEdgeChance, true));
 
@@ -208,7 +216,8 @@ class DungeonMap {
     
     // Generate cave nodes
     this.dungeon.forEach(room => {
-      let raster = generatePrecursorDungeonRoom(room.radius, room.id + 3);
+      let raster = generatePrecursorDungeonRoom(room.radius, room.id + 3,
+        room.roughness);
       this.minimap = integrateRaster(this.minimap, raster,
         room.pos, this.offset);
     });
@@ -301,12 +310,12 @@ class DungeonMap {
     }
 
     // Create the actual boss room
-    this.bossRoom = new EnemyRoom(0, 20, this, [0,0,0,0], 0, 0, true);
+    this.bossRoom = new BossRoom(0, 20, this, [0,0,0,0], 0, 0);
     this.bossRoom.portal = this.portal;
     this.dungeon = [this.bossRoom];
     this.bossRoom.pos = [60, 50];
     let raster = generatePrecursorDungeonRoom(this.bossRoom.radius,
-      this.bossRoom.id + 3);
+      this.bossRoom.id + 3, this.bossRoom.roughness);
     this.minimap = integrateRaster(this.minimap, raster, this.bossRoom.pos,
       this.offset);
   }
@@ -361,11 +370,12 @@ class DungeonMap {
  * Each dungeon room in the dungeon map, vital for generation and gameplay.
  */
 class Room {
-  constructor(_id, _radius, _dungeonMap, _caveEdgeChance,
-    _denseCaveEdgeChance){
+  constructor(_id, _minRadius, _maxRadius, _roughness, _dungeonMap,
+    _caveEdgeChance, _denseCaveEdgeChance){
     this.dungeonMap = _dungeonMap;
     this.id = _id; // Zone id in the grid
-    this.radius = _radius;
+    this.radius = Math.floor(random(_minRadius, _maxRadius));
+    this.roughness = _roughness;
     this.connections = []; // Connections to other rooms
     this.pos = [0, 0]; // xy coordinates
     this.locked = true;
@@ -430,9 +440,9 @@ class Room {
 }
 
 class EnemyRoom extends Room {
-  constructor(_id, _radius, _dungeonMap, _difficulties, _caveEdgeChance,
-    _denseCaveEdgeChance, _isBoss = false) {
-    super(_id, _radius, _dungeonMap, _caveEdgeChance, _denseCaveEdgeChance);
+  constructor(_id, _minRadius, _maxRadius, _roughness, _dungeonMap,
+    _difficulties, _caveEdgeChance, _denseCaveEdgeChance, _isBoss = false) {
+    super(_id, _minRadius, _maxRadius, _roughness, _dungeonMap, _caveEdgeChance, _denseCaveEdgeChance);
     this.difficulties = _difficulties; // Array: slime, goblin, undead, and
   // draconian difficulties, respectively
     this.isBoss = _isBoss;
@@ -627,10 +637,10 @@ class EnemyRoom extends Room {
 }
 
 class BossRoom extends EnemyRoom {
-  constructor(_id, _radius, _dungeonMap, _difficulties, _caveEdgeChance,
-    _denseCaveEdgeChance) {
-    super(_id, _radius, _dungeonMap, _difficulties, _caveEdgeChance,
-      _denseCaveEdgeChance, true);
+  constructor(_id, _minRadius, _maxRadius, _roughness, _dungeonMap,
+    _difficulties, _caveEdgeChance, _denseCaveEdgeChance) {
+    super(_id, _minRadius, _maxRadius, _roughness, _dungeonMap, _difficulties,
+      _caveEdgeChance, _denseCaveEdgeChance, true);
   }
 
   spawnEnemies() {
@@ -737,9 +747,10 @@ function between(point, bound1, bound2){
 }
 
 //generates a single organic shaped room
-function generatePrecursorDungeonRoom(radius, toFill) {
+function generatePrecursorDungeonRoom(radius, toFill, roughness = 4) {
   let room = generateEmptyGrid(2*radius - 1, 2*radius - 1);
-  room = generateCaveNode(room, radius, radius, radius - 4, radius, toFill);
+  room = generateCaveNode(room, radius, radius, radius - roughness, radius,
+    toFill);
   return room;
 }
 
