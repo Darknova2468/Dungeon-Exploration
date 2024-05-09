@@ -125,13 +125,13 @@ class DungeonMap {
     this.difficulties.sort((a, b) => getArraySum(a)-getArraySum(b));
 
     // Builds room nodes
-    this.dungeon = [new Room(0, 6, this, this.difficulties[0],
+    this.dungeon = [new Room(0, 6, this,
       this.caveEdgeChance, this.denseCaveEdgeChance)];
     for(let i=1; i<this.numberOfRooms-1; i++){
-      this.dungeon.push(new Room(i, floor(random(7, 9)), this,
+      this.dungeon.push(new EnemyRoom(i, floor(random(7, 9)), this,
         this.difficulties[i], this.caveEdgeChance, this.denseCaveEdgeChance));
     }
-    this.dungeon.push(new Room(this.numberOfRooms - 1, 10, this,
+    this.dungeon.push(new BossRoom(this.numberOfRooms - 1, 10, this,
       this.difficulties[this.numberOfRooms - 1], this.caveEdgeChance,
       this.denseCaveEdgeChance, true));
 
@@ -301,7 +301,7 @@ class DungeonMap {
     }
 
     // Create the actual boss room
-    this.bossRoom = new Room(0, 20, this, [0,0,0,0], 0, 0, true);
+    this.bossRoom = new EnemyRoom(0, 20, this, [0,0,0,0], 0, 0, true);
     this.bossRoom.portal = this.portal;
     this.dungeon = [this.bossRoom];
     this.bossRoom.pos = [60, 50];
@@ -361,25 +361,21 @@ class DungeonMap {
  * Each dungeon room in the dungeon map, vital for generation and gameplay.
  */
 class Room {
-  constructor(_id, _radius, _dungeonMap, _difficulties, _caveEdgeChance,
-    _denseCaveEdgeChance, _isBoss = false){
+  constructor(_id, _radius, _dungeonMap, _caveEdgeChance,
+    _denseCaveEdgeChance){
     this.dungeonMap = _dungeonMap;
     this.id = _id; // Zone id in the grid
     this.radius = _radius;
     this.connections = []; // Connections to other rooms
     this.pos = [0, 0]; // xy coordinates
-    this.enemies = [];
     this.locked = true;
     this.entranceStage = 0; // State variable for room progression
     this.entranceTimer = 0;
     this.entranceTime = 700;
-    this.difficulties = _difficulties; // Array: slime, goblin, undead, and
-    // draconian difficulties, respectively
 
     // Customization variables, see dungeon map documentation
     this.caveEdgeChance = _caveEdgeChance;
     this.denseCaveEdgeChance = _denseCaveEdgeChance;
-    this.isBoss = _isBoss;
     this.portal = null;
     this.healed = false;
   }
@@ -417,6 +413,30 @@ class Room {
           dungeon[index+1].radius+this.radius+distance, 1+(distance>3)]);
       }
     }
+  }
+
+  /**
+   * Operates a room. This includes major aspects such as controlling
+   *   entranceStage for room progression.
+   */
+  operate(player, time) {
+    if(player.activeZone !== this.id + 3) {
+      return;
+    }
+  }
+
+  display(screenCenter, screenSize, scale){
+  }
+}
+
+class EnemyRoom extends Room {
+  constructor(_id, _radius, _dungeonMap, _difficulties, _caveEdgeChance,
+    _denseCaveEdgeChance, _isBoss = false) {
+    super(_id, _radius, _dungeonMap, _caveEdgeChance, _denseCaveEdgeChance);
+    this.difficulties = _difficulties; // Array: slime, goblin, undead, and
+  // draconian difficulties, respectively
+    this.isBoss = _isBoss;
+    this.enemies = [];
   }
 
   /**
@@ -521,7 +541,7 @@ class Room {
     }
   }
 
-  display(screenCenter, screenSize, scale){
+  display(screenCenter, screenSize, scale) {
     if(this.entranceStage < 3) {
       return;
     }
@@ -550,82 +570,9 @@ class Room {
   }
 
   /**
-   * Used during testing phase to spawn certain enemies in each room.
-   */
-  testSpawnEnemies() {
-    // for(let i = 0; i < 0; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(Slime));
-    // }
-    // for(let i = 0; i < 0; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(LavaSlime));
-    // }
-    // for(let i = 0; i < 0; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(FrostSlime));
-    // }
-    // for(let i = 0; i < 0; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(Zombie));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(Booyahg));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(Hobgoblin));
-    // }
-    // for(let i = 0; i < 0; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(Skeleton));
-    // }
-    // for(let i = 0; i < 0; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(Phantom));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(RedDraconian));
-    // }
-    // for(let i = 0; i < 1; i++) {
-    //   this.enemies.push(this.attemptEnemyPlacement(BlueDraconian));
-    // }
-    //for(let i = 0; i < 1; i++) {
-    //  this.enemies.push(this.attemptEnemyPlacement(BlackDraconian));
-    //}
-    // this.summonSlimeBoss();
-  }
-
-  /**
-   * Summons the enemies.
-   */
-  spawnEnemies() {
-    this.enemies = [];
-    // Check if the fight is a boss one
-    // this.testSpawnEnemies();
-    if(!this.summonSlimeBoss() && !this.summonWarlord()
-      && !this.summonNecromancerKing() && !this.summonDragon()) {
-      // Summons each enemy
-      let slimes = createSlimes(this.difficulties[0]);
-      let goblins = createGoblins(this.difficulties[1]);
-      let undeads = createUndead(this.difficulties[2]);
-      let draconians = createDraconians(this.difficulties[3]);
-      for(let [slimeClass, level, radiusPortion] of slimes) {
-        this.enemies.push(this.attemptEnemyPlacement(slimeClass, level,
-          radiusPortion));
-      }
-      for(let [goblinClass, level, radiusPortion] of goblins) {
-        this.enemies.push(this.attemptEnemyPlacement(goblinClass, level,
-          radiusPortion));
-      }
-      for(let [undeadClass, level, radiusPortion] of undeads) {
-        this.enemies.push(this.attemptEnemyPlacement(undeadClass, level,
-          radiusPortion));
-      }
-      for(let [draconianClass, level, radiusPortion] of draconians) {
-        this.enemies.push(this.attemptEnemyPlacement(draconianClass, level,
-          radiusPortion));
-      }
-    }
-  }
-
-  /**
    * Summons a portal.
    */
-  spawnPortal() {
+   spawnPortal() {
     if(!this.isBoss || this.dungeonMap.floorNumber === 21) {
       return;
     }
@@ -644,10 +591,58 @@ class Room {
     this.portal.activate();
   }
 
-  // The next few commands all check if a major boss must be spawned
+  /**
+   * Used during testing phase to spawn certain enemies in each room.
+   */
+  testSpawnEnemies() {
+  }
+
+  /**
+   * Summons the enemies.
+   */
+  spawnEnemies() {
+    this.enemies = [];
+    // Summons each enemy
+    let slimes = createSlimes(this.difficulties[0]);
+    let goblins = createGoblins(this.difficulties[1]);
+    let undeads = createUndead(this.difficulties[2]);
+    let draconians = createDraconians(this.difficulties[3]);
+    for(let [slimeClass, level, radiusPortion] of slimes) {
+      this.enemies.push(this.attemptEnemyPlacement(slimeClass, level,
+        radiusPortion));
+    }
+    for(let [goblinClass, level, radiusPortion] of goblins) {
+      this.enemies.push(this.attemptEnemyPlacement(goblinClass, level,
+        radiusPortion));
+    }
+    for(let [undeadClass, level, radiusPortion] of undeads) {
+      this.enemies.push(this.attemptEnemyPlacement(undeadClass, level,
+        radiusPortion));
+    }
+    for(let [draconianClass, level, radiusPortion] of draconians) {
+      this.enemies.push(this.attemptEnemyPlacement(draconianClass, level,
+        radiusPortion));
+    }
+  }
+}
+
+class BossRoom extends EnemyRoom {
+  constructor(_id, _radius, _dungeonMap, _difficulties, _caveEdgeChance,
+    _denseCaveEdgeChance) {
+    super(_id, _radius, _dungeonMap, _difficulties, _caveEdgeChance,
+      _denseCaveEdgeChance, true);
+  }
+
+  spawnEnemies() {
+    this.enemies = [];
+    if(!this.summonSlimeBoss() && !this.summonWarlord()
+      && !this.summonNecromancerKing() && !this.summonDragon()) {
+      super.spawnEnemies();
+    }
+  }
 
   summonSlimeBoss() {
-    if(!this.isBoss || this.dungeonMap.floorNumber !== 5) {
+    if(this.dungeonMap.floorNumber !== 5) {
       return false;
     }
     this.enemies.push(new SlimeBoss(structuredClone(this.pos), this.id,
@@ -656,7 +651,7 @@ class Room {
   }
 
   summonWarlord() {
-    if(!this.isBoss || this.dungeonMap.floorNumber !== 10) {
+    if(this.dungeonMap.floorNumber !== 10) {
       return false;
     }
     this.enemies.push(new Warlord(structuredClone(this.pos), this.id,
@@ -665,7 +660,7 @@ class Room {
   }
 
   summonNecromancerKing() {
-    if(!this.isBoss || this.dungeonMap.floorNumber !== 15) {
+    if(this.dungeonMap.floorNumber !== 15) {
       return false;
     }
     this.enemies.push(new NecromancerKing(structuredClone(this.pos), this.id,
@@ -674,7 +669,7 @@ class Room {
   }
 
   summonDragon() {
-    if(!this.isBoss || this.dungeonMap.floorNumber !== 21) {
+    if(this.dungeonMap.floorNumber !== 21) {
       return false;
     }
     for(let i = 0; i < 5; i++) {
