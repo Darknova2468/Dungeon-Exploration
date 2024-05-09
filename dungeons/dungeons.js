@@ -103,7 +103,8 @@ class DungeonMap {
     this.caveEdgeChance = this.floor[3]; // Probability of cave edge
     this.denseCaveEdgeChance = this.floor[4]; // Conditional probability of a
     // second cave edge given that the first one is a cave edge
-    this.sizes = this.floor[5]; // Data for room sizes
+    this.enemyRoomChance = this.floor[5]; // Otherwise generate empty room
+    this.sizes = this.floor[6]; // Data for room sizes
     this.startingSize = this.sizes[0];
     this.emptySize = this.sizes[1];
     this.enemySize = this.sizes[2];
@@ -134,9 +135,16 @@ class DungeonMap {
       this.startingSize[2], this, this.caveEdgeChance,
       this.denseCaveEdgeChance)];
     for(let i=1; i<this.numberOfRooms-1; i++){
-      this.dungeon.push(new EnemyRoom(i, this.enemySize[0], this.enemySize[1],
-        this.enemySize[2], this, this.difficulties[i], this.caveEdgeChance,
-        this.denseCaveEdgeChance));
+      if(Math.random() < this.enemyRoomChance) {
+        this.dungeon.push(new EnemyRoom(i, this.enemySize[0], this.enemySize[1],
+          this.enemySize[2], this, this.difficulties[i], this.caveEdgeChance,
+          this.denseCaveEdgeChance));
+      }
+      else {
+        this.dungeon.push(new Room(i, this.emptySize[0], this.emptySize[1],
+          this.emptySize[2], this, this.caveEdgeChance,
+          this.denseCaveEdgeChance));
+      }
     }
     this.dungeon.push(new BossRoom(this.numberOfRooms - 1, this.bossSize[0],
       this.bossSize[1], this.bossSize[2], this,
