@@ -318,7 +318,7 @@ class DungeonMap {
     }
 
     // Create the actual boss room
-    this.bossRoom = new BossRoom(0, 20, this, [0,0,0,0], 0, 0);
+    this.bossRoom = new BossRoom(0, 20, 20, 5, this, [0,0,0,0], 0, 0);
     this.bossRoom.portal = this.portal;
     this.dungeon = [this.bossRoom];
     this.bossRoom.pos = [60, 50];

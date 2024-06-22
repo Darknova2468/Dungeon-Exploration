@@ -441,6 +441,9 @@ class Player extends Entity {
     this.money = this.totalMoney;
     this.speedBonus = 0;
     this.healthBonus = 0;
+    this.regenTimer = millis();
+    this.regenCooldown = 10000;
+    this.isRegenerating = false;
 
     // Inventory
     this.inventory = new Inventory(this);
@@ -559,6 +562,19 @@ class Player extends Entity {
     this.pos[1] += this.movementDirection[1];
     this.activeZone = this.collisionMap[Math.floor(this.pos[1])]
       [Math.floor(this.pos[0])];
+    
+    // Slow regeneration
+    if(this.health >= this.maxHealth) {
+      this.isRegenerating = false;
+    }
+    else if(!this.isRegenerating) {
+      this.isRegenerating = true;
+      this.regenTimer = millis() + this.regenCooldown;
+    }
+    else if(millis() >= this.regenTimer) {
+      this.health = min(this.health + 0.1 * this.maxHealth, this.maxHealth);
+      this.regenTimer = millis() + this.regenCooldown;
+    }
   }
 
   /**
