@@ -698,6 +698,7 @@ class Lighting {
     this.screenSize = [0, 0];
     this.playerPos = [0, 0];
     this.cachedImage = createImage(width, height);
+    this.cachedSourceImage = createImage(width, height);
   }
   update(light, ambience, screenCenter, screenSize, player) {
     if(millis() - this.updateTimer < this.updateMillis) {
@@ -725,16 +726,22 @@ class Lighting {
   }
   display(drawCached = true) {
     if(!drawCached) {
-      let img = createImage(width, height);
+      
+      let img = createImage(width, height);       // Ambient lighting
+      let sourceImg = createImage(width, height); // Source lighting
       img.loadPixels();
+      sourceImg.loadPixels();
       let xScale = this.screenSize[0] / width;
       let yScale = this.screenSize[1] / height;
-      let lightScale = 120 / Math.pow(this.light, 1.5);
+      let lightScale = 120 / Math.pow(this.light, 1.3);
       let i = 0;
       let rVal = red(this.ambience);
       let gVal = green(this.ambience);
       let bVal = blue(this.ambience);
       let aVal = alpha(this.ambience);
+      let sourceScalar = (1 - Math.pow(1.1, -(Math.max(0, this.light - 1))));
+      let rsVal = 1 * sourceScalar * 255;
+      let gsVal = 0.6 * sourceScalar * 255;
       for(let y = 0; y < height; y++) {
         for(let x = 0; x < width; x++) {
           let d = (this.playerPos[0] - x)*xScale * ((this.playerPos[0] - x)*xScale) + (this.playerPos[1] - y)*yScale * ((this.playerPos[1] - y)*yScale);
@@ -742,13 +749,21 @@ class Lighting {
           img.pixels[i+1] = gVal;
           img.pixels[i+2] = bVal;
           img.pixels[i+3] = Math.min(lightScale * d, aVal);
+
+          sourceImg.pixels[i] = rsVal;
+          sourceImg.pixels[i+1] = gsVal;
+          sourceImg.pixels[i+2] = 0;
+          sourceImg.pixels[i+3] = Math.max(aVal*(1 - sourceScalar), aVal/4);
           i += 4;
         }
       }
       img.updatePixels();
       this.cachedImage = img;
+      sourceImg.updatePixels();
+      this.cachedSourceImage = sourceImg;
     }
     imageMode(CORNER);
+    image(this.cachedSourceImage, 0, 0, width, height);
     image(this.cachedImage, 0, 0, width, height);
     imageMode(CENTER);
   }

@@ -60,6 +60,9 @@ Ordered in increasing complexity:
         - Dodge (dagger)
         - Burst fire (shortbow)
         - Arrow of death (longbow)
+    - Vastly improved scaling system
+      - Endgame weapons break the game too hard
+      - Add exponential scaling
 - Spells
     - New mob currency: essence (convertible with coins via. an NPC)
     - Unlock spells

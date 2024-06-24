@@ -111,7 +111,13 @@ class DungeonMap {
     this.bossSize = this.sizes[3];
 
     // Sets ambience
-    this.ambience = color(0, 0, 50, Math.min(255, this.floorNumber * 20));
+    if(this.floorNumber < 10) {
+      this.ambience = color(0, 0, 10, Math.min(255, this.floorNumber * 4));
+    }
+    else {
+      this.ambience = color(0, 0, 10, Math.min(255, 
+        Math.max(0, (this.floorNumber - 9.5) * 80)));
+    }
 
     // Determines difficulties of starting and boss rooms
     this.difficulties = [[], [0,0,0,0]];
