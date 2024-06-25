@@ -476,10 +476,11 @@ class MenuManager {
     this.menus = new Heap([new PauseMenu()], (a, b) => a.priority - b.priority > 0);
     this.pauseCountDown = 1; // Allow for sufficient frames before pause can work
     this.paused = false;
+    this.pauseTimer = 0;
   }
 
   triggerUpdate() {
-    this.menus.heap[1].update();
+    this.menus.heap[1].update();    
   }
 
   operate() {
@@ -487,13 +488,20 @@ class MenuManager {
       this.menus.pop();
     }
     if(this.menus.heap.length <= 1 || this.pauseCountDown > 0) {
+      if(this.paused === true) { // Update the last frame
+        pausedTime += millis() - this.pauseTimer;
+      }
       this.paused = false;
+      this.pauseTimer = millis();
       if(this.pauseCountDown > 0) {
         this.pauseCountDown -= 1;
       }
       return;
     }
     this.paused = true;
+    let currentTime = millis();
+    pausedTime += currentTime - this.pauseTimer;
+    this.pauseTimer = currentTime;
     this.menus.heap[1].display();
   }
 }

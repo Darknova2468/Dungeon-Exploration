@@ -32,11 +32,10 @@ This project will be an RPG in which you explore dungeons and complete overworld
 None of this is coming anytime soon, please don't tell Alex about any of this
 
 Ordered in increasing complexity:
-- Natural regeneration
-    - Incorporation with armour
+- ~~Natural regeneration~~
 - Sell items
-- Improved lighting algorithm
-    - Makes player darker as well in dim environments
+- ~~Improved lighting algorithm~~
+    - ~~Makes player darker as well in dim environments~~
 - Room diversity
     - Small empty rooms
     - Puzzle rooms
@@ -76,7 +75,7 @@ Ordered in increasing complexity:
         - Power
         - Cooldown reduction
         - Focus reduction
-    - Also global focus increases
+    - Also global focus increases with helmet upgrades
 - Runes
     - Add bonus effects to weapons, shields, armor, and spells
     - Large variety, e.g. triple-shot
