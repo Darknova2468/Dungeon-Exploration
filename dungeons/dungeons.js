@@ -32,7 +32,9 @@ function createDungeonMap(floor) {
   if(GENERATIONDEBUG) {
     console.log("Finished generation.");
   }
-  allDungeons.set(floor, dungeonMap);
+  if(PERSISTENTDUNGEONS) {
+    allDungeons.set(floor, dungeonMap);
+  }
   return dungeonMap;
 }
 

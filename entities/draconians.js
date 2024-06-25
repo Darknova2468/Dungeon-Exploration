@@ -21,7 +21,7 @@ class Draconian extends Enemy {
 
     // Proficient fighters with periodic breath attacks
     this.breathCooldown = 8000;
-    this.breathTimer = millis();
+    this.breathTimer = new Timer(this.breathCooldown);
     this.breathStall = 1000;
     this.firing = false;
     this.breathEntities = [];
@@ -32,16 +32,16 @@ class Draconian extends Enemy {
   }
 
   initiateBreathAttack(player, enemies) {
-    this.breathTimer = millis();
+    this.breathTimer = new Timer(this.breathCooldown);
     this.firing = true;
   }
 
   combat(player, enemies, time, distance, pursuitVector) {
     this.updateBreathAttack(player, enemies);
-    if(millis() - this.breathTimer > this.breathCooldown) {
+    if(this.breathTimer.pastTime()) {
       this.initiateBreathAttack(player, enemies);
     }
-    else if(millis() - this.breathTimer < this.breathStall || this.firing) {
+    else if(this.breathTimer.getTime() < this.breathStall || this.firing) {
       return;
     }
     else if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {
@@ -85,9 +85,9 @@ class BlueDraconian extends Draconian {
     // Lightning bolts
     this.boltCount = 3;
     this.boltCountRemaining = 0;
-    this.boltTimer = millis();
     this.boltCooldown = this.breathStall / (this.boltCount + 1);
     this.boltDuration = 200;
+    this.boltTimer = millis();
     this.boltTargetPos = [0, 0];
     this.boltRange = 20;
     this.boltWidth = 0.1;
@@ -182,7 +182,7 @@ class RedDraconian extends Draconian {
   }
 
   updateBreathAttack(player, enemies) {
-    while(this.firing && millis() - this.breathTimer > this.fireBallCooldown * this.fireBallsFired) {
+    while(this.firing && this.breathTimer.getTime() > this.fireBallCooldown * this.fireBallsFired) {
       this.fireFireBall(player, enemies);
     }
     if(!super.updateBreathAttack(player, enemies)) {

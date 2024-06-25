@@ -33,6 +33,15 @@ None of this is coming anytime soon, please don't tell Alex about any of this
 
 Ordered in increasing complexity:
 - ~~Natural regeneration~~
+- Stop timers from finishing on game pause
+- Revamp guild hall
+  - New NPC's
+    - Merchant: Sell items, convert between essence and coins
+    - Archmage: Upgrades spells in exchange for essence
+    - Armourer: Update helmet to give focus and also cost essence
+    - Banker: Store coins, essence, and items
+    - Guild master (???): Gives quests
+    - Dne eht (ton): Much later
 - Sell items
 - ~~Improved lighting algorithm~~
     - ~~Makes player darker as well in dim environments~~
@@ -45,23 +54,24 @@ Ordered in increasing complexity:
         - Artifacts
     - Miniboss rooms, introducing earlier draconian variants
 - Save inventory (no more liquidation)
+- Fix memory leak (and equivalently the breaking music)
 - Revamped combat mechanics
     - Prevent player from stunlocking enemies with knockback
-    - Stop timers from finishing while paused
     - Dual wield
         - Double weapon
         - Shield
     - Combat skills and associated weapons
-        - Deflect (sword)
-        - Reckless attack (axe)
-        - Skewer (spear)
+        - Deflect (sword, shield)
+        - Reckless attack (axe, both hands; ignores most defense)
+        - Skewer (spear; more range)
         - Shove (any)
-        - Dodge (dagger)
-        - Burst fire (shortbow)
-        - Arrow of death (longbow)
+        - Dodge (any, dagger)
+        - Burst fire (shortbow, both hands)
+        - Arrow of death (longbow, both hands; ignores most defense)
     - Vastly improved scaling system
-      - Endgame weapons break the game too hard
-      - Add exponential scaling
+        - Endgame weapons break the game too hard
+        - Add exponential scaling
+    - Improve enemy combat system
 - Spells
     - New mob currency: essence (convertible with coins via. an NPC)
     - Unlock spells
