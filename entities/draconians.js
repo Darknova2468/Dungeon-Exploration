@@ -110,7 +110,7 @@ class BlueDraconian extends Draconian {
     let pos = player.pos; // May be changed later
     let targetLightningDisp = scaleVector(pos, this.boltRange, this.pos);
     this.targetLightningPos = [this.pos[0] + targetLightningDisp[0] + random(-5, 5), this.pos[1] + targetLightningDisp[1] + random(-5, 5)];
-    this.breathEntities.push(new LineWarnZone(this.pos, this.targetLightningPos, this.boltWidth, millis(), millis() + this.boltCooldown, millis() + this.boltCooldown + this.boltDuration, this.initLightningColour, this.finalLightningColour, this.lightningColour, this.fadeLightningColour, this.collisionMap));
+    this.breathEntities.push(new LineWarnZone(this.pos, this.targetLightningPos, this.boltWidth, 0, this.boltCooldown, this.boltDuration, this.initLightningColour, this.finalLightningColour, this.lightningColour, this.fadeLightningColour, this.collisionMap));
   }
 
   fireLightning(player) {
@@ -301,7 +301,7 @@ class DeathBall extends EnemyProjectile {
         player.blindnessTimer = max(player.blindnessTimer, millis() + 1000);
       }
     }
-    myDungeon.dungeon[this.lockedZone - 3].enemies.push(new DiskWarnZone(this.pos, this.explosionRadius, 0, millis(), millis() + 1000, color(0,0,0,0), color(0,0,0,0), color(0,0,0,255), color(0,0,0,0), this.collisionMap));
+    myDungeon.dungeon[this.lockedZone - 3].enemies.push(new DiskWarnZone(this.pos, this.explosionRadius, 0, 0, 1000, color(0,0,0,0), color(0,0,0,0), color(0,0,0,255), color(0,0,0,0), this.collisionMap));
   }
 }
 

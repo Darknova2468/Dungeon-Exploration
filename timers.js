@@ -10,7 +10,7 @@ class Timer {
     return millis() - pausedTime - this.time;
   }
 
-  pastTime() {
-    return this.getTime() > this.threshold;
+  pastTime(threshold = this.threshold) {
+    return this.getTime() > threshold;
   }
 }

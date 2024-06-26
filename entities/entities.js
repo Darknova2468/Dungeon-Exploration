@@ -150,15 +150,19 @@ class Portal extends Entity {
  * Warn zones show where AoE effects are.
  */
 class WarnZone extends Entity {
-  constructor(_pos, _timerInit, _timerFinal, _timerFade, _colInit, _colFinal,
-    _colExecution, _colFade, _collisionMap) {
+  constructor(_pos, _timeDelay, _timeInterval, _timeFadeInterval, _colInit,
+    _colFinal, _colExecution, _colFade, _collisionMap) {
     super(_pos, 1, 0, 0, _collisionMap, null);
-    // A bunch of timers
-    this.timerInit = _timerInit;
-    this.timerFinal = _timerFinal;
-    this.timerFade = _timerFade;
-    this.timeInterval = _timerFinal - _timerInit;
-    this.timeFadeInterval = _timerFade - _timerFinal;
+    // Deprecated timers
+    // this.timerInit = _timerInit;
+    // this.timerFinal = _timerFinal;
+    // this.timerFade = _timerFade;
+
+    // New timers
+    this.timeDelay = _timeDelay;
+    this.timeInterval = _timeInterval;
+    this.timeFadeInterval = _timeFadeInterval;
+    this.timer = new Timer(0, this.timeDelay);
 
     // Colours colours colours!
     this.colInit = _colInit;
@@ -173,12 +177,13 @@ class WarnZone extends Entity {
   operate(player, time) {
     // Note that both parameters are unused
     // Check alive
-    if(millis() > this.timerFade) {
+    if(this.timer.pastTime(this.timeInterval + this.timeFadeInterval)) {
       this.isAlive = false;
     }
-    else if(millis() > this.timerFinal) {
+    else if(this.timer.pastTime(this.timeInterval)) {
       // Get weights
-      let finalPortion = (millis() - this.timerFinal) / this.timeFadeInterval;
+      let finalPortion = ((this.timer.getTime() - this.timeInterval)
+        / this.timeFadeInterval);
       let initPortion = 1 - finalPortion;
       // Very complicated colour calculation
       this.colour = color(Math.floor(initPortion * red(this.colExecution)
@@ -192,7 +197,7 @@ class WarnZone extends Entity {
     }
     else {
       // Get weights
-      let finalPortion = (millis() - this.timerInit) / this.timeInterval;
+      let finalPortion = this.timer.getTime() / this.timeInterval;
       let initPortion = 1 - finalPortion;
       // Almost identical very complicated colour calculation
       this.colour = color(Math.floor(initPortion * red(this.colInit)
@@ -211,8 +216,11 @@ class WarnZone extends Entity {
  * Linear warn zone.
  */
 class LineWarnZone extends WarnZone {
-  constructor(_pos, _targetPos, _width, _timerInit, _timerFinal, _timerFade, _colInit, _colFinal, _colExecution, _colFade, _collisionMap) {
-    super(_pos, _timerInit, _timerFinal, _timerFade, _colInit, _colFinal, _colExecution, _colFade, _collisionMap);
+  constructor(_pos, _targetPos, _width, _timeDelay, _timeInterval,
+    _timeFadeInterval, _colInit, _colFinal, _colExecution, _colFade,
+    _collisionMap) {
+    super(_pos, _timeDelay, _timeInterval, _timeFadeInterval,
+      _colInit, _colFinal, _colExecution, _colFade, _collisionMap);
     this.targetPos = _targetPos;
     this.width = _width;
   }
@@ -232,8 +240,10 @@ class LineWarnZone extends WarnZone {
  * Circular warn zone.
  */
 class DiskWarnZone extends WarnZone {
-  constructor(_pos, _radius, _timerInit, _timerFinal, _timerFade, _colInit, _colFinal, _colExecution, _colFade, _collisionMap) {
-    super(_pos, _timerInit, _timerFinal, _timerFade, _colInit, _colFinal, _colExecution, _colFade, _collisionMap);
+  constructor(_pos, _radius, _timeDelay, _timeInterval, _timeFadeInterval,
+    _colInit, _colFinal, _colExecution, _colFade, _collisionMap) {
+    super(_pos, _timeDelay, _timeInterval, _timeFadeInterval, _colInit,
+      _colFinal, _colExecution, _colFade, _collisionMap);
     this.radius = _radius;
   }
 

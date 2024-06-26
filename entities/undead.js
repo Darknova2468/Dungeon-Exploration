@@ -215,7 +215,7 @@ class DarkSpell extends EnemyProjectile {
         player.blindnessTimer = max(player.blindnessTimer, millis() + 2000);
       }
     }
-    myDungeon.dungeon[this.lockedZone - 3].enemies.push(new DiskWarnZone(this.pos, this.explosionRadius, 0, millis(), millis() + 1000, color(0,0,0,0), color(0,0,0,0), color(0,0,0,255), color(0,0,0,0), this.collisionMap));
+    myDungeon.dungeon[this.lockedZone - 3].enemies.push(new DiskWarnZone(this.pos, this.explosionRadius, 0, 0, 1000, color(0,0,0,0), color(0,0,0,0), color(0,0,0,255), color(0,0,0,0), this.collisionMap));
   }
 }
 
@@ -277,7 +277,7 @@ class NecromancerKing extends Phantom {
     this.scaleFactor = 1.25;
     this.radius = 0.5;
 
-    // Boss dies to fast. Time to change that!
+    // Boss dies too fast. Time to change that!
     this.defence = 10;
 
     // All attacks (visuals)
@@ -343,7 +343,7 @@ class NecromancerKing extends Phantom {
     this.waveStart = structuredClone(this.pos);
     let targetDisp = scaleVector(player.pos, this.waveLength, this.pos);
     this.waveEnd = [this.pos[0] + targetDisp[0], this.pos[1] + targetDisp[1]];
-    this.spells.push(new LineWarnZone(this.waveStart, this.waveEnd, this.waveWidth, millis(), millis() + this.waveCharge, millis() + this.waveCharge + this.castDuration, this.initWaveColour, this.castColour, this.castColour, this.fadeCastColour, this.collisionMap));
+    this.spells.push(new LineWarnZone(this.waveStart, this.waveEnd, this.waveWidth, 0, this.waveCharge, this.castDuration, this.initWaveColour, this.castColour, this.castColour, this.fadeCastColour, this.collisionMap));
   }
 
   castWaveSpell(player, enemies) {
@@ -364,7 +364,7 @@ class NecromancerKing extends Phantom {
 
   prepareCircleSpell(player) {
     this.circlePos = structuredClone(player.pos);
-    this.spells.push(new DiskWarnZone(this.circlePos, this.circleRadius, millis(), millis() + this.circleCharge, millis() + this.circleCharge + this.castDuration, this.initCircleColour, this.castColour, this.castColour, this.fadeCastColour, this.collisionMap));
+    this.spells.push(new DiskWarnZone(this.circlePos, this.circleRadius, 0, this.circleCharge, this.castDuration, this.initCircleColour, this.castColour, this.castColour, this.fadeCastColour, this.collisionMap));
   }
 
   castCircleSpell(player, enemies) {

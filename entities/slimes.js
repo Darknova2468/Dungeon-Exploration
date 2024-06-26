@@ -385,7 +385,7 @@ class SlimeTentacle extends Slime {
     this.attackTimer = millis();
     let targetSlamDisp = scaleVector(pos, this.attackRange, this.pos);
     this.targetSlamPos = [this.pos[0] + targetSlamDisp[0], this.pos[1] + targetSlamDisp[1]];
-    this.suckers.push(new LineWarnZone(this.pos, this.targetSlamPos, this.slamWidth, this.attackTimer, this.attackTimer + this.slamCharge, this.attackTimer + this.slamCharge + this.slamDuration, this.initSlamColour, this.finalSlamColour, this.slamColour, this.fadeSlamColour, this.collisionMap));
+    this.suckers.push(new LineWarnZone(this.pos, this.targetSlamPos, this.slamWidth, 0, this.slamCharge, this.slamDuration, this.initSlamColour, this.finalSlamColour, this.slamColour, this.fadeSlamColour, this.collisionMap));
   }
 
   slam(player, enemies) {
