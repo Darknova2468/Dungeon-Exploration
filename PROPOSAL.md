@@ -33,15 +33,16 @@ None of this is coming anytime soon, please don't tell Alex about any of this
 
 Ordered in increasing complexity:
 - ~~Natural regeneration~~
+- ~~Fix blindness granting total darkness~~
 - Stop timers from finishing on game pause
 - Revamp guild hall
-  - New NPC's
+  - New NPC's (??? indicates extremely low to nonexistant priority)
     - Merchant: Sell items, convert between essence and coins
     - Archmage: Upgrades spells in exchange for essence
     - Armourer: Update helmet to give focus and also cost essence
-    - Banker: Store coins, essence, and items
+    - Banker (???): Store coins, essence, and items
     - Guild master (???): Gives quests
-    - Dne eht (ton): Much later
+    - Dne eht (ton) (???): Much later
 - Sell items
 - ~~Improved lighting algorithm~~
     - ~~Makes player darker as well in dim environments~~
@@ -61,11 +62,11 @@ Ordered in increasing complexity:
         - Double weapon
         - Shield
     - Combat skills and associated weapons
-        - Deflect (sword, shield)
+        - Deflect (sword, shield passive)
         - Reckless attack (axe, both hands; ignores most defense)
         - Skewer (spear; more range)
         - Shove (any)
-        - Dodge (any, dagger)
+        - Dodge (empty, dagger)
         - Burst fire (shortbow, both hands)
         - Arrow of death (longbow, both hands; ignores most defense)
     - Vastly improved scaling system
@@ -86,10 +87,11 @@ Ordered in increasing complexity:
         - Cooldown reduction
         - Focus reduction
     - Also global focus increases with helmet upgrades
-- Runes
+- Runes (???)
     - Add bonus effects to weapons, shields, armor, and spells
     - Large variety, e.g. triple-shot
-- Better texturing?
+    - Most likely will not be implemented (i.e. replaced with spells entirely)
+- More texturing?
 - The dragon fight
     - Much better than before
     - The dragon itself appears with extreme health
@@ -99,7 +101,7 @@ Ordered in increasing complexity:
       increasing complexity
         - Small boss lairs, all mobs spawned simultaneously
             - Belly of the slime (harder slime boss fight), floor 5
-            - Arena of Trollol, floor 10
+            - Arena of Troll, floor 10 (player gets surrounded with troll faces)
         - Glitches (after beating floor 19, any floor)
             - Uniquely animated sequences
             - Feature void enemies

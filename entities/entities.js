@@ -616,7 +616,7 @@ class Player extends Entity {
       this.vision = Math.max(this.floorVision * this.visionPortion, 1);
     }
     else {
-      this.vision = 1 * this.visionPortion;
+      this.vision = Math.min(this.vision, 2 * this.visionPortion);
     }
     if(this.holding !== null) {
       this.holding.display(screenCenter, screenSize);
