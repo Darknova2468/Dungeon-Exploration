@@ -87,7 +87,7 @@ class BlueDraconian extends Draconian {
     this.boltCountRemaining = 0;
     this.boltCooldown = this.breathStall / (this.boltCount + 1);
     this.boltDuration = 200;
-    this.boltTimer = millis();
+    this.boltTimer = new Timer(this.boltCooldown);
     this.boltTargetPos = [0, 0];
     this.boltRange = 20;
     this.boltWidth = 0.1;
@@ -105,7 +105,7 @@ class BlueDraconian extends Draconian {
       return;
     }
     this.boltCountRemaining -= 1;
-    this.boltTimer = millis();
+    this.boltTimer.reset();
 
     let pos = player.pos; // May be changed later
     let targetLightningDisp = scaleVector(pos, this.boltRange, this.pos);
@@ -132,9 +132,9 @@ class BlueDraconian extends Draconian {
     if(!super.updateBreathAttack(player, enemies)) {
       return false;
     }
-    if(millis() - this.boltTimer > this.boltCooldown) {
+    if(this.boltTimer.pastTime()) {
       this.fireLightning(player);
-      this.boltTimer = millis();
+      this.boltTimer.reset();
       this.initiateLightning(player);
     }
     return true;
@@ -203,10 +203,11 @@ class BlackDraconian extends Draconian {
     this.deathBallDamage = 3 * this.attackDamage;
     this.deathBallCount = 3;
     this.deathBallWaitTime = 1000;
+    this.deathBallTimer = new Timer(this.deathBallCharge);
   }
 
   updateBreathAttack(player, enemies) {
-    if(this.firing && millis() - this.deathBallCharge > 0) {
+    if(this.firing && this.deathBallTimer.pastTime()) {
       enemies.push(new DeathBall(this.pos, this.lockedZone, player,
         this.deathBallDamage, this.deathBallWaitTime, this.deathBallCount,
         this.collisionMap));
@@ -238,7 +239,7 @@ class DeathBall extends EnemyProjectile {
     super(_pos, _zone, [1, 1], 255, 0, "Force", 0.1, true, 2, _hitDmg, "Neocrotic", _collisionMap, textures.deathBallTextureSet, 3, 0.3);
     this.initPos = structuredClone(this.pos);
     this.targetPos = structuredClone(_player.pos);
-    this.moveTimer = millis();
+    this.moveTimer = new Timer(this.timeInterval);
     this.timeInterval = _dt;
     this.countsRemaining = _counts - 1;
     this.movementHalfLive = 300;
@@ -250,7 +251,7 @@ class DeathBall extends EnemyProjectile {
    */
   setNextPos(target) {
     this.countsRemaining -= 1;
-    this.moveTimer = millis();
+    this.moveTimer.reset();
     this.initPos = structuredClone(this.pos);
     let [i, j] = target.movementDirection;
     let dispMag = 0;
@@ -269,7 +270,7 @@ class DeathBall extends EnemyProjectile {
     if(!this.isAlive) {
       return;
     }
-    if(millis() - this.moveTimer >= this.timeInterval) {
+    if(this.moveTimer.pastTime()) {
       this.explode([target], time);
       if(this.countsRemaining <= 0) {
         this.isAlive = false;
@@ -279,7 +280,7 @@ class DeathBall extends EnemyProjectile {
     }
     else {
       // Weights of initial and final pos, respectively
-      let w1 = Math.pow(1/2, (millis() - this.moveTimer) / this.movementHalfLive);
+      let w1 = Math.pow(1/2, (this.moveTimer.getTime()) / this.movementHalfLive);
       let w2 = 1 - w1;
       this.pos = [this.initPos[0] * w1 + this.targetPos[0] * w2,
         this.initPos[1] * w1 + this.targetPos[1] * w2];
