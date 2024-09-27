@@ -446,7 +446,7 @@ class Player extends Entity {
     this.holdingIndex = 0;
     this.totalMoney = getItem("totalMoney");
     if(this.totalMoney === null) {
-      this.totalMoney = 0;
+      this.totalMoney = 50;
     }
     this.money = this.totalMoney;
     this.speedBonus = 0;

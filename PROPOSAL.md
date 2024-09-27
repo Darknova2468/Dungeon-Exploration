@@ -54,7 +54,7 @@ Ordered in increasing complexity:
         - Currency (coins and essence)
         - Artifacts
     - Miniboss rooms, introducing earlier draconian variants
-- Save inventory (no more liquidation)
+- ~~Save inventory (no more liquidation)~~
 - Fix memory leak (and equivalently the breaking music)
 - Revamped combat mechanics
     - Prevent player from stunlocking enemies with knockback
