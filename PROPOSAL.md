@@ -37,9 +37,9 @@ Ordered in increasing complexity:
 - Stop timers from finishing on game pause
 - Revamp guild hall
   - New NPC's (??? indicates extremely low to nonexistant priority)
-    - Merchant: Sell items, convert between essence and coins
     - Archmage: Upgrades spells in exchange for essence
     - Armourer: Update helmet to give focus and also cost essence
+    - Merchant (???): Sell items, convert between essence and coins
     - Banker (???): Store coins, essence, and items
     - Guild master (???): Gives quests
     - Dne eht (ton) (???): Much later
@@ -57,7 +57,8 @@ Ordered in increasing complexity:
 - ~~Save inventory (no more liquidation)~~
 - Fix memory leak (and equivalently the breaking music)
 - Revamped combat mechanics
-    - Prevent player from stunlocking enemies with knockback
+    - ~~Prevent player from stunlocking enemies with knockback~~
+    - Add weapon cooldowns
     - Dual wield
         - Double weapon
         - Shield
@@ -78,7 +79,7 @@ Ordered in increasing complexity:
     - Unlock spells
     - Unique spells with interesting (but not game-breaking) effects
     - Schools of spells
-        - Utility (default): speed, teleportation, time stall
+        - Utility (default): speed, enhancement, teleportation, time stall
         - Defensive: reflect attack, toughen, stone wall, force barrier
         - Healing: mend, healing aura, extra life, true wish
         - Offensive: ice projectile, lightning beam, fireball, solar storm

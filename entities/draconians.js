@@ -34,6 +34,7 @@ class Draconian extends Enemy {
   initiateBreathAttack(player, enemies) {
     this.breathTimer = new Timer(this.breathCooldown);
     this.firing = true;
+    this.shoveSpeed = 0;
   }
 
   combat(player, enemies, time, distance, pursuitVector) {
@@ -50,6 +51,8 @@ class Draconian extends Enemy {
       this.attackTimer = millis();
     }
     else {
+      this.shoveSpeed = 2;
+
       // Chase
       let weights = new Weights();
       weights.weighObstacles(this.collisionMap, this.lockedZone, this.pos, 2, 3);

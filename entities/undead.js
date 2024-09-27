@@ -22,7 +22,7 @@ class Zombie extends Enemy {
     this.biteRadius = 0.7;
     this.biteDamage = Math.floor(Math.sqrt(_level));
     this.biteDamageType = "Piercing";
-    this.shoveTime = 200;
+    this.shoveDecay = 0.01;
   }
   combat(player, enemies, time, distance, pursuitVector) {
     if(distance <= this.attackRange && millis() - this.attackTimer > this.attackCooldown) {

@@ -300,10 +300,11 @@ class Enemy extends Entity {
 
     // Knockback variables
     this.knockback = false;
-    this.shoveTimer = millis();
-    this.shoveTime = 500;
-    this.shoveSpeed = 2;
-    this.shoveDir = [1, 0];
+    this.shoveTimer = new Timer();
+    // this.shoveTime = 500;
+    this.shoveSpeed = 3;
+    this.shoveDecay = 0.1;
+    this.shoveVector = [0, 0];
   }
 
   /**
@@ -312,8 +313,8 @@ class Enemy extends Entity {
   beginShove(player) {
     if(this.knockback) {
       this.knockback = false;
-      this.shoveTimer = millis() + this.shoveTime;
-      this.shoveDir = scaleVector(this.pos, this.shoveSpeed, player.pos);
+      this.shoveTimer.reset();
+      this.shoveVector = scaleVector(this.pos, this.shoveSpeed, player.pos);
     }
   }
 
@@ -321,7 +322,13 @@ class Enemy extends Entity {
    * Continues an initiated knockback.
    */
   shove(time) {
-    let [dx, dy] = scaleVector(this.shoveDir, this.shoveSpeed * time);
+    let decayFactor = Math.pow(this.shoveDecay, time);
+    this.shoveVector = [this.shoveVector[0] * decayFactor,
+                        this.shoveVector[1] * decayFactor];
+    let [dx, dy] = [this.shoveVector[0] * time,
+                    this.shoveVector[1] * time];
+    // console.log(time);
+    // this.shoveTimer.reset();
     if(this.canMoveTo(this.collisionMap[floor(this.pos[1])]
       [floor(this.pos[0]+dx)])){
       this.pos[0] += dx;
@@ -337,10 +344,11 @@ class Enemy extends Entity {
    */
   operate(player, enemies, time) {
     this.beginShove(player);
-    if(this.shoveTimer > millis()) {
-      this.shove(time);
-      return;
-    }
+    // if(this.shoveTimer > millis()) {
+    //   this.shove(time);
+    //   return;
+    // }
+    this.shove(time);
     let distance = dist(player.pos[0], player.pos[1], this.pos[0],
       this.pos[1]);
     let pursuitVector = [player.pos[0] - this.pos[0],
