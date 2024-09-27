@@ -457,9 +457,8 @@ class Player extends Entity {
 
     // Inventory
     this.inventory = new Inventory(this);
-    this.inventory.storage[0].holding = new Dagger(this);
-    this.inventory.storage[1].holding = new Candle(this);
     this.updateHolding();
+    this.updateArmor();
     
     // Attack/use cooldowns
     this.attackTimer = millis();

@@ -165,6 +165,7 @@ class SpecificUpgradeMenu extends Menu {
       else if(this.mode === 0) {
         if(player.inventory.attemptCollect(new WEAPONCLASSES[this.index](null))) {
           player.money -= this.costs;
+          storeItem("totalMoney", player.money);
         }
       }
       else {
@@ -179,6 +180,7 @@ class SpecificUpgradeMenu extends Menu {
         }
         if(found) {
           player.money -= this.costs;
+          storeItem("totalMoney", player.money);
         }
       }
       player.updateHolding();
@@ -245,6 +247,7 @@ class SpecificArmorUpgradeMenu extends Menu {
       else if(this.mode === 0) {
         if(player.inventory.attemptCollect(new ARMORCLASSES[this.index](null))) {
           player.money -= this.costs;
+          storeItem("totalMoney", player.money);
         }
       }
       else {
@@ -259,6 +262,7 @@ class SpecificArmorUpgradeMenu extends Menu {
         }
         if(found) {
           player.money -= this.costs;
+          storeItem("totalMoney", player.money);
         }
       }
       player.updateArmor();
@@ -328,6 +332,7 @@ class LightingMenu extends Menu {
       else {
         if(player.inventory.attemptCollect(new LIGHTINGCLASSES[this.index](null))) {
           player.money -= this.costs;
+          storeItem("totalMoney", player.money);
         }
       }
       player.updateHolding();
@@ -608,6 +613,26 @@ class Inventory {
     for(let i = 0; i < this.armorSize; i++) {
       this.wearing.push(new InventoryCell(this.graphics, this, [this.graphics.width - this.padding - this.squareSize, 3/2 * this.padding + i * this.squareSize], this.squareSize, this.hotbarSize * this.invHeight + i, ARMORTYPES[i]));
       this.storage.push(this.wearing[i]);
+    }
+
+    // Initialize actual values
+    this.storedInventory = getItem("playerInventory");
+    if(this.storedInventory === null) {
+      this.storage[0].holding = new Dagger(this.player);
+      this.storage[1].holding = new Candle(this.player);
+    }
+    else {
+      for(let i = 0; i < this.storedInventory.length; i++) {
+        let storedName = this.storedInventory[i][0];
+        if(storedName === null) {
+          continue;
+        }
+        let storedTier = this.storedInventory[i][1];
+        this.storage[i].holding = eval("new " + storedName + "(this.player)");
+        if(storedTier !== -1) {
+          this.storage[i].holding.tier = storedTier;
+        }
+      }
     }
   }
 
