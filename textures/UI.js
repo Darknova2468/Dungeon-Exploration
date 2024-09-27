@@ -172,6 +172,7 @@ class SpecificUpgradeMenu extends Menu {
         for(let cell of player.inventory.storage) {
           if(cell.holding !== null && cell.holding.name === this.weapon) {
             cell.holding.tier += 1;
+            player.inventory.store();
             found = true;
             break;
           }
@@ -251,6 +252,7 @@ class SpecificArmorUpgradeMenu extends Menu {
         for(let cell of player.inventory.storage) {
           if(cell.holding !== null && cell.holding.name === this.armor) {
             cell.holding.tier += 1;
+            player.inventory.store();
             found = true;
             break;
           }
@@ -644,6 +646,7 @@ class Inventory {
     this.player.updateHolding();
     this.player.updateArmor();
     this.player.updateVision(myDungeon);
+    this.store();
   }
 
   display() {
@@ -668,13 +671,35 @@ class Inventory {
       if(this.storage[i].holding === null) {
         this.storage[i].holding = item;
         item.wielder = this.player;
+        this.store();
         return true;
       }
     }
     console.log("! Inventory full !");
     return false;
   }
+
+  store() {
+    let stored = [];
+    for(let cell of this.storage) {
+      let holding = cell.holding;
+      if(holding == null) {
+        stored.push([null, -1]);
+      }
+      else if(typeof holding.tier === "undefined") {
+        stored.push([holding.name, -1]);
+      }
+      else {
+        stored.push([holding.name, holding.tier]);
+      }
+    }
+    storeItem("playerInventory", stored);
+  }
 }
+
+// class StoredInventory {
+//   ~~ May be implemented later if more metadata exists ~~
+// }
 
 class HealthBar {
   constructor(_health, _tileSet, _pos, _scale){

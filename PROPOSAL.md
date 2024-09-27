@@ -116,7 +116,7 @@ Ordered in increasing complexity:
 - Final destination
     - An NPC appears after beating floor 19, saying "The end..."
     - Giving him end shards evolves its speech into "The end is inevitable and
-      must be reached by giving shards to the dragon..."
+      must be reached by giving twelve shards to the dragon..."
     - Giving more shards to it increases the number of dots until 12, at which
       point this gets added: "Nothing more lol, what did you expect"
     - Giving a shard to the dragon causes it to try some experiment; music
