@@ -158,6 +158,7 @@ class Essence extends DroppedItem {
     if(this.isAlive && dist(this.pos[0], this.pos[1], player.pos[0], player.pos[1]) < 1
       || this.autoPickupTimer.pastTime()) {
       player.essence += this.value;
+      storeItem("essence", player.essence);
       this.isAlive = false;
     }
   }

@@ -474,7 +474,10 @@ class Player extends Entity {
       this.totalMoney = 50;
     }
     this.money = this.totalMoney;
-    this.essence = 0;
+    this.essence = getItem("essence");
+    if(this.essence === null) {
+      this.essence = 0;
+    }
     this.speedBonus = 0;
     this.healthBonus = 0;
     this.regenTimer = millis();
