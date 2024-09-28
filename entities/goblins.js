@@ -82,12 +82,7 @@ class Goblin extends Enemy {
       this.knockback = true;
     }
     if(!this.isAlive) {
-      let netWorth = Math.floor(random(this.level) / Math.max(0.1, Math.sqrt(random(2))));
-      while(netWorth > 0) {
-        let amt = min(5, netWorth);
-        myDungeon.otherEntities.push(new Coin(structuredClone(this.pos), amt, this.collisionMap));
-        netWorth -= amt;
-      }
+      this.loot(1 / Math.max(0.1, Math.sqrt(random(2))))
     }
     this.thrusting = false;
     this.backing = true;

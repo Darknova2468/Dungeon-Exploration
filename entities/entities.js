@@ -430,13 +430,20 @@ class Enemy extends Entity {
 
     // Drops money upon death
     if(!this.isAlive) {
-      let netWorth = Math.floor(random(this.level));
-      while(netWorth > 0) {
-        let amt = min(5, netWorth);
-        myDungeon.otherEntities.push(new Coin(structuredClone(this.pos), amt,
-          this.collisionMap));
-        netWorth -= amt;
-      }
+      this.loot();
+    }
+  }
+
+  /**
+   * Calculate and drop loot
+   */
+  loot(coinFactor = 1) {
+    let netWorth = Math.floor(random(this.level) * coinFactor);
+    while(netWorth > 0) {
+      let amt = min(5, netWorth);
+      myDungeon.otherEntities.push(new Coin(structuredClone(this.pos), amt,
+        this.collisionMap));
+      netWorth -= amt;
     }
   }
 }
@@ -456,6 +463,7 @@ class Player extends Entity {
       this.totalMoney = 50;
     }
     this.money = this.totalMoney;
+    this.essence = 0;
     this.speedBonus = 0;
     this.healthBonus = 0;
     this.regenTimer = millis();

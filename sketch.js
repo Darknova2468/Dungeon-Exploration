@@ -194,8 +194,9 @@ function draw() {
     if(floorNum === 21) {
       floorNum = "???";
     }
-    text("On Floor " + floorNum, height*1/20, height*8.5/10);
-    text("Money in wallet: " + player.money, height*1/20, height*9/10);
+    text("On Floor " + floorNum, height*1/20, height*8/10);
+    text("Money in wallet: " + player.money, height*1/20, height*8.5/10);
+    text("Essence held: " + player.essence, height*1/20, height*9/10);
     player.inventory.display();
     if(keyIsDown(20) || showMap){
       minimap.displayMap(player.pos);

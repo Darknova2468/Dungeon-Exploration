@@ -715,7 +715,7 @@ class Inventory {
         stored.push([holding.name, -1]);
       }
       else {
-        stored.push([holding.name, holding.tier]);
+        stored.push([holding.constructor.name, holding.tier]);
       }
     }
     storeItem("playerInventory", stored);
