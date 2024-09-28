@@ -301,7 +301,6 @@ class Enemy extends Entity {
     // Knockback variables
     this.knockback = false;
     this.shoveTimer = new Timer();
-    // this.shoveTime = 500;
     this.shoveSpeed = 3;
     this.shoveDecay = 0.1;
     this.shoveVector = [0, 0];

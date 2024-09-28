@@ -5,6 +5,8 @@
  * and lighting objects.
  */
 
+const autoPickupTime = 5000;
+
 class Item {
   constructor(_name, _wielder, _animationSet, _tileSet, _scaleFactor) {
     this.name = _name;
@@ -127,12 +129,14 @@ class Coin extends DroppedItem {
   constructor(pos, value, collisionMap) {
     super(pos, textures.coinTileSet, collisionMap);
     this.value = value;
+    this.autoPickupTimer = new Timer(autoPickupTime * random(0.5, 1));
   }
 
   operate(player, time) {
     this.move(this.direction, time);
     this.speed *= 0.9;
-    if(this.isAlive && dist(this.pos[0], this.pos[1], player.pos[0], player.pos[1]) < 1) {
+    if(this.isAlive && dist(this.pos[0], this.pos[1], player.pos[0], player.pos[1]) < 1
+      || this.autoPickupTimer.pastTime()) {
       player.money += this.value;
       player.totalMoney += this.value;
       storeItem("totalMoney", player.totalMoney);
