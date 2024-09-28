@@ -484,6 +484,9 @@ class Player extends Entity {
     this.regenCooldown = 10000;
     this.isRegenerating = false;
 
+    // Magic
+    this.mana = 6;
+
     // Inventory
     this.inventory = new Inventory(this);
     this.updateHolding();

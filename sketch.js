@@ -23,6 +23,7 @@ let minimap;
 let player;
 let myBackground;
 let healthBar;
+let manaBar;
 let music;
 let sfx;
 
@@ -109,7 +110,8 @@ function setup() {
   }
   myDungeon = createDungeonMap(0);
   player = new Player(structuredClone(myDungeon.playerPos), myDungeon.minimap);
-  healthBar = new HealthBar(player.health, textures.healthBarTileSet, [50, 50], 2.5);
+  healthBar = new HealthBar(player.health, textures.healthBarTileSet, [50, 50], 2);
+  manaBar = new HealthBar(player.mana, textures.healthBarTileSet, [50, 100], 1.5);
   lighting = new Lighting();
   menuManager = new MenuManager();
   enterDungeonMap(myDungeon);
@@ -185,6 +187,7 @@ function draw() {
     lighting.update(player.vision, myDungeon.ambience, myBackground.pos, myBackground.scale, player);
     minimap.displayMinimap(player.pos);
     healthBar.display(player.health);
+    manaBar.display(player.mana);
     textAlign(CENTER, CENTER);
     fill("white");
     textSize(12);

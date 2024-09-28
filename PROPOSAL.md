@@ -75,11 +75,11 @@ Ordered in increasing complexity:
         - Add exponential scaling
     - Improve enemy combat system
 - Spells
-    - New mob currency: essence (convertible with coins via. an NPC)
+    - ~~New mob currency: essence~~ (convertible with coins via. an NPC)
     - Unlock spells
     - Unique spells with interesting (but not game-breaking) effects
     - Schools of spells
-        - Utility (default): speed, enhancement, teleportation, time stall
+        - Utility (default): speed, enhance, teleportation, time stall
         - Defensive: reflect attack, toughen, stone wall, force barrier
         - Healing: mend, healing aura, extra life, true wish
         - Offensive: ice projectile, lightning beam, fireball, solar storm
