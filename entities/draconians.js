@@ -25,6 +25,8 @@ class Draconian extends Enemy {
     this.breathStall = 1000;
     this.firing = false;
     this.breathEntities = [];
+
+    this.magicFind = 0.05;
   }
 
   updateBreathAttack(player, enemies) {

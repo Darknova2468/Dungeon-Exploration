@@ -100,6 +100,7 @@ class Booyahg extends Goblin {
     this.spellSpeed = 1;
     this.spellRange = 20;
     this.spellDamage = this.attackDamage;
+    this.magicFind = 0.2;
   }
 
   combat(player, enemies, time, distance, pursuitVector) {

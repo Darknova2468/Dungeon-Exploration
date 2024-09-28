@@ -102,6 +102,8 @@ class LavaSlime extends Slime {
     this.attackDamage = 0;
     this.canJump = true;
 
+    this.magicFind = 0.1;
+
     if(this.level >= 10) {
       this.animationSet = textures.largeLavaSlimeTileSet;
     }
@@ -145,6 +147,8 @@ class FrostSlime extends Slime {
     this.defaultSpeed = 0;
     this.canJump = true;
     this.activeFrozenPuddle = null;
+    
+    this.magicFind = 0.1;
 
     if(this.level >= 10) {
       this.animationSet = textures.largeFrostSlimeTileSet;
@@ -375,6 +379,8 @@ class SlimeTentacle extends Slime {
     this.attackTimer = 0;
     this.maxSlimeSpawn = 5;
     this.shoveSpeed = 0;
+
+    this.magicFind = 0.05;
   }
 
   initiateSlamAttack(pos) {

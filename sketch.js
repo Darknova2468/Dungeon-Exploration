@@ -79,6 +79,7 @@ function preload() {
     portalTileSet: new AnimateSet("textures/portal.png", [40, 40]),
     numbers: new TileSet("textures/numbers.png", [6, 7]),  
     coinTileSet: new TileSet("textures/coin.png", [11, 11]),
+    essenceTileSet: new TileSet("textures/essence.png", [11, 11]),
     blacksmithTileSet: new AnimateSet("textures/blacksmith.png", [42, 23]),
     armorerTileSet: new AnimateSet("textures/armourSmith.png", [42, 23]),
     explorerTileSet: new AnimateSet("textures/explorer.png", [42, 23]),

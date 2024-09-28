@@ -145,6 +145,24 @@ class Coin extends DroppedItem {
   }
 }
 
+class Essence extends DroppedItem {
+  constructor(pos, value, collisionMap) {
+    super(pos, textures.essenceTileSet, collisionMap);
+    this.value = value;
+    this.autoPickupTimer = new Timer(autoPickupTime * random(0.5, 1));
+  }
+
+  operate(player, time) {
+    this.move(this.direction, time);
+    this.speed *= 0.9;
+    if(this.isAlive && dist(this.pos[0], this.pos[1], player.pos[0], player.pos[1]) < 1
+      || this.autoPickupTimer.pastTime()) {
+      player.essence += this.value;
+      this.isAlive = false;
+    }
+  }
+}
+
 const LIGHTINGTYPES = ["Candle", "Torch"];
 const LIGHTINGCLASSES = [Candle, Torch];
 const LIGHTINGCOSTS = [100, 1000];

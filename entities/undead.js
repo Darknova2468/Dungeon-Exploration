@@ -144,6 +144,7 @@ class Phantom extends Enemy {
     this.spellCooldown = 7000;
     this.spellSpeed = 5;
     this.spellDamage = Math.floor(Math.pow(this.level, 0.4));
+    this.magicFind = 0.3;
   }
 
   combat(player, enemies, time, distance, pursuitVector) {

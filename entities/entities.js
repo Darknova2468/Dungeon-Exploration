@@ -304,6 +304,9 @@ class Enemy extends Entity {
     this.shoveSpeed = 3;
     this.shoveDecay = 0.1;
     this.shoveVector = [0, 0];
+
+    // Magic-related
+    this.magicFind = 0;
   }
 
   /**
@@ -444,6 +447,14 @@ class Enemy extends Entity {
       myDungeon.otherEntities.push(new Coin(structuredClone(this.pos), amt,
         this.collisionMap));
       netWorth -= amt;
+    }
+    let netEssence = Math.floor(random(this.level) 
+                                * this.magicFind);
+    while(netEssence > 0) {
+      let amt = min(5, netEssence);
+      myDungeon.otherEntities.push(new Essence(structuredClone(this.pos), amt,
+        this.collisionMap));
+        netEssence -= amt;
     }
   }
 }
