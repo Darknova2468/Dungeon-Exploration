@@ -9,6 +9,7 @@ const baseResolution = [24, 24];
 const ENEMYDEBUG = 0;
 const SHOWHITBOXES = false;
 const DEFAULTPLAYERHEALTH = 10;
+const DEFAULTPLAYERMANA = 4;
 
 class Entity {
   constructor(_pos, _health, _defence, _speed, _collisionMap, _animationSet,
@@ -485,7 +486,9 @@ class Player extends Entity {
     this.isRegenerating = false;
 
     // Magic
-    this.mana = 6;
+    this.maxMana = DEFAULTPLAYERMANA;
+    this.mana = this.maxMana;
+    this.manaBonus = 0;
 
     // Inventory
     this.inventory = new Inventory(this);
@@ -544,6 +547,7 @@ class Player extends Entity {
    * Updates the player's armor stats.
    */
   updateArmor() {
+    this.manaBonus = 0;
     this.defence = 0;
     this.healthBonus = 0;
     this.speedBonus = 0;
@@ -556,10 +560,13 @@ class Player extends Entity {
       this.healthBonus += piece.health;
       this.defence += piece.defence;
       this.speedBonus += piece.speed;
+      this.manaBonus += piece.mana;
     }
     this.maxHealth = DEFAULTPLAYERHEALTH + this.healthBonus;
+    this.maxMana = DEFAULTPLAYERMANA + this.manaBonus;
     if(myDungeon.floorNumber === 0) {
       this.health = this.maxHealth;
+      this.mana = this.maxMana;
     }
   }
 

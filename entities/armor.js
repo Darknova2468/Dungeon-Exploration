@@ -7,10 +7,17 @@
 
 const ARMORTYPES = ["Helmet", "Chestplate", "Pants", "Boots"];
 
+const ARMORMANABONUS = [
+  [5, 9, 16, 25, 36],
+  [0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0],
+]
+
 const ARMORHEALTHBONUS = [
-  [1, 2, 4, 8, 16],
   [1, 2, 3, 4, 5],
   [1, 2, 3, 6, 10],
+  [1, 2, 4, 8, 16],
   [0, 0, 0, 0, 0]
 ];
 
@@ -18,14 +25,14 @@ const ARMORDEFENCEBONUS = [
   [1, 2, 3, 4, 5],
   [1, 2, 4, 8, 16],
   [1, 2, 3, 6, 10],
-  [1, 2, 2, 2, 2]
+  [1, 2, 2, 3, 3]
 ];
 
 const ARMORSPEEDBONUS = [
   [-0.1, -0.2, 0, 0, 0],
   [-0.1, -0.2, 0, 0, 0],
-  [-0.1, -0.2, -0.1, -0.1, -0.1],
-  [-0.1, -0.1, 0.5, 1, 1.5]
+  [-0.1, -0.2, 0, 0, 0],
+  [-0.1, -0.1, 1, 1.5, 2]
 ];
 
 const ARMORCOSTS = [
@@ -43,6 +50,7 @@ class ArmorPiece extends Item {
     this.health = 0;
     this.defence = 0;
     this.speed = 0;
+    this.mana = 0;
     this.stackable = false;
     this.tier = 1;
     this.tileAngle = 0;
@@ -52,6 +60,7 @@ class ArmorPiece extends Item {
     this.health = ARMORHEALTHBONUS[this.armorId][this.tier - 1];
     this.defence = ARMORDEFENCEBONUS[this.armorId][this.tier - 1];
     this.speed = ARMORSPEEDBONUS[this.armorId][this.tier - 1];
+    this.mana = ARMORMANABONUS[this.armorId][this.tier - 1];
     super.updateStats();
   }
 

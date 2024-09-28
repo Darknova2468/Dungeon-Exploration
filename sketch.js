@@ -111,7 +111,7 @@ function setup() {
   myDungeon = createDungeonMap(0);
   player = new Player(structuredClone(myDungeon.playerPos), myDungeon.minimap);
   healthBar = new HealthBar(player.health, textures.healthBarTileSet, [50, 50], 2);
-  manaBar = new HealthBar(player.mana, textures.healthBarTileSet, [50, 100], 1.5);
+  manaBar = new HealthBar(player.mana, textures.healthBarTileSet, [50, 100], 2);
   lighting = new Lighting();
   menuManager = new MenuManager();
   enterDungeonMap(myDungeon);
