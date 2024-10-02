@@ -11,7 +11,7 @@
 const PERSISTENTDUNGEONS = false;
 const allDungeons = new Map(); // May store floor data
 let floorBitmask; // Stores the available floors as a bitmask
-const GENERATIONDEBUG = false;
+const GENERATIONDEBUG = true;
 
 /**
  * Creates a dungeon map.
@@ -411,16 +411,23 @@ class Room {
    */
   addConnection(numberOfConnections, index, numberOfRooms, dungeon, check){
     // Pushes connections to node
-    let distance = random() < this.caveEdgeChance ? 3:Math.floor(random(8, 12));
+    let isLaby = random() > this.caveEdgeChance;
+    let distance;
+    if(isLaby) {
+      distance = Math.floor(random(8, 12));
+    }
+    else {
+      distance = 3;
+    }
     if(check){
       this.connections.push([index, dungeon[index].radius+this.radius+distance,
-        1+(distance>3)]);
+        1+isLaby]);
     }
     else {
       if(numberOfConnections === 1){      
         if(random() < 0.5 && index+1 < numberOfRooms){
           this.connections.push([index,
-            dungeon[index].radius+this.radius+distance, 1+(distance>3)]);
+            dungeon[index].radius+this.radius+distance, 1+isLaby]);
           this.connections.push([index+1,
             dungeon[index+1].radius+this.radius+3, 0]);
         }
@@ -428,15 +435,15 @@ class Room {
           this.connections.push([index,
             dungeon[index].radius+this.radius+3, 0]);
           this.connections.push([index+1,
-            dungeon[index+1].radius+this.radius+distance, 1+(distance>3)]);
+            dungeon[index+1].radius+this.radius+distance, 1+isLaby]);
         }
       }
       else {
         this.connections.push([index,
-          dungeon[index].radius+this.radius+distance, 1+(distance>3)]);
+          dungeon[index].radius+this.radius+distance, 1+isLaby]);
         distance = random() < this.denseCaveEdgeChance ? 3:Math.floor(random(8, 12));
         this.connections.push([index+1,
-          dungeon[index+1].radius+this.radius+distance, 1+(distance>3)]);
+          dungeon[index+1].radius+this.radius+distance, 1+isLaby]);
       }
     }
   }
@@ -744,7 +751,7 @@ function integrateRaster(minimap, raster, pos){
  * @returns The angle of the angle in radians.
  */
 function cosineLaw(leg1, leg2, opp){
-  if(DEBUG) {
+  if(GENERATIONDEBUG) {
     console.assert(leg1 + leg2 > opp,
       "[Cosine Law] Opposite side length is too short!");
     console.assert(opp + leg2 > leg1,

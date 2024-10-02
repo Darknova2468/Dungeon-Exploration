@@ -46,14 +46,22 @@ Ordered in increasing complexity:
 - Sell items
 - ~~Improved lighting algorithm~~
     - ~~Makes player darker as well in dim environments~~
-- Room diversity
-    - Small empty rooms
+- Revamp generation
+  - Generation diversity
+    - Revamp addConnection()
+    - Peripheral rooms to the side of the main ones; connected to main rooms
+      or labyrinths with a single long tunnel
+    - Variation in labyrinth lengths
+  - Room diversity
     - Puzzle rooms
         - Returning a lost item to an NPC
     - Treasure rooms, mostly at dead ends
         - Currency (coins and essence)
         - Artifacts
     - Miniboss rooms, introducing earlier draconian variants
+  - Labyrinth diversity
+    - Small empty rooms in the middle (likely orthogonal)
+    - Cutting out some dead ends (depending on style)
 - ~~Save inventory (no more liquidation)~~
 - Fix memory leak (and equivalently the breaking music)
 - Revamped combat mechanics
