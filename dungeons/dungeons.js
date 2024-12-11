@@ -222,6 +222,7 @@ class DungeonMap {
       room.connections.forEach(connection => {
         if(connection[2] === 1) {
           let pos2 = this.dungeon[connection[0]].pos;
+          // let raster = generatePrecursorStaircase()
           // console.log(pos1[0], pos2[0]);
           generateCaveEdge(this.minimap, pos1[1], pos1[0],
             pos2[1], pos2[0]);
@@ -762,20 +763,22 @@ function cosineLaw(leg1, leg2, opp){
   return acos((leg1*leg1+leg2*leg2-opp*opp)/(2*leg1*leg2));
 }
 
-//checks if a number is with in a bound
+// Checks if a number is with in a bound
 function between(point, bound1, bound2){
   let minimum = min(bound1, bound2);
   let maximum = max(bound1, bound2);
   return minimum <= point && maximum >= point;
 }
 
-//generates a single organic shaped room
+// Generates a single organic shaped room
 function generatePrecursorDungeonRoom(radius, toFill, roughness = 4) {
   let room = generateEmptyGrid(2*radius - 1, 2*radius - 1);
   room = generateCaveNode(room, radius, radius, radius - roughness, radius,
     toFill);
   return room;
 }
+
+// function generatePrecursorStaircase(yDisp, xDisp)
 
 /**
  * Converts an empty array to a uniform 2d array.

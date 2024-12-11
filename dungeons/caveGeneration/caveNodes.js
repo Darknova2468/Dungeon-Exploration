@@ -28,10 +28,11 @@ const DEBUG = false;
 // Default variables for cave node radius and cave edge width specifications
 let caveNodeHardBound = 2;
 let caveNodeSoftBound = 4;
-let caveEdgeHardBound = 1.5;
-let caveEdgeSoftBound = 3; // No soft bound
+let caveEdgeHardBound = 1;
+let caveEdgeSoftBound = 4; // No soft bound
 
-const FILLPORTION = 0.6; // Portion of solid rock for cave generation
+const NODEFILLPORTION = 0.6; // Portion of solid rock for cave generation
+const EDGEFILLPORTION = 0.4; // Portion of solid rock for cave generation
 const NUMGENERATIONS = 3;
 
 /**
@@ -153,7 +154,7 @@ function generateCaveEdge(grid, i1, j1, i2, j2) {
           setGrid(grid, a, b, 1);
         }
         else if(d < caveEdgeSoftBound) {
-          if(random() < FILLPORTION) {
+          if(random() < EDGEFILLPORTION) {
             setGrid(grid, a, b, 1);
           }
         }
@@ -219,7 +220,7 @@ function generateCaveNode(grid, i, j,
         setGrid(grid, a, b, toFill);
       }
       else if(dist(i, j, a, b) <= sr) {
-        if(random() < FILLPORTION) {
+        if(random() < NODEFILLPORTION) {
           setGrid(grid, a, b, toFill);
         }
       }
