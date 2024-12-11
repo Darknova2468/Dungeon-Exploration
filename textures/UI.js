@@ -10,6 +10,7 @@ class Menu {
   constructor(_name, _text, _commands, _priority, _x = width * 2 / 7, _y = height * 3 / 7, _marginCol = color(100, 50, 50, 255), _fillCol = color(70, 70, 70, 255), _defaultTextCol = color("white"), _highlightedTextCol = color(255, 150, 150)) {
     this.graphics = createGraphics(550, 375);
     this.graphics.imageMode(CENTER);
+    this.graphics.textFont("Courier New");
     this.toDisplay = true;
     this.priority = _priority ?? -1;
     this.name = _name ?? "";
