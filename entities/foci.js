@@ -2,7 +2,8 @@
  * Introducing spells and foci!
  * 
  * List of foci:
- * - Wand (silver): utility and manipulation
+ * - Wand (silver): general use
+ * - Orb (indigo): utility and manipulation
  * - Rod (cyan): defence
  * - Amulet (green): healing and support
  * - Staff (red): offence

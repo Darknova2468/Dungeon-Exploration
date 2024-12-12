@@ -490,6 +490,7 @@ class Player extends Entity {
     this.mana = this.maxMana;
     this.manaBonus = 0;
     this.requestedMana = 0;
+    this.spellManager = new SpellManager(this);
 
     // Inventory
     this.inventory = new Inventory(this);
