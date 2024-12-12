@@ -560,12 +560,20 @@ class CastOverlay {
     return [spell, spellLevel];
   }
 
+  throw(msg) {
+    this.textCol = color(150, 0, 0);
+    this.text = msg;
+    this.selecting = false;
+    this.charging = false;
+  }
+  
   reset() {
     player.requestedMana = 0;
     this.spellSelect = 1;
     this.castLevel = 0;
     this.text = "";
     this.selecting = true;
+    this.charging = false;
   }
 
   cast_comma() {
@@ -590,7 +598,11 @@ class CastOverlay {
   }
 
   upcast() {
+    if(!this.selecting && !this.charging) {
+      this.reset();
+    }
     this.selecting = false;
+    this.charging = true;
     this.castLevel++;
     this.pushText('\u29F8');
   }

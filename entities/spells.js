@@ -54,7 +54,12 @@ class SpellManager {
     return [true, requestedMana, spellPower, spellFunction]
   }
 
-  castSpell(spell, spellLevel, enemies, direction, time, isRolling) {
+  castSpell(enemies, direction, time, isRolling) {
+    if(!castOverlay.charging) {
+      return false;
+    }
+    let spell = castOverlay.spellSelect;
+    let spellLevel = castOverlay.castLevel;
     let spellInfo = this.prepareSpell(spell, spellLevel);
     if(!spellInfo[0]) {
       return false;

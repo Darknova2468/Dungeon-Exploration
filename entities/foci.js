@@ -24,6 +24,9 @@ class Focus extends Item {
 
   attack(enemies, direction, time, isRolling) {
     // this.damage = WEAPONDAMAGE[this.weaponId][this.tier - 1];
+    if(mouseIsPressed) {
+      this.wielder.spellManager.castSpell(enemies, direction, time, isRolling);
+    }
   }
 
   updateTileNumber() {
