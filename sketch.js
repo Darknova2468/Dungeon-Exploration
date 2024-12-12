@@ -34,7 +34,7 @@ function preload() {
   textures = {
     tileSet: new TileSet("textures/CaveTiles.png", [16, 16]),
     healthBarTileSet: new TileSet("textures/Hearts.png", [21, 18]),
-    manaBarTileSet: new TileSet("textures/Mana.png", [21, 18]),
+    manaBarTileSet: new AnimateSet("textures/Mana.png", [21, 18]),
     playerTileSet: new AnimateSet("textures/player.png", [19, 21]),
     slimeTileSet: new AnimateSet("textures/slime.png", [19, 21]),
     largeSlimeTileSet: new AnimateSet("textures/largeSlime.png", [31, 31]),
@@ -113,7 +113,7 @@ function setup() {
   myDungeon = createDungeonMap(0);
   player = new Player(structuredClone(myDungeon.playerPos), myDungeon.minimap);
   healthBar = new HealthBar(player.health, textures.healthBarTileSet, [50, 50], 2);
-  manaBar = new HealthBar(player.mana, textures.manaBarTileSet, [50, 100], 2);
+  manaBar = new ManaBar(player.mana, textures.manaBarTileSet, [50, 100], 2);
   castOverlay = new CastOverlay();
   lighting = new Lighting();
   menuManager = new MenuManager();

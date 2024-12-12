@@ -832,26 +832,28 @@ class HealthBar {
 }
 
 /**
- * Too identical to health bar, so reusing that instead
+ * Needed an improved version for mana
  */
-// class ManaBar {
-//   constructor(_mana, _tileSet, _pos, _scale){
-//     this.health = _mana;
-//     this.tileSet = _tileSet;
-//     this.pos = _pos;
-//     this.scale = _scale;
-//   }
-//   display(mana){
-//     this.mana = mana; 
-//     let n = Math.floor(this.mana*0.5);
-//     for(let i=0; i<n; i++){
-//       image(this.tileSet.assets[0], this.pos[0]+i*this.scale*this.tileSet.size[0], this.pos[1], this.tileSet.size[0]*this.scale, this.tileSet.size[1]*this.scale);
-//     }
-//     if(Math.floor(this.mana)%2 === 1){
-//       image(this.tileSet.assets[1], this.pos[0]+n*this.scale*this.tileSet.size[0], this.pos[1], this.tileSet.size[0]*this.scale, this.tileSet.size[1]*this.scale);
-//     }
-//   }
-// }
+class ManaBar {
+  constructor(_mana, _animationSet, _pos, _scale){
+    this.mana = _mana;
+    this.animationSet = _animationSet;
+    this.pos = _pos;
+    this.scale = _scale;
+  }
+  display(mana, requestedMana = 0){
+    this.mana = mana;
+    this.freeMana = mana - requestedMana;
+    this.requestedMana = requestedMana;
+    let n = Math.floor(this.mana*0.5);
+    for(let i=0; i<n; i++){
+      image(this.animationSet.animations[0][0], this.pos[0]+i*this.scale*this.animationSet.size[0], this.pos[1], this.animationSet.size[0]*this.scale, this.animationSet.size[1]*this.scale);
+    }
+    if(Math.floor(this.mana)%2 === 1){
+      image(this.animationSet.animations[0][1], this.pos[0]+n*this.scale*this.animationSet.size[0], this.pos[1], this.animationSet.size[0]*this.scale, this.animationSet.size[1]*this.scale);
+    }
+  }
+}
 
 LIGHTINGDEBUG = false;
 
