@@ -522,15 +522,23 @@ class CastOverlay {
   }
 
   updateColour() {
+    player.requestedMana = 0;
     if(this.selecting) {
       this.textCol = color(200, 210, 170);
+      return;
     }
-    else if(this.castLevel < 6) {
+    // else if(!player.spellManager.knownSpells.has(this.spellSelect)) {
+    //   this.textCol = color(150, 0, 0);
+    // }
+    let preparedSpell = player.spellManager.prepareSpell(this.spellSelect, this.castLevel);
+    if(preparedSpell[0]) {
       let fadeFactor = Math.pow(1.1, -this.castLevel);
       this.textCol = color(150*fadeFactor, 230-100*fadeFactor, 255-100*fadeFactor);
+      player.requestedMana = preparedSpell[1];
     }
     else {
       this.textCol = color(150, 0, 0);
+      this.text = preparedSpell[1];
     }
   }
 
@@ -553,6 +561,7 @@ class CastOverlay {
   }
 
   reset() {
+    player.requestedMana = 0;
     this.spellSelect = 1;
     this.castLevel = 0;
     this.text = "";

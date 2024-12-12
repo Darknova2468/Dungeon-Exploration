@@ -10,7 +10,7 @@ const ALLSPELLS = {
   emptySpell(player, spellLevel, spellBonus) {
 
   },
-  mend(player, spellLevel, spellBonus) {
+  mend(player, spellLevel, spellBonus, enemies, direction, time, isRolling) {
     player.health += Math.floor((1 + spellBonus) * spellLevel * Math.log(1 + spellLevel*2));
     player.health = Math.min(player.health, player.maxHealth);
   },
@@ -25,13 +25,16 @@ class SpellManager {
   constructor(player) {
     this.player = player;
     this.knownSpells = new Map();
+
+    // Temporary things
+    this.knownSpells.set(5, 1);
   }
 
   computeMana(spellTier, spellLevel) {
     return Math.floor(spellLevel * Math.log(1 + spellTier * spellTier * spellLevel));
   }
 
-  castSpell(spell, spellLevel) {  
+  prepareSpell(spell, spellLevel) {  
     if(!this.knownSpells.has(spell)) {
       return [false, "Unknown or invalid spell!"];
     }
@@ -41,9 +44,25 @@ class SpellManager {
     if(this.player.holding !== null) {
       spellPower *= 1 + (this.player.holding.name === spellAffinity);
     }
-    if(spellLevel > this.spellPower) {
+    if(spellLevel > spellPower) {
       return [false, "Spell level too high!"];
     }
-    spellFunction(this.player, spellLevel, (1 + spellPower / 10));
+    let requestedMana = this.computeMana(spell, spellTier);
+    if(requestedMana > this.player.mana) {
+      return [false, "Not enough mana!"]
+    }
+    return [true, requestedMana, spellPower, spellFunction]
+  }
+
+  castSpell(spell, spellLevel, enemies, direction, time, isRolling) {
+    let spellInfo = this.prepareSpell(spell, spellLevel);
+    if(!spellInfo[0]) {
+      return false;
+    }
+    spellInfo[3](this.player, spellLevel, (1 + spellInfo[2] / 10),
+      enemies, direction, time, isRolling);
+    this.player.mana -= spellInfo[1];
+    castOverlay.release();
+    return true;
   }
 }
