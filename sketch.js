@@ -24,6 +24,7 @@ let player;
 let myBackground;
 let healthBar;
 let manaBar;
+let castOverlay;
 let music;
 let sfx;
 
@@ -113,6 +114,7 @@ function setup() {
   player = new Player(structuredClone(myDungeon.playerPos), myDungeon.minimap);
   healthBar = new HealthBar(player.health, textures.healthBarTileSet, [50, 50], 2);
   manaBar = new HealthBar(player.mana, textures.manaBarTileSet, [50, 100], 2);
+  castOverlay = new CastOverlay();
   lighting = new Lighting();
   menuManager = new MenuManager();
   enterDungeonMap(myDungeon);
@@ -193,6 +195,8 @@ function draw() {
     fill("white");
     textSize(12);
     text("fps: " + Math.floor(frameRate()), width-height*3/20, height*6/20);
+    castOverlay.display();
+    fill("white");
     textSize(20);
     textAlign(LEFT, TOP);
     let floorNum = myDungeon.floorNumber;
@@ -248,6 +252,7 @@ function keyPressed() {
         menuManager.menus.push(new PauseMenu());
       }
     }
+    castOverlay.handleKeyPress(keyCode);
   }
 }
 

@@ -2,14 +2,15 @@
  * Introducing spells and foci!
  * 
  * List of foci:
- * - Wand (silver): utility
+ * - Wand (silver): utility and manipulation
  * - Rod (cyan): defence
- * - Amulet (green): healing
+ * - Amulet (green): healing and support
  * - Staff (red): offence
  * 
  * Controls (WIP):
- * - Cast/charge spells: left click, hold for more power
- * - Switch spells: x
+ * - Select spells: comma, period (27F2, 27F3)
+ * - Cast/upcast spells: slash (26A1)
+ * - Release spell: left click
  */
 
 class Focus extends Item {

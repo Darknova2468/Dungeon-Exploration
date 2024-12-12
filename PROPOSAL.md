@@ -34,12 +34,13 @@ None of this is coming anytime soon, please don't tell Alex about any of this
 Ordered in increasing complexity:
 - ~~Natural regeneration~~
 - ~~Fix blindness granting total darkness~~
+- Add player effect system
 - Stop timers from finishing on game pause
 - Revamp guild hall
   - New NPC's (??? indicates extremely low to nonexistant priority)
     - Archmage: Upgrades spells in exchange for essence
     - Armourer: Update helmet to give focus and also cost essence
-    - Merchant (???): Sell items, convert between essence and coins
+    - Merchant: Sell items and essence
     - Banker (???): Store coins, essence, and items
     - Guild master (???): Gives quests
     - Dne eht (ton) (???): Much later
@@ -61,7 +62,7 @@ Ordered in increasing complexity:
     - Miniboss rooms, introducing earlier draconian variants
   - Labyrinth diversity
     - Small empty rooms in the middle (likely orthogonal)
-    - Cutting out some dead ends (depending on style)
+    - Cutting out some dead ends (depending on style) to control sparseness
 - ~~Save inventory (no more liquidation)~~
 - Fix memory leak (and equivalently the breaking music)
 - Revamped combat mechanics

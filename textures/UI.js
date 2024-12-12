@@ -514,6 +514,91 @@ class MenuManager {
   }
 }
 
+class CastOverlay {
+  constructor() {
+    this.text = "";
+    this.textCol = "red";
+    this.reset();
+  }
+
+  updateColour() {
+    if(this.selecting) {
+      this.textCol = color(200, 210, 170);
+    }
+    else if(this.castLevel < 6) {
+      let fadeFactor = Math.pow(1.1, -this.castLevel);
+      this.textCol = color(150*fadeFactor, 230-100*fadeFactor, 255-100*fadeFactor);
+    }
+    else {
+      this.textCol = color(150, 0, 0);
+    }
+  }
+
+  display() {
+    textSize(30);
+    fill(this.textCol);
+    text(castOverlay.text, width/2, 2*height/3);
+  }
+
+  pushText(c) {
+    this.text += c;
+    this.updateColour();
+  }
+
+  release() {
+    let spell = this.spellSelect;
+    let spellLevel = this.castLevel;
+    this.reset();
+    return [spell, spellLevel];
+  }
+
+  reset() {
+    this.spellSelect = 1;
+    this.castLevel = 0;
+    this.text = "";
+    this.selecting = true;
+  }
+
+  cast_comma() {
+    if(!this.selecting) {
+      this.reset();
+    }
+    else {
+      this.spellSelect <<= 1;
+      this.pushText('\u293E');
+    }
+  }
+  
+  cast_period() {
+    if(!this.selecting) {
+      this.reset();
+    }
+    else {
+      this.spellSelect <<= 1;
+      this.spellSelect++;
+      this.pushText('\u293F');
+    }
+  }
+
+  upcast() {
+    this.selecting = false;
+    this.castLevel++;
+    this.pushText('\u29F8');
+  }
+
+  handleKeyPress(keyCode) {
+    if(keyCode === 188) {
+      this.cast_comma();
+    }
+    else if(keyCode === 190) {
+      this.cast_period();
+    }
+    else if(keyCode === 191) {
+      this.upcast();
+    }
+  }
+}
+
 class InventoryCell {
   constructor(_graphics, _inventory, _pos, _size, _pointer, _accepts = "All") {
     this.graphics = _graphics;
