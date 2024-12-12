@@ -489,6 +489,7 @@ class Player extends Entity {
     this.maxMana = DEFAULTPLAYERMANA;
     this.mana = this.maxMana;
     this.manaBonus = 0;
+    this.requestedMana = 0;
 
     // Inventory
     this.inventory = new Inventory(this);

@@ -845,12 +845,34 @@ class ManaBar {
     this.mana = mana;
     this.freeMana = mana - requestedMana;
     this.requestedMana = requestedMana;
+    if(this.freeMana < 0) {
+      this.freeMana = mana;
+      this.requestedMana = 0;
+    }
+    let m = Math.floor(this.freeMana*0.5);
+    let M = Math.ceil(this.freeMana*0.5);
     let n = Math.floor(this.mana*0.5);
-    for(let i=0; i<n; i++){
+    for(let i=0; i<m; i++){
       image(this.animationSet.animations[0][0], this.pos[0]+i*this.scale*this.animationSet.size[0], this.pos[1], this.animationSet.size[0]*this.scale, this.animationSet.size[1]*this.scale);
     }
+    if(Math.floor(this.freeMana)%2 === 1){
+      if(this.requestedMana >= 1) {
+        image(this.animationSet.animations[1][0], this.pos[0]+m*this.scale*this.animationSet.size[0], this.pos[1], this.animationSet.size[0]*this.scale, this.animationSet.size[1]*this.scale);
+      }
+      else {
+        image(this.animationSet.animations[0][1], this.pos[0]+m*this.scale*this.animationSet.size[0], this.pos[1], this.animationSet.size[0]*this.scale, this.animationSet.size[1]*this.scale);
+      }
+    }
+    for(let i=M; i<n; i++){
+      image(this.animationSet.animations[2][0], this.pos[0]+i*this.scale*this.animationSet.size[0], this.pos[1], this.animationSet.size[0]*this.scale, this.animationSet.size[1]*this.scale);
+    }
     if(Math.floor(this.mana)%2 === 1){
-      image(this.animationSet.animations[0][1], this.pos[0]+n*this.scale*this.animationSet.size[0], this.pos[1], this.animationSet.size[0]*this.scale, this.animationSet.size[1]*this.scale);
+      if(this.requestedMana >= 1) {
+        image(this.animationSet.animations[2][1], this.pos[0]+n*this.scale*this.animationSet.size[0], this.pos[1], this.animationSet.size[0]*this.scale, this.animationSet.size[1]*this.scale);
+      }
+      else {
+        image(this.animationSet.animations[0][1], this.pos[0]+n*this.scale*this.animationSet.size[0], this.pos[1], this.animationSet.size[0]*this.scale, this.animationSet.size[1]*this.scale);
+      }
     }
   }
 }

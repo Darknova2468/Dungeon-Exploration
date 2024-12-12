@@ -190,7 +190,7 @@ function draw() {
     lighting.update(player.vision, myDungeon.ambience, myBackground.pos, myBackground.scale, player);
     minimap.displayMinimap(player.pos);
     healthBar.display(player.health);
-    manaBar.display(player.mana);
+    manaBar.display(player.mana, player.requestedMana);
     textAlign(CENTER, CENTER);
     fill("white");
     textSize(12);
