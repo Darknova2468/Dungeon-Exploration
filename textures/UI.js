@@ -580,21 +580,21 @@ class CastOverlay {
     if(!this.selecting) {
       this.reset();
     }
-    else {
-      this.spellSelect <<= 1;
-      this.pushText('\u293E');
-    }
+    // else {
+    this.spellSelect <<= 1;
+    this.pushText('\u293E');
+    // }
   }
   
   cast_period() {
     if(!this.selecting) {
       this.reset();
     }
-    else {
-      this.spellSelect <<= 1;
-      this.spellSelect++;
-      this.pushText('\u293F');
-    }
+    // else {
+    this.spellSelect <<= 1;
+    this.spellSelect++;
+    this.pushText('\u293F');
+    // }
   }
 
   upcast() {

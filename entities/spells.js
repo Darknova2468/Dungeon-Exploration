@@ -1,13 +1,20 @@
 /**
- * Each entry contains:
+ * Here are spells in their full glory!
  * 
- * - Mana spell tier
- * - Spell affinity
- * - Execution function
+ * Common spell variables include:
+ * - spellLevel: Level of spell, determined by player and capped by knowledge
+ * - spellAffinity: Appropriate focus used for a particular spell. Multiplies 
+ *   spellPower by the tier of the focus used (or 2 for now); see spellPower
+ * - spellPower: Power level of spell, calculated with spellAffinity and the 
+ *   player's knowledge. Converted to spellBonus as 1 + spellPower/10
+ * - spellTier: Mana tier of spell, determined by its type. That is, weaker 
+ *   spells such as mend are lower tiered than the strong ones like solar storm
+ * - spellBonus: Percentage increase in potency of spell; see spellPower
+ * - spellFunction: actual function for casting the spell.
  */
 
 const ALLSPELLS = {
-  emptySpell(player, spellLevel, spellBonus) {
+  emptySpell(player, spellLevel, spellBonus, enemies, direction, time, isRolling) {
 
   },
   mend(player, spellLevel, spellBonus, enemies, direction, time, isRolling) {
@@ -16,9 +23,16 @@ const ALLSPELLS = {
   },
 };
 
+/**
+ * Each entry contains:
+ * 
+ * - Mana spell tier
+ * - Spell affinity
+ * - Execution function
+ */
 const SPELLDATA = new Map([
+  [1, [2, "Wand", ALLSPELLS.emptySpell]],
   [5, [2, "Amulet", ALLSPELLS.mend]],
-  [9, [2, "Amulet", ALLSPELLS.emptySpell]],
 ]);
 
 class SpellManager {
@@ -27,11 +41,12 @@ class SpellManager {
     this.knownSpells = new Map();
 
     // Temporary things
-    this.knownSpells.set(5, 1);
+    this.knownSpells.set(5, 2);
   }
 
   computeMana(spellTier, spellLevel) {
-    return Math.floor(spellLevel * Math.log(1 + spellTier * spellTier * spellLevel));
+    console.log("Spell tier is " + spellTier);
+    return Math.floor(spellLevel * Math.log(2 + spellTier * spellTier * spellLevel));
   }
 
   prepareSpell(spell, spellLevel) {  
@@ -47,7 +62,7 @@ class SpellManager {
     if(spellLevel > spellPower) {
       return [false, "Spell level too high!"];
     }
-    let requestedMana = this.computeMana(spell, spellTier);
+    let requestedMana = this.computeMana(spellTier, spellLevel);
     if(requestedMana > this.player.mana) {
       return [false, "Not enough mana!"]
     }
